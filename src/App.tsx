@@ -1,10 +1,8 @@
-import "@/index.css";
-
 function App() {
   return (
     <>
-      <div className="h-screen w-full bg-black">
-        <h1>Hello World</h1>
+      <div className=" font-int h-screen w-full">
+        <h1 className="text-4xl font-bold">Hello World</h1>
       </div>
     </>
   );
