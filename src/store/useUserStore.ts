@@ -21,10 +21,11 @@ interface UserStore {
   }) => Promise<void>;
   handleLogin: (data: { email: string; password: string }) => Promise<void>;
   handleLogout: () => Promise<void>;
-  checkAuth: () => Promise<void>;
+  handleCheckAuth: () => Promise<void>;
+  refreshToken: () => Promise<void>;
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
   loading: false,
   checkingAuth: true,
@@ -43,6 +44,7 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ loading: true });
 
     if (password !== confirmPassword) {
+      set({ loading: false });
       toast.error("Passwords do not match");
       return;
     }
@@ -75,7 +77,7 @@ export const useUserStore = create<UserStore>((set) => ({
         password,
       });
 
-      set({ user: response.data, checkingAuth: false });
+      set({ user: response.data });
 
       toast.success("Logged in successfully");
       return response.data;
@@ -99,18 +101,32 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   },
 
-  checkAuth: async () => {
+  handleCheckAuth: async () => {
     set({ checkingAuth: true });
     try {
       const response = await axiosInstance.get("/auth/profile");
-      console.log(response.data);
       set({ user: response.data, checkingAuth: false });
     } catch (error) {
       set({ checkingAuth: false, user: null });
       const axiosError = error as AxiosError<ErrorResponse>;
       console.log("Error in checkAuth", axiosError.response?.data?.message);
+    }
+  },
+
+  refreshToken: async () => {
+    // Prevent multiple simultaneous refresh attempts
+    if (get().checkingAuth) return;
+
+    set({ checkingAuth: true });
+
+    try {
+      const response = await axiosInstance.post("/auth/refresh-token");
+      return response.data;
+    } catch (error) {
+      set({ user: null });
+      throw error;
     } finally {
-      set({ loading: false });
+      set({ checkingAuth: false });
     }
   },
 }));

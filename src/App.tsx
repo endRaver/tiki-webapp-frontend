@@ -7,11 +7,11 @@ import { useUserStore } from "./store/useUserStore";
 import { useEffect } from "react";
 
 function App() {
-  const { user, checkAuth, checkingAuth } = useUserStore();
+  const { user, handleCheckAuth, checkingAuth } = useUserStore();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    handleCheckAuth();
+  }, [handleCheckAuth]);
 
   if (checkingAuth) {
     return <div>Checking authentication...</div>;
