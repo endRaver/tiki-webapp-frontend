@@ -23,6 +23,7 @@ interface UserStore {
   handleLogout: () => Promise<void>;
   handleCheckAuth: () => Promise<void>;
   refreshToken: () => Promise<void>;
+  handleGoogleLogin: (accessToken: string) => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -127,6 +128,22 @@ export const useUserStore = create<UserStore>((set, get) => ({
       throw error;
     } finally {
       set({ checkingAuth: false });
+    }
+  },
+
+  handleGoogleLogin: async (accessToken) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.post("/auth/google", {
+        token: accessToken,
+      });
+      set({ user: response.data });
+      toast.success("Logged in successfully");
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
     }
   },
 }));

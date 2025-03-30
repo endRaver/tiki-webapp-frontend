@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { toast } from "react-hot-toast";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
-  const { handleLogin, loading, handleLogout } = useUserStore();
+  const { handleLogin, loading, handleLogout, handleGoogleLogin } =
+    useUserStore();
   const [email, setEmail] = useState("admin@gmail.com");
   const [password, setPassword] = useState("test123");
 
@@ -17,9 +19,20 @@ const Login = () => {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (response) => {
+      await handleGoogleLogin(response.access_token);
+    },
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
+  });
+
   return (
     <div className="flex h-screen items-center justify-center">
       <button onClick={handleLogout}>Logout</button>
+
+      <button onClick={() => googleLogin()}>Login with Google</button>
       <form onSubmit={handleSubmit} className="rounded bg-white p-6 shadow-md">
         <h1 className="mb-4 text-2xl">Login</h1>
         <div className="mb-4">
