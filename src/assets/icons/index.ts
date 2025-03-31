@@ -39,11 +39,17 @@ import payment_methods from "./checkout_page_icons/payment_method.png";
 import checkout_delivery from "./checkout_page_icons/delivery-method-icon.svg";
 import delivery_bubble from "./checkout_page_icons/delivery_bubble.svg";
 import info from "./checkout_page_icons/info.svg";
+import info_blue from "./checkout_page_icons/info_blue.svg";
 import delivery_box from "./checkout_page_icons/delivery_box.svg";
 import coupon from "./checkout_page_icons/coupon.svg";
 import angle_right from "./checkout_page_icons/angle_right.svg";
+import angle_right_blue from "./checkout_page_icons/angle_right_blue.svg";
+import angle_down_blue from "./checkout_page_icons/angle_down_blue.svg";
 import percentage from "./checkout_page_icons/percentage.svg";
 import bank_logo from "./checkout_page_icons/bank_logo.svg";
+import free_ship from "./checkout_page_icons/free_ship.jpg";
+import coupon_active from "./checkout_page_icons/coupon_active.svg";
+import coupon_inactive from "./checkout_page_icons/coupon_inactive.svg";
 
 export {
   logo,
@@ -81,11 +87,17 @@ export {
   checkout_delivery,
   delivery_bubble,
   info,
+  info_blue,
   delivery_box,
   coupon,
   angle_right,
+  angle_right_blue,
+  angle_down_blue,
   credit_card,
   payment_methods,
   percentage,
   bank_logo,
+  free_ship,
+  coupon_active,
+  coupon_inactive,
 };

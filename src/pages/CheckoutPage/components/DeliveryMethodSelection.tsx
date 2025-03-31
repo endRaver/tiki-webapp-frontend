@@ -1,9 +1,10 @@
 import { checkout_delivery, delivery_bubble } from "@/assets/icons";
 import Selection from "@/components/ui/Selection";
+
 const DeliveryMethodSelection = () => {
   return (
-    <div className="relative w-fit">
-      <div className="bg-primary-50 border-primary-100 relative z-0 flex w-[500px] flex-col gap-3 rounded-[10px] border p-4">
+    <div className="relative">
+      <div className="bg-primary-50 border-primary-100 relative z-0 flex w-full max-w-[500px] flex-col gap-3 rounded-[10px] border p-4">
         <Selection
           name="delivery-method"
           title="quick-delivery"

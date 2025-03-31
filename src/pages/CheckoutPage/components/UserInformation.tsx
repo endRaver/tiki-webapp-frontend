@@ -1,6 +1,6 @@
 const UserInformation = () => {
   return (
-    <div className="space-y-3 bg-white p-4">
+    <div className="space-y-3 rounded bg-white p-4 shadow">
       <div className="flex items-center justify-between">
         <span className="text-neutral-600">Giao tới</span>
         <button className="text-primary-300 cursor-pointer text-sm">

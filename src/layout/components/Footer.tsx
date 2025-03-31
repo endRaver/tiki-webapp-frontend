@@ -278,10 +278,8 @@ const Footer = () => {
           <h1 className="mb-[12px] font-medium">Thương hiệu nổi bật</h1>
           <div className="text-sm text-gray-500">
             {brands.map((brand, index) => (
-              <a>
-                <span key={index} className="cursor-pointer hover:underline">
-                  {brand}
-                </span>
+              <a key={index}>
+                <span className="cursor-pointer hover:underline">{brand}</span>
                 {index < brands.length - 1 && " / "}
               </a>
             ))}

@@ -1,12 +1,14 @@
-import { products } from "@/data/fakeData";
 import { map } from "lodash";
-import DeliveryItem from "./components/DeliveryItem";
-import { coupon, angle_right } from "@/assets/icons";
+import { products } from "@/data/fakeData";
 
+import { coupon, angle_right } from "@/assets/icons";
+import DeliveryItem from "./components/DeliveryItem";
 import DeliveryMethodSelection from "./components/DeliveryMethodSelection";
 import PaymentMethodSelection from "./components/PaymentMethodSelection";
 import PaymentOffersSection from "./components/PaymentOffersSection";
 import UserInformation from "./components/UserInformation";
+import CouponSection from "./components/CouponSection";
+import ItemTotalPrice from "./components/ItemTotalPrice";
 
 const productList = products.slice(0, 3);
 
@@ -15,7 +17,7 @@ const CheckoutPage = () => {
     <div className="bg-background">
       <div className="container mx-auto h-[1500px] pt-5">
         <div className="flex gap-5">
-          <div className="flex flex-2/3 flex-col gap-5">
+          <div className="flex-1 space-y-4">
             {/* Choose delivery method section */}
             <div className="rounded bg-white px-4 pt-4 shadow">
               {/* Delivery method selection */}
@@ -51,9 +53,10 @@ const CheckoutPage = () => {
           </div>
 
           {/* Checkout summary */}
-          <div className="flex-1/3 space-y-3">
-            {/* User information */}
+          <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
+            <CouponSection />
+            <ItemTotalPrice products={productList} />
           </div>
         </div>
       </div>

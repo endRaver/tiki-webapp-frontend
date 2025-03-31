@@ -10,10 +10,10 @@ const OfferCard = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="rounded bg-white px-3 py-2 shadow">
+    <div className="cursor-pointer rounded bg-white px-3 py-2 shadow">
       <div className="flex items-center justify-between">
         <span className="text-primary-400 text-lg font-medium">{title}</span>
-        <img src={logo} alt="bank_logo" />
+        <img src={logo} alt="logo" />
       </div>
 
       <div className="mt-1 flex justify-between">
@@ -21,7 +21,7 @@ const OfferCard = ({
           {children}
         </span>
 
-        <img src={info} alt="info" className="size-5" />
+        <img src={info} alt="info" className="size-5 cursor-pointer" />
       </div>
 
       <span className="text-xs text-[#FD820A] italic">Không giới hạn</span>

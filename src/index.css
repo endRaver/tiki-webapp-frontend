@@ -60,7 +60,7 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('./assets/font/Inter_18pt-RegularItalic.ttf') format('truetype');
+  src: url('./assets/font/Inter_18pt-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -165,7 +165,7 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1536px;
+  --breakpoint-2xl: 1440px;
 }
 
 @theme {
