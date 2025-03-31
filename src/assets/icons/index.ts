@@ -32,9 +32,18 @@ import tiki_pay from "./footer_icons/tiki_pay.svg";
 import viettel_pay from "./footer_icons/viettel_pay.svg";
 import visa_pay from "./footer_icons/visa_pay.svg";
 import zalo_pay from "./footer_icons/zalo_pay.svg";
+import credit_card from "./checkout_page_icons/credit_card.png";
+import payment_methods from "./checkout_page_icons/payment_method.png";
 
 //checkout
 import checkout_delivery from "./checkout_page_icons/delivery-method-icon.svg";
+import delivery_bubble from "./checkout_page_icons/delivery_bubble.svg";
+import info from "./checkout_page_icons/info.svg";
+import delivery_box from "./checkout_page_icons/delivery_box.svg";
+import coupon from "./checkout_page_icons/coupon.svg";
+import angle_right from "./checkout_page_icons/angle_right.svg";
+import percentage from "./checkout_page_icons/percentage.svg";
+import bank_logo from "./checkout_page_icons/bank_logo.svg";
 
 export {
   logo,
@@ -70,4 +79,13 @@ export {
   atm_pay,
   vn_pay,
   checkout_delivery,
+  delivery_bubble,
+  info,
+  delivery_box,
+  coupon,
+  angle_right,
+  credit_card,
+  payment_methods,
+  percentage,
+  bank_logo,
 };

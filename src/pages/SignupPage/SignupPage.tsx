@@ -24,7 +24,7 @@ const Signup = () => {
           <div className="mb-4">
             <label className="mb-2 block">Name</label>
             <input
-              type="text"
+            type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded border p-2"

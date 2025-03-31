@@ -206,10 +206,10 @@
 
 /* Rating Colors */
 @theme {
+  --color-rating-50: #FFF9E5;
   --color-rating-100: #FDD835;
-  /* Light yellow */
   --color-rating-200: #FFC400;
-  /* Star yellow */
+  --color-rating-300: #FC820A;
 }
 
 /* Danger Colors */
