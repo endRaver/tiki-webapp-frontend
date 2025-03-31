@@ -1,21 +1,12 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
+import Signup from "./pages/SignupPage/SignupPage";
+import Login from "./pages/LoginPage/LoginPage";
+import Home from "./pages/Homepage/Home";
 import { useUserStore } from "./store/useUserStore";
-import { useEffect } from "react";
 
 function App() {
-  const { user, handleCheckAuth, checkingAuth } = useUserStore();
-
-  useEffect(() => {
-    handleCheckAuth();
-  }, [handleCheckAuth]);
-
-  if (checkingAuth) {
-    return <div>Checking authentication...</div>;
-  }
+  const { user } = useUserStore();
 
   return (
     <>
