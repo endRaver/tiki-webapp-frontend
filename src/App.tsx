@@ -1,22 +1,16 @@
 import { Toaster } from "react-hot-toast";
-import { Route, Routes, Navigate } from "react-router-dom";
-import Signup from "./pages/SignupPage/SignupPage";
-import Login from "./pages/LoginPage/LoginPage";
-import Home from "./pages/Homepage/Home";
-import { useUserStore } from "./store/useUserStore";
+import { Route, Routes } from "react-router-dom";
+
+import Homepage from "./pages/Homepage/HomePage";
+import MainLayout from "./layout/MainLayout";
 
 function App() {
-  const { user } = useUserStore();
-
   return (
     <>
       <Routes>
-        <Route
-          path="/signup"
-          element={user ? <Navigate to="/" /> : <Signup />}
-        />
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Homepage />} />
+        </Route>
       </Routes>
 
       <Toaster />
