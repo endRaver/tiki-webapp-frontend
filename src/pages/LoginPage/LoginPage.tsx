@@ -31,6 +31,7 @@ const Login = () => {
   return (
     <div className="flex h-screen items-center justify-center">
       <button onClick={handleLogout}>Logout</button>
+      
 
       <button onClick={() => googleLogin()}>Login with Google</button>
       <form onSubmit={handleSubmit} className="rounded bg-white p-6 shadow-md">
