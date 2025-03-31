@@ -15,7 +15,7 @@ type CartItem = {
 
 type Product = {
   _id: string;
-  authors?: string[];
+  authors?: null;
   categories: Category;
   current_seller: CurrentSeller;
   description: string;
@@ -31,7 +31,10 @@ type Product = {
   list_price: number;
   name: string;
   original_price: number;
-  quantity_sold: number;
+  quantity_sold?: {
+    text: string;
+    value: number;
+  };
   rating_average: number;
   short_description: string;
   specifications: Specification[];
