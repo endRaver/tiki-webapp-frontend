@@ -1,8 +1,9 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
 
-import Homepage from "./pages/Homepage/HomePage";
 import MainLayout from "./layout/MainLayout";
+import Homepage from "./pages/Homepage/HomePage";
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Homepage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Route>
       </Routes>
 
