@@ -4,7 +4,12 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-// import { AuthProvider } from "./providers/AuthProvider.tsx";
+import { AuthProvider } from "./providers/AuthProvider.tsx";
+// Import Font Awesome
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+
+library.add(fas);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
