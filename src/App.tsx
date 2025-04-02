@@ -1,14 +1,12 @@
 import { Toaster } from "react-hot-toast";
-import { Route, Routes, Navigate } from "react-router-dom";
-import Signup from "./pages/SignupPage/SignupPage";
-import Login from "./pages/LoginPage/LoginPage";
-import Home from "./pages/Homepage/Home";
-import { useUserStore } from "./store/useUserStore";
+import { Route, Routes } from "react-router-dom";
+
+import MainLayout from "./layout/MainLayout";
+import Homepage from "./pages/Homepage/HomePage";
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import ModalLayout from "./layout/modalLayout";
 
 function App() {
-  const { user } = useUserStore();
-
   return (
     <>
       <Routes>
