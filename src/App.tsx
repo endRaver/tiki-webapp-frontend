@@ -1,11 +1,10 @@
 import { Toaster } from "react-hot-toast";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Admin from "./pages/adminPage/AdminPage";
 import MainLayout from "./layout/MainLayout";
 import Homepage from "./pages/Homepage/Homepage";
 import Profile from "./pages/ProfilePage/Profile";
-
-
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 
 function App() {
   return (
