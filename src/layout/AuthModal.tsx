@@ -3,7 +3,7 @@ import LoginModal from "@/pages/LoginPage/LoginModal"
 import SignUpModal from "@/pages/SignupPage/SignUpModal"
 import { useState } from "react"
 
-const ModalLayout = () => {
+const AuthModal = () => {
     const [modalType, setModalType] = useState("login");
 
     return (
@@ -51,4 +51,4 @@ const ModalLayout = () => {
     )
 }
 
-export default ModalLayout
+export default AuthModal

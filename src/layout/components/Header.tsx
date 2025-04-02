@@ -61,7 +61,13 @@ const Header = () => {
                 <img src={header_home} alt="" />
                 <span className="text-[#82828B]">Trang chủ</span>
               </div>
-              <div className="flex items-center gap-[1px] rounded-md px-[16px] py-[8px] hover:bg-[#27272a1f]">
+              <div
+                className="flex items-center gap-[1px] rounded-md px-[16px] py-[8px] hover:bg-[#27272a1f]"
+                onClick={() => {
+                  const modal = document.getElementById("modal") as HTMLDialogElement | null;
+                  if (modal) modal.showModal();
+                }}
+              >
                 <img src={header_account} alt="" />
                 <span className="text-[#82828B]">Tài khoản</span>
               </div>

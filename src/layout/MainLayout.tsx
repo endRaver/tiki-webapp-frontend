@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Outlet } from "react-router-dom";
+import ModalLayout from "./AuthModal";
 
 const MainLayout = () => {
   return (
@@ -8,6 +9,7 @@ const MainLayout = () => {
       <Header />
       <Outlet />
       <Footer />
+      <ModalLayout/>
     </div>
   );
 };
