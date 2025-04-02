@@ -55,7 +55,6 @@ const bestBooksSeller = [
 ];
 
 const Homepage = () => {
-  console.log(products);
   return (
     <main className="bg-[#F5F5FA] px-[24px] pb-[24px]">
       <div className="flex flex-row gap-[5px] py-[16px]">

@@ -14,6 +14,7 @@ import {
   nav_real,
   nav_refund,
 } from "../../assets/icons/navbar_header_icons";
+import AuthModal from "../AuthModal";
 
 const Header = () => {
   const recommendtags = [
@@ -28,6 +29,7 @@ const Header = () => {
     "lịch treo tường 2024",
     "nguyễn nhật ánh",
   ];
+
   return (
     <>
       <section className="font-inter flex cursor-pointer justify-center bg-[#EFFFF4] py-2 align-middle">
@@ -64,10 +66,19 @@ const Header = () => {
                 <img src={header_home} alt="" />
                 <span className="text-[#82828B]">Trang chủ</span>
               </div>
-              <div className="flex items-center gap-[1px] rounded-md px-[16px] py-[8px] hover:bg-[#27272a1f]">
+              <button
+                className="flex items-center gap-[1px] rounded-md px-[16px] py-[8px] hover:bg-[#27272a1f]"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "auth_modal",
+                  ) as HTMLDialogElement | null;
+                  if (modal) modal.showModal();
+                }}
+              >
                 <img src={header_account} alt="" />
                 <span className="text-[#82828B]">Tài khoản</span>
-              </div>
+              </button>
+              
               <div className="relative flex items-center gap-[20px]">
                 <span className="text-[#cacad2]">|</span>
                 <img
@@ -129,6 +140,8 @@ const Header = () => {
           </li>
         </ul>
       </nav>
+
+      <AuthModal />
     </>
   );
 };
