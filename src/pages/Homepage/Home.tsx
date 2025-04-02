@@ -4,6 +4,7 @@ import CategoryItem from "./Components/CategoryItem";
 import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
 import ProductItem from "@/components/ui/ProductItem";
+import products from "@/data/fakeData";
 const categories = [
   {
     image: english_books,
@@ -41,6 +42,7 @@ const bestBooksSeller = [
   },
 ]
 const Home = () => {
+  console.log(products);
   return (
 
     <main className="px-[24px] pb-[24px] bg-[#F5F5FA] ">
@@ -104,9 +106,12 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-4 gap-4">
-            {categories.map((item, index) => (
-              <ProductItem key={index} image={item.image}></ProductItem>
+            {products.map((item, index) => (
+              <ProductItem key={index} image={item.images[0].small_url}></ProductItem>
             ))}
+          </div>
+          <div className="flex justify-center">
+            <button className="border border-blue-400 rounded-md cursor-pointer  text-blue-500 px-24 py-[8px] hover:bg-[#0060ff1f]">Xem Thêm</button>
           </div>
         </div>
 
