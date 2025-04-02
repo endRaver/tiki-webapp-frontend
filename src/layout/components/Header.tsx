@@ -3,14 +3,17 @@ import {
   header_home,
   header_img_Cart,
   icon_search,
-  logo,
+  tikiLogo,
+} from "../../assets/icons/header_icons";
+
+import {
   nav_discount,
   nav_exchange,
   nav_fast_delivery,
   nav_freeship,
   nav_real,
   nav_refund,
-} from "../../assets/icons";
+} from "../../assets/icons/navbar_header_icons";
 
 const Header = () => {
   const recommendtags = [
@@ -37,7 +40,7 @@ const Header = () => {
       <main className="flex flex-row gap-[48px] px-[24px] py-[8px]">
         <section className="cursor-pointer">
           <div>
-            <img src={logo} alt="" />
+            <img src={tikiLogo} alt="logo" />
             <span className="text-sm font-bold text-[#003EA1]">
               Tốt & Nhanh
             </span>

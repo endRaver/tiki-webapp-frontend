@@ -1,4 +1,4 @@
-import { info } from "@/assets/icons";
+import { info } from "@/assets/icons/checkout_page_icons";
 
 const OfferCard = ({
   title,

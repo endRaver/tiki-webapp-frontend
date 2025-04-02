@@ -1,7 +1,7 @@
 import { map } from "lodash";
 import { products } from "@/data/fakeData";
 
-import { coupon, angle_right } from "@/assets/icons";
+import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
 import DeliveryItem from "./components/DeliveryItem";
 import DeliveryMethodSelection from "./components/DeliveryMethodSelection";
 import PaymentMethodSelection from "./components/PaymentMethodSelection";
@@ -47,7 +47,6 @@ const CheckoutPage = () => {
               </h4>
 
               <PaymentMethodSelection />
-
               <PaymentOffersSection />
             </div>
           </div>

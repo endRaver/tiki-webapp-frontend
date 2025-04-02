@@ -8,19 +8,19 @@ import {
   gg_play,
   installment_pay,
   jcb_pay,
-  link,
+  Link,
   mastercard_pay,
   momo_pay,
   qr,
   tiki_pay,
   tikinow,
-  viettel_pay,
+  viettel_pay_svg,
   visa_pay,
   vn_pay,
-  youtobe,
+  youtube,
   zalo,
   zalo_pay,
-} from "../../assets/icons";
+} from "../../assets/icons/footer_icons";
 
 const Footer = () => {
   const brands = [
@@ -163,7 +163,7 @@ const Footer = () => {
                 <img src={bo_cong_thuong_2} alt="" />
               </a>
               <a href="">
-                <img src={link} alt="" />
+                <img src={Link} alt="" />
               </a>
             </div>
           </div>
@@ -194,7 +194,7 @@ const Footer = () => {
                 <img src={zalo_pay} alt="" />
               </a>
               <a href="">
-                <img src={viettel_pay} alt="" />
+                <img src={viettel_pay_svg} alt="" />
               </a>
               <a href="">
                 <img src={vn_pay} alt="" />
@@ -222,7 +222,7 @@ const Footer = () => {
                 <img src={facebook} alt="" />
               </a>
               <a href="">
-                <img src={youtobe} alt="" />
+                <img src={youtube} alt="" />
               </a>
               <a href="">
                 <img src={zalo} alt="" />

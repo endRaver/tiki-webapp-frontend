@@ -1,4 +1,8 @@
-import { delivery_box, checkout_delivery, info } from "@/assets/icons";
+import {
+  delivery_box,
+  delivery_method,
+  info,
+} from "@/assets/icons/checkout_page_icons";
 
 const DeliveryItem = ({ product }: { product: unknown }) => {
   return (
@@ -13,7 +17,7 @@ const DeliveryItem = ({ product }: { product: unknown }) => {
       <div className="max-w-[482px] space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={checkout_delivery} alt="delivery" />
+            <img src={delivery_method} alt="delivery" />
             <span className="text-xs uppercase">Giao siêu tốc 2h</span>
           </div>
 
