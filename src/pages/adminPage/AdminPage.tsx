@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import Header from "./components/shared/header";
-import SliderBar from "./components/shared/sliderBar";
+import Header from "./components/shared/Header";
+import SliderBar from "./components/shared/SliderBar";
 import CategoryList from "./components/category/CategoryList.tsx";
 import CategoryFilter from "./components/category/CategoryFilter";
 import AddCategoryForm from "./components/category/CategoryAdd.tsx";
