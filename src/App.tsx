@@ -4,6 +4,7 @@ import Signup from "./pages/SignupPage/SignupPage";
 import Login from "./pages/LoginPage/LoginPage";
 import Home from "./pages/Homepage/Home";
 import { useUserStore } from "./store/useUserStore";
+import ModalLayout from "./layout/modalLayout";
 
 function App() {
   const { user } = useUserStore();
@@ -16,7 +17,8 @@ function App() {
           element={user ? <Navigate to="/" /> : <Signup />}
         />
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/" element={user ? <><Home /><ModalLayout/></> : <Navigate to="/login" />} />
+        <Route path="/test" element={<ModalLayout/>} />
       </Routes>
 
       <Toaster />
