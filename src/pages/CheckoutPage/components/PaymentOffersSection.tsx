@@ -1,4 +1,6 @@
-import { percentage, bank_logo, tiki_pay } from "@/assets/icons";
+import { percentage, bank_logo } from "@/assets/icons/checkout_page_icons";
+import { tiki_pay } from "@/assets/icons/footer_icons";
+
 import OfferCard from "./OfferCard";
 
 const PaymentOffersSection = () => {

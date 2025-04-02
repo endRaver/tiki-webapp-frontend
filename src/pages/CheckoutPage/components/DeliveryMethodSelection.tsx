@@ -1,17 +1,20 @@
-import { checkout_delivery, delivery_bubble } from "@/assets/icons";
+import {
+  delivery_method,
+  delivery_bubble,
+} from "@/assets/icons/checkout_page_icons";
 import Selection from "@/components/ui/Selection";
 
 const DeliveryMethodSelection = () => {
   return (
-    <div className="relative">
-      <div className="bg-primary-50 border-primary-100 relative z-0 flex w-full max-w-[500px] flex-col gap-3 rounded-[10px] border p-4">
+    <div className="relative max-w-[500px]">
+      <div className="bg-primary-50 border-primary-100 relative z-0 flex w-full flex-col gap-3 rounded-[10px] border p-4">
         <Selection
           name="delivery-method"
           title="quick-delivery"
           ariaLabel="Giao siêu tốc 2h"
         >
           <div className="flex items-center gap-1">
-            <img src={checkout_delivery} alt="delivery" />
+            <img src={delivery_method} alt="delivery" />
             <span className="text-sm">Giao siêu tốc 2h</span>
             <span className="text-success-100 rounded bg-white px-1 py-0.5 text-[13px]">
               -25k
@@ -32,6 +35,7 @@ const DeliveryMethodSelection = () => {
           </div>
         </Selection>
       </div>
+
       <div className="absolute -bottom-[10.5px] left-1/2 z-10 -translate-x-1/2">
         <img src={delivery_bubble} alt="delivery" />
       </div>
