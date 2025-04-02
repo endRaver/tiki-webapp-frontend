@@ -60,7 +60,7 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('./assets/font/Inter_18pt-RegularItalic.ttf') format('truetype');
+  src: url('./assets/font/Inter_18pt-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -165,55 +165,55 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1536px;
+  --breakpoint-2xl: 1440px;
 }
 
-
+@theme {
+  --color-background: #F5F5FA;
+}
 
 /* Primary Colors */
 @theme {
-  --primary-color-100: #0A68FF;
-  /* Lightest blue */
-  --primary-color-200: #0B74E5;
-  /* Light blue */
-  --primary-color-300: #0D5CB6;
-  /* Medium blue */
-  --primary-color-400: #003EA1;
-  /* Dark blue */
+  --color-primary-50: #F0F8FF;
+  --color-primary-100: #C2E1FF;
+  --color-primary-200: #0A68FF;
+  --color-primary-300: #0B74E5;
+  --color-primary-400: #0D5CB6;
+  --color-primary-500: #003EA1;
 }
 
 /* Success Colors */
 @theme {
-  --success-color-100: #00AB56;
+  --color-success-100: #00AB56;
   /* Primary success green */
 }
 
 /* Neutral Colors */
 @theme {
-  --neutral-color-100: #242424;
+  --color-neutral-100: #242424;
   /* Almost black */
-  --neutral-color-200: #27272A;
+  --color-neutral-200: #27272A;
   /* Dark gray */
-  --neutral-color-300: #333333;
+  --color-neutral-300: #333333;
   /* Medium dark gray */
-  --neutral-color-400: #38383D;
+  --color-neutral-400: #38383D;
   /* Medium gray */
-  --neutral-color-500: #4A4A4A;
+  --color-neutral-500: #4A4A4A;
   /* Light gray */
-  --neutral-color-600: #808089;
+  --color-neutral-600: #808089;
   /* Lighter gray */
 }
 
 /* Rating Colors */
 @theme {
-  --rating-color-100: #FDD835;
-  /* Light yellow */
-  --rating-color-200: #FFC400;
-  /* Star yellow */
+  --color-rating-50: #FFF9E5;
+  --color-rating-100: #FDD835;
+  --color-rating-200: #FFC400;
+  --color-rating-300: #FC820A;
 }
 
 /* Danger Colors */
 @theme {
-  --danger-color-100: #FF424E;
+  --color-danger-100: #FF424E;
   /* Error/Delete red */
 }
