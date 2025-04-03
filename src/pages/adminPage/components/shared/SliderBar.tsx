@@ -4,7 +4,7 @@ import { FaSearch, FaBox, FaList, FaUsers, FaShoppingCart, FaHeadset, FaChevronD
 
 const SliderBar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [openMenus, setOpenMenus] = useState<string[]>([]); // Trạng thái mở/đóng submenu
+  const [openMenus, setOpenMenus] = useState<string[]>([]);
 
   const menuItems = [
     {
@@ -45,7 +45,6 @@ const SliderBar: React.FC = () => {
     },
   ];
 
-  // Hàm toggle submenu
   const toggleSubmenu = (menuName: string) => {
     if (openMenus.includes(menuName)) {
       setOpenMenus(openMenus.filter((name) => name !== menuName));
@@ -56,9 +55,9 @@ const SliderBar: React.FC = () => {
 
   return (
     <div
-      className={`bg-white border border-gray-200 flex font-inter text-sm flex-col h-screen transition-all duration-300 ${
+      className={`bg-white border-r border-gray-200 flex font-inter text-sm flex-col transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
-      } overflow-auto`} // Chiều rộng cố định: 64px khi thu gọn, 256px khi mở rộng
+      } fixed left-0 h-[calc(100vh-64px)] top-[64px]`} // Điều chỉnh top và height dựa trên chiều cao Header
     >
       {/* Thanh tìm kiếm */}
       {!isCollapsed && (
@@ -68,7 +67,7 @@ const SliderBar: React.FC = () => {
               type="text"
               placeholder="Search"
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled // Tạm thời vô hiệu hóa vì chưa có API
+              disabled
             />
             <FaSearch
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -78,10 +77,9 @@ const SliderBar: React.FC = () => {
       )}
 
       {/* Menu */}
-      <ul className="flex-1 space-y-1 px-2">
+      <ul className="flex-1 space-y-1 px-2 overflow-y-auto">
         {menuItems.map((item, index) => (
           <li key={index}>
-            {/* Mục chính */}
             <div
               className={`flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded cursor-pointer ${
                 isCollapsed ? "justify-center" : ""
@@ -105,7 +103,6 @@ const SliderBar: React.FC = () => {
               )}
             </div>
 
-            {/* Submenu */}
             {!isCollapsed && item.hasSubmenu && openMenus.includes(item.name) && (
               <ul className="pl-8 space-y-1">
                 {item.subItems.map((subItem, subIndex) => (
@@ -129,28 +126,25 @@ const SliderBar: React.FC = () => {
         ))}
       </ul>
 
-      {/* Nút Support */}
-      {!isCollapsed && (
-        <div className="p-4">
-          <button className="w-full flex items-center justify-center py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100">
+      <div className="p-4 border-t border-gray-200">
+        {!isCollapsed && (
+          <button className="w-full flex items-center justify-center py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 mb-2">
             <FaHeadset className="mr-2" />
             Support
           </button>
-        </div>
-      )}
-
-      {/* Nút Collapse */}
-      <div className="p-2 flex justify-center border-t border-gray-200">
+        )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-gray-500 hover:text-gray-700"
+          className={`w-full flex items-center justify-center py-2 rounded text-gray-700 hover:bg-gray-100 transition-all duration-300 ${
+            isCollapsed ? "justify-center" : ""
+          }`}
         >
           {isCollapsed ? (
-            <FaChevronRight />
+            <FaChevronRight className="text-lg" />
           ) : (
             <>
-              <FaChevronLeft />
-              <span className="ml-2">Collapse</span>
+              <FaChevronLeft className="mr-2" />
+              <span>Collapse</span>
             </>
           )}
         </button>
