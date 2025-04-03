@@ -1,5 +1,5 @@
-import { logo } from "@/assets/icons";
-import { minus, official, plus } from "@/assets/icons/details_page_icons";
+// import { logo } from "@/assets/icons";
+import { minus, official, plus,logo } from "@/assets/icons/details_page_icons";
 import { useState } from "react";
 
 const Payment = () => {
@@ -12,7 +12,7 @@ const Payment = () => {
     <div className="w-80 h-102.5 p-4 rounded-lg shadow-md bg-white">
       {/* Tiki Trading Logo */}
       <div className="flex items-center gap-2 border-b border-[#EBEBF0] pb-4">
-        <img src={logo} alt="Tiki Trading" className="h-6" />
+        <img src={logo} alt="Tiki Trading" className="w-10" />
         <div>
           <p className="font-medium text-sm">Tiki Trading</p>
           <img src={official} alt="" />

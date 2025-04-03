@@ -7,7 +7,8 @@ import Signup from "./pages/SignupPage/SignupPage";
 import Login from "./pages/LoginPage/LoginPage";
 import { useUserStore } from "./store/useUserStore";
 import Home from "./pages/Homepage/Home";
-import MainLayout from "./layout/Mainlayout/mainlayout";
+import MainLayout from "./layout/Mainlayout/Mainlayout";
+import Detailpage from "./pages/Detailpage/DetailPage";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           />
           <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
           <Route path="/" element={<Home /> } />
+          <Route path="/test" element={<Detailpage /> } />
 
         </Route>
       </Routes>
