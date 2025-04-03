@@ -8,6 +8,7 @@ import ProfilePage from "./pages/Profilepage/ProfilePage";
 import Homepage from "./pages/Homepage/HomePage";
 import DashboardPage from "./pages/adminPage/DashboardPage";
 import AdminLayout from "./layout/AdminLayout/AdminLayout";
+import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Homepage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/test" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/test" element={<ProductDetailPage />} />
         </Route>
 
         {/* <Route path="/admin" element={<Admin />} /> */}
