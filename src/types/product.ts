@@ -1,63 +1,60 @@
-export interface Author {
+export type Author = {
   name: string;
   slug: string;
-}
+  _id: string;
+};
 
-export interface Category {
+export type Category = {
   name: string;
   is_leaf: boolean;
-}
+};
 
-export interface CurrentSeller {
-  sku: string;
+export type CurrentSeller = {
+  _id: string;
   name: string;
   link: string;
   logo: string;
-  price: number;
-  product_id: string;
   store_id: number;
   is_best_store: boolean;
   is_offline_installment_supported: boolean | null;
-}
+  price: number;
+  product_id: string;
+  sku: string;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+};
 
-export interface Image {
+export type ProductImage = {
   base_url: string;
   is_gallery: boolean;
   label: string | null;
+  position: number | null;
   large_url: string;
   medium_url: string;
-  position: string | null;
   small_url: string;
   thumbnail_url: string;
-}
+  _id: string;
+};
 
-export interface QuantitySold {
+export type QuantitySold = {
   text: string;
   value: number;
-}
+};
 
-export interface SpecificationAttribute {
-  code?: string;
-  name: string;
-  value: string;
-}
-
-export interface Specification {
-  name: string;
-  attributes: SpecificationAttribute[];
-}
-
-export interface Product {
+export type Product = {
+  _id: string;
   authors?: Author[];
   categories: Category;
   current_seller: CurrentSeller;
   description: string;
-  images: Image[];
-  list_price: number;
+  images: ProductImage[];
   name: string;
   original_price: number;
-  quantity_sold: QuantitySold;
+  quantity_sold?: QuantitySold;
   rating_average: number;
   short_description: string;
-  specifications: Specification[];
-}
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+};
