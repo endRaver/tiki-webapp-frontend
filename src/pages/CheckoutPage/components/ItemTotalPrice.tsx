@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { map } from "lodash";
 
+import { Product } from "@/types/product";
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
 
-const ItemTotalPrice = ({ products }: { products: any }) => {
+const ItemTotalPrice = ({ products }: { products: Product[] }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -40,7 +41,7 @@ const ItemTotalPrice = ({ products }: { products: any }) => {
         }`}
       >
         <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
-          {map(products, (product: any) => (
+          {map(products, (product: Product) => (
             <div
               key={product.name}
               className="flex items-start justify-between text-xs font-medium"

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { toast } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { AxiosError } from "axios";
-import { User } from "@/types";
+import { User } from "@/types/user";
 
 interface ErrorResponse {
   message: string;

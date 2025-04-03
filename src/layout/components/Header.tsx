@@ -121,10 +121,10 @@ const Header = () => {
         </div>
       </main>
 
-      <nav className="border-1 border-[#EBEBF0] p-4">
+      <nav className="container mx-auto border-y border-[#EBEBF0] p-4">
         <Link to="/">
           <ul className="flex items-center gap-4">
-            <span className="text-primary-500 text-sm font-semibold">
+            <span className="text-primary-500 text-sm font-semibold text-nowrap">
               <li>Cam kết</li>
             </span>
             <li className="flex cursor-pointer gap-1">

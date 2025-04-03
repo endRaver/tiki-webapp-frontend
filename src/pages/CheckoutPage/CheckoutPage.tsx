@@ -2,6 +2,7 @@ import { map } from "lodash";
 import { products } from "@/data/fakeData";
 
 import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
+
 import DeliveryItem from "./components/DeliveryItem";
 import DeliveryMethodSelection from "./components/DeliveryMethodSelection";
 import PaymentMethodSelection from "./components/PaymentMethodSelection";
@@ -9,6 +10,7 @@ import PaymentOffersSection from "./components/PaymentOffersSection";
 import UserInformation from "./components/UserInformation";
 import CouponSection from "./components/CouponSection";
 import ItemTotalPrice from "./components/ItemTotalPrice";
+import { Product } from "@/types/product";
 
 const productList = products.slice(0, 3);
 
@@ -28,7 +30,7 @@ const CheckoutPage = () => {
 
               {/* Product list */}
               <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                {map(productList, (product: any) => (
+                {map(productList, (product: Product) => (
                   <DeliveryItem key={product.name} product={product} />
                 ))}
               </div>

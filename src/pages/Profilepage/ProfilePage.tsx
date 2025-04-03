@@ -3,7 +3,7 @@ import { nav_exchange } from "@/assets/icons/navbar_header_icons";
 
 import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const ProfilePage = () => {
   const navigate = useNavigate();
 
   return (
@@ -172,4 +172,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfilePage;
