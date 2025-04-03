@@ -1,32 +1,34 @@
-import { Toaster } from "react-hot-toast";
-import { Route, Routes } from "react-router-dom";
-import Admin from "./pages/adminPage/AdminPage";
-import MainLayout from "./layout/MainLayout";
 
-import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
-import ProfilePage from "./pages/Profilepage/ProfilePage";
-import Homepage from "./pages/Homepage/HomePage";
-import DashboardPage from "./pages/adminPage/DashboardPage";
-import AdminLayout from "./layout/AdminLayout/AdminLayout";
+
+
+import { Toaster } from "react-hot-toast";
+import { Route, Routes, Navigate } from "react-router-dom";
+import Signup from "./pages/SignupPage/SignupPage";
+import Login from "./pages/LoginPage/LoginPage";
+import { useUserStore } from "./store/useUserStore";
+import Home from "./pages/Homepage/Home";
+import MainLayout from "./layout/Mainlayout/mainlayout";
+
 
 function App() {
+  const { user } = useUserStore();
+
   return (
     <>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/test" element={<ProfilePage />} />
-        </Route>
+          <Route
+            path="/signup"
+            element={user ? <Navigate to="/" /> : <Signup />}
+          />
+          <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path="/" element={<Home /> } />
 
-        {/* <Route path="/admin" element={<Admin />} /> */}
-        <Route element={<AdminLayout />}>
-          <Route path="/admin/categories" element={<Admin />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
       </Routes>
 
       <Toaster />
+
     </>
   );
 }
