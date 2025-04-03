@@ -1,11 +1,11 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
-
-import AdminLayout from "./pages/adminPage/AdminLayout.tsx";
-import Homepage from "./pages/Homepage/HomePage";
-import Profile from "./pages/Profilepage/Profile.tsx";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
+import ProfilePage from "./pages/Profilepage/ProfilePage";
+import Homepage from "./pages/Homepage/HomePage";
+import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
+import AdminLayout from "./pages/adminPage/AdminLayout.tsx";
 import DashboardPage from "./pages/adminPage/DashboardPage";
 import CategoryPage from "./pages/adminPage/CategoryPage";
 import AddCategoryForm from "./pages/adminPage/components/category/CategoryAdd.tsx";
@@ -16,12 +16,7 @@ import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
 
-import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
-import ProfilePage from "./pages/Profilepage/ProfilePage";
-import Homepage from "./pages/Homepage/HomePage";
-import DashboardPage from "./pages/adminPage/DashboardPage";
-import AdminLayout from "./layout/AdminLayout/AdminLayout";
-import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
+
 
 
 function App() {
