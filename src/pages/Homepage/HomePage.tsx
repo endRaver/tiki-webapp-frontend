@@ -2,7 +2,6 @@ import {
   calculator,
   english_books,
   freeship_extra,
-  next_icon,
   now,
   souvenir,
   top_deal,
@@ -12,10 +11,12 @@ import SideBar from "@/components/Sidebar";
 import CategoryItem from "./Components/CategoryItem";
 import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
-import ProductItem, { ProductModel } from "@/components/ui/ProductItem";
+import ProductItem from "@/components/ui/ProductItem";
 import { useEffect, useState } from "react";
 import { getProductList } from "@/services/ProductService";
 import RatingStar from "@/components/ui/Rating";
+import { Product } from "@/types/product";
+import BreadCrumb from "@/components/ui/BreadCrumb";
 
 const categories = [
   {
@@ -55,51 +56,37 @@ const bestBooksSeller = [
 ];
 
 const Homepage = () => {
-  const [products, setProducts] = useState<ProductModel[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
   useEffect(() => {
     const getProducts = async () => {
       const res = await getProductList();
-      console.log(res.products);
-      const formattedProducts: ProductModel[] = res.products.map(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (product: any) => ({
-          id: product._id,
-          image: product.images[0]?.small_url,
-          price: product.original_price,
-          author: product.authors[0]?.name,
-          name: product.name,
-          rating: product.rating_average,
-          quantity_sold: product.quantity_sold.text
-          ,
-        })
-      );
-      setProducts(formattedProducts);
-    }
+
+      setProducts(res.products);
+    };
 
     getProducts();
   }, []);
+
   return (
-    <main className="bg-[#F5F5FA] px-[24px] pb-[24px]">
-      <div className="flex flex-row gap-[5px] py-[16px]">
-        <a href="/">Trang chủ</a>
-        <img src={next_icon} alt="" />
-        <a href="/" className="active:font-bold">
-          Nhà Sách Tiki
-        </a>
-      </div>
-      <section className="flex flex-row gap-[24px]">
+    <main className="bg-background text-neutral-200">
+      <BreadCrumb />
+
+      <section className="container mx-auto flex gap-6">
         <SideBar />
 
-        <div className="flex w-full flex-col gap-[16px]">
-          <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
-            <h1 className="text-4xl font-bold">Nhà Sách Tiki</h1>
+        <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+          <div className="flex rounded-lg bg-white p-4 align-middle">
+            <h1 className="text-[28px] leading-[42px] font-semibold">
+              Nhà Sách Tiki
+            </h1>
           </div>
 
-          <Carousel></Carousel>
+          <Carousel />
 
-          <div className="rounded-2xl bg-[#FFFFFF] px-[16px] py-[12px]">
-            <h1 className="font-medium">Khám phá theo danh mục</h1>
-            <div className="flex flex-row gap-[12px]">
+          <div className="rounded-lg bg-white px-4 py-3">
+            <span className="font-semibold">Khám phá theo danh mục</span>
+            <div className="mt-3 flex flex-row gap-3">
               {categories.map((category, index) => (
                 <CategoryItem
                   key={index}
@@ -110,39 +97,57 @@ const Homepage = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-[#FFFFFF] px-[16px] py-[12px]">
-            <h1 className="font-medium">Tất cả sản phẩm</h1>
-            <div className="mt-[25px] mb-[36px] flex cursor-pointer flex-row align-middle">
-              <div className="flex flex-row gap-[8px]">
-                <input type="checkbox" className="cursor-pointer" />
-                <img src={now} alt="" />
-                <span>Giao siêu tốc 2H</span>
-              </div>
-              <div className="flex flex-row gap-[8px]">
-                <span className="px-8 text-gray-300">|</span>
-                <input type="checkbox" className="cursor-pointer" />
-                <img src={top_deal} alt="" />
-                <span>Giá rẻ</span>
-              </div>
-              <div className="flex flex-row gap-[8px]">
-                <span className="px-8 text-gray-300">|</span>
-                <input type="checkbox" className="cursor-pointer" />
-                <img src={freeship_extra} alt="" />
-              </div>
-              <div className="flex flex-row gap-[8px]">
-                <span className="px-8 text-gray-300">|</span>
-                <input type="checkbox" className="cursor-pointer" />
-                <RatingStar numofStar={4}/>
-                <span>Từ 4 sao</span>
-              </div>
-            </div>
+          <div className="rounded-lg bg-[#FFFFFF] px-4 py-4.5">
+            <span className="font-semibold">Tất cả sản phẩm</span>
 
-            <ArrangeFilter />
+            <div className="space-y-9 py-5.5">
+              <div className="flex cursor-pointer align-middle">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
+                  />
+                  <img src={now} alt="now" className="h-[17px]" />
+                  <span className="text-sm text-nowrap">Giao siêu tốc 2H</span>
+                </div>
+
+                <span className="bg-border-line mx-4 h-6 w-[1px]" />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
+                  />
+                  <img src={top_deal} alt="top_deal" />
+                  <span className="text-sm text-nowrap">Siêu rẻ</span>
+                </div>
+
+                <span className="bg-border-line mx-4 h-6 w-[1px]" />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
+                  />
+                  <img src={freeship_extra} alt="freeship" />
+                </div>
+
+                <span className="bg-border-line mx-4 h-6 w-[1px]" />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
+                  />
+                  <RatingStar numofStar={4} />
+                  <span className="text-sm text-nowrap">từ 4 sao</span>
+                </div>
+              </div>
+
+              <ArrangeFilter />
+            </div>
           </div>
 
           <div className="grid grid-cols-4 gap-4">
             {products.map((item) => (
-              <ProductItem key={item.id} product={item}></ProductItem>
+              <ProductItem key={item._id} product={item} />
             ))}
           </div>
           <div className="flex justify-center">
@@ -154,11 +159,13 @@ const Homepage = () => {
       </section>
       <section className="my-10 flex w-full flex-col gap-10">
         <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
-          <h1 className="font-medium">Tìm kiếm liên quan</h1>
+          <span className="font-medium">Tìm kiếm liên quan</span>
         </div>
 
         <div className="rounded-xl bg-[#FFFFFF] p-[16px]">
-          <h1 className="font-medium">Top Bán Chạy Sản Phẩm Nhà Sách Tiki</h1>
+          <span className="font-medium">
+            Top Bán Chạy Sản Phẩm Nhà Sách Tiki
+          </span>
           <ul className="m-4">
             {bestBooksSeller.map((book, index) => (
               <li key={index} className="flex flex-row justify-between">

@@ -54,7 +54,6 @@ export type Product = {
   quantity_sold?: QuantitySold;
   rating_average: number;
   short_description: string;
-  __v: number;
   createdAt: string;
   updatedAt: string;
 };

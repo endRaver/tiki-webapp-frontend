@@ -5,7 +5,7 @@ import {
   header_img_Cart,
   icon_search,
   tikiLogo,
-} from "../../assets/icons/header_icons";
+} from "../../../assets/icons/header_icons";
 
 import {
   nav_discount,
@@ -14,8 +14,8 @@ import {
   nav_freeship,
   nav_real,
   nav_refund,
-} from "../../assets/icons/navbar_header_icons";
-import AuthModal from "../AuthModal";
+} from "../../../assets/icons/navbar_header_icons";
+import AuthModal from "../../AuthModal";
 import { Link } from "react-router-dom";
 
 const Header = () => {

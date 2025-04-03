@@ -20,7 +20,7 @@ import {
   youtube,
   zalo,
   zalo_pay,
-} from "../../assets/icons/footer_icons";
+} from "../../../assets/icons/footer_icons";
 
 const Footer = () => {
   const brands = [
@@ -60,7 +60,7 @@ const Footer = () => {
       <section className="flex flex-row justify-between">
         <div className="flex flex-row">
           <div className="">
-            <h1 className="mb-[12px] font-medium">Hỗ trợ khách hàng</h1>
+            <span className="mb-[12px] font-medium">Hỗ trợ khách hàng</span>
             <ul>
               <li className="mb-[8px] text-[#808089]">
                 Hotline:{" "}
@@ -105,7 +105,7 @@ const Footer = () => {
         </div>
         <div className="flex flex-row">
           <div className="">
-            <h1 className="mb-[12px] font-medium">Về Tiki</h1>
+            <span className="mb-[12px] font-medium">Về Tiki</span>
             <ul>
               <li className="mb-[8px] text-[#808089] hover:underline">
                 <a href="">Giới thiệu Tiki</a>
@@ -145,7 +145,7 @@ const Footer = () => {
         </div>
         <div className="flex flex-row">
           <div className="">
-            <h1 className="mb-[12px] font-medium">Hợp tác và liên kết</h1>
+            <span className="mb-[12px] font-medium">Hợp tác và liên kết</span>
             <ul>
               <li className="mb-[8px] text-[#808089] hover:underline">
                 <a href="">Quy chế hoạt động Sàn GDTMĐT </a>
@@ -154,7 +154,7 @@ const Footer = () => {
                 <a href="">Bán hàng cùng Tiki</a>
               </li>
             </ul>
-            <h1 className="mb-[12px] font-medium">Hợp tác và liên kết</h1>
+            <span className="mb-[12px] font-medium">Hợp tác và liên kết</span>
             <div className="flex flex-row gap-[8px]">
               <a href="">
                 <img src={bo_cong_thuong} alt="" />
@@ -169,7 +169,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="">
-          <h1 className="mb-[12px] font-medium">Phương thức thanh toán</h1>
+          <span className="mb-[12px] font-medium">Phương thức thanh toán</span>
           <div className="flex flex-col">
             <div className="grid grid-cols-5 gap-[8px]">
               <a href="">
@@ -206,7 +206,7 @@ const Footer = () => {
                 <img src={installment_pay} alt="" />
               </a>
             </div>
-            <h1 className="mb-[12px] font-medium">Dịch vụ giao hàng</h1>
+            <span className="mb-[12px] font-medium">Dịch vụ giao hàng</span>
             <div className="flex flex-row gap-[8px]">
               <a href="">
                 <img src={tikinow} alt="" />
@@ -216,7 +216,7 @@ const Footer = () => {
         </div>
         <div className="flex flex-row">
           <div className="">
-            <h1 className="mb-[12px] font-medium">Kết nối với chúng tôi</h1>
+            <span className="mb-[12px] font-medium">Kết nối với chúng tôi</span>
             <div className="flex flex-row gap-[8px]">
               <a href="">
                 <img src={facebook} alt="" />
@@ -228,9 +228,9 @@ const Footer = () => {
                 <img src={zalo} alt="" />
               </a>
             </div>
-            <h1 className="mb-[12px] font-medium">
+            <span className="mb-[12px] font-medium">
               Tải ứng dụng trên điện thoại
-            </h1>
+            </span>
             <div className="flex flex-row gap-[8px]">
               <a href="">
                 <img src={qr} alt="" />
@@ -249,7 +249,7 @@ const Footer = () => {
       </section>
       <section className="border-t border-b border-gray-300 py-[16px]">
         <div className="">
-          <h1 className="mb-[12px] font-medium">Công ty TNHH TI KI</h1>
+          <span className="mb-[12px] font-medium">Công ty TNHH TI KI</span>
           <ul>
             <li className="mb-[8px] text-[#808089] hover:underline">
               <a href="">
@@ -275,7 +275,7 @@ const Footer = () => {
       </section>
       <section className="py-[16px]">
         <div className="">
-          <h1 className="mb-[12px] font-medium">Thương hiệu nổi bật</h1>
+          <span className="mb-[12px] font-medium">Thương hiệu nổi bật</span>
           <div className="text-sm text-gray-500">
             {brands.map((brand, index) => (
               <a key={index}>

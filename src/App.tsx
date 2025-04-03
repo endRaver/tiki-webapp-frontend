@@ -1,6 +1,6 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
-import MainLayout from "./layout/MainLayout";
+import MainLayout from "./layout/Mainlayout/MainLayout.tsx";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import ProfilePage from "./pages/Profilepage/ProfilePage";
 import Homepage from "./pages/Homepage/HomePage";
@@ -16,9 +16,6 @@ import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
 
-
-
-
 function App() {
   return (
     <>
@@ -33,7 +30,10 @@ function App() {
 
         {/* Routes cho admin */}
         <Route element={<AdminLayout />}>
-          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route
+            path="/admin"
+            element={<Navigate to="/admin/dashboard" replace />}
+          />
           <Route path="/admin/dashboard" element={<DashboardPage />} />
           <Route path="/admin/categories" element={<CategoryPage />} />
           <Route path="/admin/categories/add" element={<AddCategoryForm />} />

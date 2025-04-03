@@ -54,49 +54,57 @@ const Carousel = () => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden">
-      {/* Ảnh */}
-      <div
-        className="flex transition-transform duration-500"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
-        {carouselList.map((item, index) => (
-          <CarouselItem
-            key={index}
-            brandImage={item.brandImage}
-            brandTitle={item.brandTitle}
-            subtitle={item.subtitle}
-            booksImage={item.booksImage}
-          />
-        ))}
+    <div className="w-full overflow-hidden">
+      <div className="relative">
+        {/* Ảnh */}
+        <div
+          className="flex gap-3 transition-transform duration-500"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {carouselList.map((item, index) => (
+            <CarouselItem
+              key={index}
+              index={index}
+              brandImage={item.brandImage}
+              brandTitle={item.brandTitle}
+              subtitle={item.subtitle}
+              booksImage={item.booksImage}
+            />
+          ))}
+        </div>
+
+        {/* Nút điều hướng */}
+        <button
+          onClick={prevSlide}
+          className="absolute top-1/2 left-0 -translate-y-1/2 cursor-pointer"
+        >
+          <img src={arrow_left} alt="" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer"
+        >
+          <img src={arrow_right} alt="arrow_right" />
+        </button>
       </div>
 
-      {/* Nút điều hướng */}
-      <button
-        onClick={prevSlide}
-        className="absolute top-1/2 left-0 -translate-y-1/2 cursor-pointer"
-      >
-        <img src={arrow_left} alt="" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer"
-      >
-        <img src={arrow_right} alt="" />
-      </button>
-
       {/* Chỉ báo trang */}
-      <div className="mt-2 flex justify-center space-x-2">
+      <div className="flex justify-center space-x-2 pt-4">
         {Array.from({ length: maxIndex + 1 }).map((_, index) =>
           index === currentIndex ? (
             <img
-              className="cursor-pointer py-4"
+              key={index}
+              className="cursor-pointer"
               src={carousel_navigate_active}
-              alt=""
+              alt="line"
             />
           ) : (
             <button key={index} onClick={() => curSlide(index)}>
-              <img className="cursor-pointer" src={carousel_navigate} alt="" />
+              <img
+                className="cursor-pointer"
+                src={carousel_navigate}
+                alt="line"
+              />
             </button>
           ),
         )}

@@ -15,7 +15,7 @@ const AuthModal = () => {
               <img
                 className="w-10"
                 src="https://salt.tikicdn.com/ts/upload/fe/20/d7/6d7764292a847adcffa7251141eb4730.png"
-                alt=""
+                alt="close"
               />
             </button>
           </form>
@@ -66,7 +66,7 @@ const AuthModal = () => {
             <img
               className="w-60"
               src="https://salt.tikicdn.com/ts/upload/df/48/21/b4d225f471fe06887284e1341751b36e.png"
-              alt=""
+              alt="logo"
             />
             <div className="flex flex-col items-center text-blue-500">
               <p className="text-xl font-medium">Mua sắm tại Tiki</p>
