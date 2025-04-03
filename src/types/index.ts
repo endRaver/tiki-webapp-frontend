@@ -15,14 +15,8 @@ type CartItem = {
 
 type Product = {
   _id: string;
-  authors?: {
-    name: string;
-    slug: string;
-  }[];
-  categories: {
-    name: string;
-    is_leaf: boolean;
-  };
+  authors?: string[];
+  categories: Category;
   current_seller: CurrentSeller;
   description: string;
   images: {
@@ -33,15 +27,11 @@ type Product = {
     thumbnail_url: string;
     is_gallery: boolean;
     label: string | null;
-    position: number | null;
   }[];
   list_price: number;
   name: string;
   original_price: number;
-  quantity_sold?: {
-    text: string;
-    value: number;
-  };
+  quantity_sold: number;
   rating_average: number;
   short_description: string;
   specifications: Specification[];
@@ -50,14 +40,19 @@ type Product = {
 type Specification = {
   name: string;
   attributes: {
-    code?: string;
-    name?: string;
-    value?: string;
+    code: string;
+    name: string;
+    value: string;
   }[];
 };
 
-type CurrentSeller = {
+type Category = {
   _id: string;
+  name: string;
+  is_leaf: boolean;
+};
+
+type CurrentSeller = {
   sku: string;
   name: string;
   price: number;
@@ -69,4 +64,4 @@ type CurrentSeller = {
   is_official_installment_supported: boolean | null;
 };
 
-export type { User, CartItem, Product, Specification, CurrentSeller };
+export type { User, CartItem, Product, Specification, Category, CurrentSeller };
