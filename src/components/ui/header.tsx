@@ -32,7 +32,7 @@ const Header = () => {
                             </div>
                             <div className="flex items-center gap-[20px] relative ">
                                 <span className="text-[#cacad2]">|</span>
-                                <img src={header_img_Cart} alt="" className= "p-[2px] rounded-lg hover:bg-[#90b9e5]" />
+                                <img src={header_img_Cart} alt="" className= "p-[2px] rounded-lg cursor-pointer hover:bg-[#90b9e5]" />
                                 <span className="absolute -top-0     -right-2 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full">0</span>
                             </div>
 

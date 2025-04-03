@@ -1,10 +1,12 @@
-import { calculator, english_books, freeship_extra, next_icon, now, souvenir, star_fullfill, star_notfill, top_deal, vietnames_book } from "@/assets";
-import SideBar from "@/components/ui/Sidebar";
+import { calculator, english_books, freeship_extra, next_icon, now, souvenir, top_deal, vietnames_book } from "@/assets";
 import CategoryItem from "./Components/CategoryItem";
 import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
-import ProductItem from "@/components/ui/ProductItem";
-import products from "@/data/fakeData";
+import ProductItem, { ProductModel } from "@/components/ui/ProductItem";
+import { useEffect, useState } from "react";
+import { getProductList } from "@/services/ProductService";
+import SideBar from "@/components/ui/sidebar";
+import RatingStar from "@/components/ui/Rating";
 const categories = [
   {
     image: english_books,
@@ -42,7 +44,30 @@ const bestBooksSeller = [
   },
 ]
 const Home = () => {
-  console.log(products);
+  const [products, setProducts] = useState<ProductModel[]>([]);
+  useEffect(() => {
+    const getProducts = async () => {
+      const res = await getProductList();
+      console.log(res.products);
+      const formattedProducts: ProductModel[] = res.products.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (product: any) => ({
+          id: product._id,
+          image: product.images[0]?.small_url,
+          price: product.original_price,
+          author: product.authors[0]?.name,
+          name: product.name,
+          rating: product.rating_average,
+          quantity_sold: product.quantity_sold.text
+          ,
+        })
+      );
+      setProducts(formattedProducts);
+    }
+
+    getProducts();
+  }, []);
+  // console.log(products);
   return (
 
     <main className="px-[24px] pb-[24px] bg-[#F5F5FA] ">
@@ -92,11 +117,7 @@ const Home = () => {
               <div className="flex flex-row gap-[8px]">
                 <span className="text-gray-300 px-8">|</span>
                 <input type="checkbox" className="cursor-pointer" />
-                <img src={star_fullfill} alt="" />
-                <img src={star_fullfill} alt="" />
-                <img src={star_fullfill} alt="" />
-                <img src={star_fullfill} alt="" />
-                <img src={star_notfill} alt="" />
+                <RatingStar numofStar={4}/>
                 <span>Từ 4 sao</span>
               </div>
             </div>
@@ -106,8 +127,8 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-4 gap-4">
-            {products.map((item, index) => (
-              <ProductItem key={index} image={item.images[0].small_url}></ProductItem>
+            {products.map((item) => (
+              <ProductItem key={item.id} product={item}></ProductItem>
             ))}
           </div>
           <div className="flex justify-center">
