@@ -34,8 +34,8 @@ const Header: React.FC = () => {
                         className="flex items-center space-x-2 border border-gray-300 rounded-full px-3 py-1 bg-gray-100 cursor-pointer"
                         onClick={() => setIsOpen(!isOpen)}
                     >
-                        {/* Icon cửa hàng */}
-                        <FaStore className="text-xl" />
+                        {/* Icon cửa hàng */} 
+                        <img className="flex rounded-full w-6" src="https://salt.tikicdn.com/cache/w40/ts/sellercenterFE/93/76/03/2a08fa4ae6a024a752fbba87d145bce8.png" alt="" />           
                         {/* Username */}
                         <span className="text-gray-700">quainhannmlc...</span>
                         {/* Mũi tên dropdown */}
@@ -44,10 +44,10 @@ const Header: React.FC = () => {
 
                     {/* Dropdown menu */}
                     {isOpen && (
-                        <div className="absolute top-10 right-0 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="absolute top-15 right-0 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                             {/* Header của dropdown */}
                             <div className="flex items-center space-x-3 p-3 border-b border-gray-200">
-                                <FaStore className="text-xl" />
+                            <img className="flex rounded-full" src="https://salt.tikicdn.com/cache/w40/ts/sellercenterFE/93/76/03/2a08fa4ae6a024a752fbba87d145bce8.png" alt="" />           
                                 <div>
                                     <p className="font-semibold text-gray-800">Đức Đạo Dĩnh</p>
                                     <p className="text-sm text-gray-500">quainhannmlc@gmail.com</p>
