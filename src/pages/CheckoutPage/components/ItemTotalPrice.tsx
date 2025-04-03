@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { map } from "lodash";
 
-import { angle_down_blue, info } from "@/assets/icons";
+import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
 
 const ItemTotalPrice = ({ products }: { products: any }) => {
   const [isOpen, setIsOpen] = useState(false);

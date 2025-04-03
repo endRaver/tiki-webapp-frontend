@@ -8,7 +8,7 @@ import {
   coupon_inactive,
   info_blue,
   angle_right_blue,
-} from "@/assets/icons/index";
+} from "@/assets/icons/checkout_page_icons";
 
 const CouponSection = () => {
   const [isCouponActive, setIsCouponActive] = useState(false);

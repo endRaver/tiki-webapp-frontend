@@ -1,4 +1,7 @@
-import { cash_pay, credit_card, payment_methods } from "@/assets/icons";
+import { cash_pay } from "@/assets/icons/footer_icons";
+
+import { credit_card } from "@/assets/icons/checkout_page_icons";
+
 import Selection from "@/components/ui/Selection";
 
 const PaymentMethodSelection = () => {
@@ -27,7 +30,7 @@ const PaymentMethodSelection = () => {
 
         <div>
           <span className="text-sm">Thẻ tính dụng/ Ghi nợ</span>
-          <img className="h-6" src={payment_methods} alt="payment-methods" />
+          {/* <img className="h-6" src={payment_methods} alt="payment-methods" /> */}
         </div>
       </Selection>
     </div>
