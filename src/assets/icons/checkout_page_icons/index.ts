@@ -16,6 +16,8 @@ import payment_method from "./payment_method.png";
 import percentage from "./percentage.svg";
 import close from "./close.svg";
 import percentage_gray from "./percentage_gray.svg";
+import coupon_img from "./coupon_img.png";
+import more_arrow from "./more_arrow.svg";
 
 export {
   angle_down_blue,
@@ -36,4 +38,6 @@ export {
   percentage,
   close,
   percentage_gray,
+  coupon_img,
+  more_arrow,
 };
