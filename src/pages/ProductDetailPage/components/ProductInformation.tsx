@@ -3,6 +3,7 @@ import TitleSection from "./TitleSection";
 import DetailInformation from "./DetailInformation";
 import ItemDescription from "./ItemDescription";
 import { map } from "lodash";
+import PurchaseAssurance from "./PurchaseAssurance";
 
 const ProductInformation = ({ product }: { product: Product }) => {
   return (
@@ -12,6 +13,7 @@ const ProductInformation = ({ product }: { product: Product }) => {
         <DetailInformation key={index} specifications={specification} />
       ))}
       <ItemDescription>{product.description}</ItemDescription>
+      <PurchaseAssurance/>
     </div>
   );
 };
