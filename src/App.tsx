@@ -25,7 +25,7 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/test" element={<ProductDetailPage />} />
+          <Route path="/detail" element={<ProductDetailPage />} />
         </Route>
 
         {/* Routes cho admin */}

@@ -42,6 +42,17 @@ export type QuantitySold = {
   value: number;
 };
 
+export type SpecificationAttribute = {
+  code?: string;
+  name?: string;
+  value?: string;
+};
+
+export type Specification = {
+  name: string;
+  attributes: SpecificationAttribute[];
+};
+
 export type Product = {
   _id: string;
   authors?: Author[];
@@ -54,6 +65,7 @@ export type Product = {
   quantity_sold?: QuantitySold;
   rating_average: number;
   short_description: string;
+  specifications?: Specification[];
   createdAt: string;
   updatedAt: string;
 };

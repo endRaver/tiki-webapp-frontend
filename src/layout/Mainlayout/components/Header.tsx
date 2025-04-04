@@ -41,7 +41,7 @@ const Header = () => {
         </div>
       </section>
 
-      <main className="container mx-auto flex gap-12 px-6 py-2">
+      <main className="container mx-auto flex gap-12 py-2">
         <Link
           to="/"
           className="flex cursor-pointer flex-col items-center gap-2"
@@ -94,7 +94,7 @@ const Header = () => {
 
               <span className="h-5 w-0.5 bg-[#EBEBF0]" />
 
-              <div className="relative flex items-center gap-4">
+              <Link to="/checkout" className="relative flex items-center gap-4">
                 <img
                   src={header_img_Cart}
                   alt="cart"
@@ -103,7 +103,7 @@ const Header = () => {
                 <span className="absolute -top-0 -right-2 rounded-full bg-red-500 px-1 py-0.5 text-[8px] font-bold text-white">
                   0
                 </span>
-              </div>
+              </Link>
             </div>
           </div>
 
@@ -121,7 +121,7 @@ const Header = () => {
         </div>
       </main>
 
-      <nav className="container mx-auto border-y border-[#EBEBF0] p-4">
+      <nav className="container mx-auto border-y border-[#EBEBF0] py-4">
         <Link to="/">
           <ul className="flex items-center gap-4">
             <span className="text-primary-500 text-sm font-semibold text-nowrap">

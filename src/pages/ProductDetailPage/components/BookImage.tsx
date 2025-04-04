@@ -2,12 +2,13 @@ import { arrow_right, book_info } from "@/assets/icons/detail_page_icons";
 import { useState } from "react";
 
 // import products from "@/assets/fakeData";
+
 const BookImage = () => {
   const [isFront, setIsFront] = useState(true);
   const [isFrontImg, setIsFrontImg] = useState(false);
 
   return (
-    <div className="w-100 gap-y-4 rounded-lg bg-white py-4 pb-0">
+    <div className="h-fit max-w-100 flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0">
       <div className="mb-4 px-4">
         {/* Main Image */}
         <div className="mb-2 flex justify-center rounded-lg border border-gray-300">
