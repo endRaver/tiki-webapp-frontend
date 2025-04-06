@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 import { User } from "@/types/user";
 
 interface ErrorResponse {
+  success: boolean;
   message: string;
 }
 
@@ -13,17 +14,25 @@ interface UserStore {
   loading: boolean;
   checkingAuth: boolean;
 
-  handleSignup: (data: {
-    name: string;
+  handleSignup: (data: { email: string; password: string }) => Promise<{
+    success: boolean;
+    message: string | undefined;
+  }>;
+  handleLogin: (data: {
     email: string;
     password: string;
-    confirmPassword: string;
-  }) => Promise<void>;
-  handleLogin: (data: { email: string; password: string }) => Promise<void>;
+  }) => Promise<{ success: boolean; message: string | undefined }>;
   handleLogout: () => Promise<void>;
   handleCheckAuth: () => Promise<void>;
   refreshToken: () => Promise<void>;
   handleGoogleLogin: (accessToken: string) => Promise<void>;
+  handleForgetPassword: (
+    email: string,
+  ) => Promise<{ success: boolean; message: string | undefined }>;
+  handleVerifyEmail: (code: string) => Promise<{
+    success: boolean;
+    message: string | undefined;
+  }>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -32,38 +41,24 @@ export const useUserStore = create<UserStore>((set, get) => ({
   checkingAuth: true,
 
   handleSignup: async ({
-    name,
     email,
     password,
-    confirmPassword,
   }: {
     email: string;
     password: string;
-    name: string;
-    confirmPassword: string;
   }) => {
     set({ loading: true });
 
-    if (password !== confirmPassword) {
-      set({ loading: false });
-      toast.error("Passwords do not match");
-      return;
-    }
-
     try {
       const response = await axiosInstance.post("/auth/signup", {
-        name,
         email,
         password,
       });
 
-      set({ user: response.data, checkingAuth: false });
-
-      toast.success("Account created successfully");
-      return response.data;
+      return { success: true, message: response.data.message };
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+      return { success: false, message: axiosError.response?.data?.message };
     } finally {
       set({ loading: false });
     }
@@ -81,10 +76,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
       set({ user: response.data });
 
       toast.success("Logged in successfully");
-      return response.data;
+      return { success: true, message: "Logged in successfully" };
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+      return { success: false, message: axiosError.response?.data?.message };
     } finally {
       set({ loading: false });
     }
@@ -138,10 +133,45 @@ export const useUserStore = create<UserStore>((set, get) => ({
         token: accessToken,
       });
       set({ user: response.data });
-      toast.success("Logged in successfully");
+      toast.success("Đăng nhập thành công");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleForgetPassword: async (email) => {
+    set({ loading: true });
+
+    try {
+      await axiosInstance.post("/auth/forgot-password", {
+        email,
+      });
+
+      toast.success("Email đã được gửi đến bạn");
+      return { success: true, message: "Email đã được gửi đến bạn" };
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      return { success: false, message: axiosError.response?.data?.message };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleVerifyEmail: async (code: string) => {
+    set({ loading: true });
+
+    try {
+      await axiosInstance.post("/auth/verify-email", {
+        code,
+      });
+
+      return { success: true, message: "Email đã được xác thực" };
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      return { success: false, message: axiosError.response?.data?.message };
     } finally {
       set({ loading: false });
     }
