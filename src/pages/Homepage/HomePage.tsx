@@ -1,21 +1,17 @@
 import {
   calculator,
   english_books,
-  freeship_extra,
   next_icon,
-  now,
   souvenir,
-  top_deal,
   vietnames_book,
 } from "@/assets/icons/home_page_icons";
 import SideBar from "@/components/Sidebar";
 import CategoryItem from "./Components/CategoryItem";
-import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
 import ProductItem, { ProductModel } from "@/components/ui/ProductItem";
 import { useEffect, useState } from "react";
 import { getProductList } from "@/services/ProductService";
-import RatingStar from "@/components/ui/Rating";
+import ProductFilter from "./Components/ProductFilter";
 
 const categories = [
   {
@@ -80,7 +76,7 @@ const Homepage = () => {
   }, []);
   return (
     <main className="bg-[#F5F5FA] px-[24px] pb-[24px]">
-      <div className="flex flex-row gap-[5px] py-[16px]">
+      <div className="flex flex-row gap-[5px] py-[16px] hidden md:flex">
         <a href="/">Trang chủ</a>
         <img src={next_icon} alt="" />
         <a href="/" className="active:font-bold">
@@ -91,13 +87,13 @@ const Homepage = () => {
         <SideBar />
 
         <div className="flex w-full flex-col gap-[16px]">
-          <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
+          <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle hidden md:block">
             <h1 className="text-4xl font-bold">Nhà Sách Tiki</h1>
           </div>
 
           <Carousel></Carousel>
 
-          <div className="rounded-2xl bg-[#FFFFFF] px-[16px] py-[12px]">
+          <div className="rounded-2xl bg-[#FFFFFF] px-[16px] py-[12px] hidden md:block">
             <h1 className="font-medium">Khám phá theo danh mục</h1>
             <div className="flex flex-row gap-[12px]">
               {categories.map((category, index) => (
@@ -109,38 +105,8 @@ const Homepage = () => {
               ))}
             </div>
           </div>
-
-          <div className="rounded-2xl bg-[#FFFFFF] px-[16px] py-[12px]">
-            <h1 className="font-medium">Tất cả sản phẩm</h1>
-            <div className="mt-[25px] mb-[36px] flex cursor-pointer flex-row align-middle">
-              <div className="flex flex-row gap-[8px]">
-                <input type="checkbox" className="cursor-pointer" />
-                <img src={now} alt="" />
-                <span>Giao siêu tốc 2H</span>
-              </div>
-              <div className="flex flex-row gap-[8px]">
-                <span className="px-8 text-gray-300">|</span>
-                <input type="checkbox" className="cursor-pointer" />
-                <img src={top_deal} alt="" />
-                <span>Giá rẻ</span>
-              </div>
-              <div className="flex flex-row gap-[8px]">
-                <span className="px-8 text-gray-300">|</span>
-                <input type="checkbox" className="cursor-pointer" />
-                <img src={freeship_extra} alt="" />
-              </div>
-              <div className="flex flex-row gap-[8px]">
-                <span className="px-8 text-gray-300">|</span>
-                <input type="checkbox" className="cursor-pointer" />
-                <RatingStar numofStar={4}/>
-                <span>Từ 4 sao</span>
-              </div>
-            </div>
-
-            <ArrangeFilter />
-          </div>
-
-          <div className="grid grid-cols-4 gap-4">
+         <ProductFilter/>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {products.map((item) => (
               <ProductItem key={item.id} product={item}></ProductItem>
             ))}
@@ -152,7 +118,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-      <section className="my-10 flex w-full flex-col gap-10">
+      <section className="my-10 flex w-full flex-col gap-10 hidden md:block">
         <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
           <h1 className="font-medium">Tìm kiếm liên quan</h1>
         </div>

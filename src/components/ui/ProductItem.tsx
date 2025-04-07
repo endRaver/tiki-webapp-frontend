@@ -18,7 +18,8 @@ interface ProductItemProps {
 const ProductItem = (props: ProductItemProps) => {
     const getRandomDiscount = () => {
         return Math.floor(Math.random() * (40 - 20 + 1)) + 20;
-      };
+    };
+    const discount = getRandomDiscount();
     const { product } = props;
     return (
         <div className="flex flex-col bg-[#FFFFFF] rounded-2xl cursor-pointer h-[570px]">
@@ -26,23 +27,35 @@ const ProductItem = (props: ProductItemProps) => {
                 <img src={product.image} alt="" />
                 <span className="absolute top-2  right-2 bg-[#F5F5FA] p-1 rounded-xl text-xs font-semibold">AD</span>
             </div>
-            <div  className="m-3">
+            <div className="m-3">
                 <div className="flex flex-row gap-4 my-3">
                     <p className="relative text-[#FF424E] font-bold">{product.price.toLocaleString("vi-VN")}<span className="absolute top-[-5px]">đ</span></p>
-                    <p>{getRandomDiscount()}%</p>
+                    <p>{discount}%</p>
                 </div>
                 <p className="uppercase text-[#808089]">{product.author}</p>
                 <p className="mb-2 mt-0.5">{product.name}</p>
                 <div className="flex flex-row gap-4">
-                    {product.rating && <RatingStar numofStar={5}/>}
+                    {product.rating && <RatingStar numofStar={5} />}
                     <p className="text-[#808089]">|</p>
                     <p className="text-[#808089]">{product.quantity_sold}</p>
                 </div>
             </div>
-            <div className="mt-auto flex flex-row  gap-1 m-3  border-t border-gray-300">
-                <img src={now} alt="" />
-                <p className="text-[#808089]">Giao siêu tốc 2h</p>
+
+
+            <div className="mt-auto m-3  border-t border-gray-300">
+                {
+                    discount > 30 ?
+                        <div className=" flex flex-row  gap-1">
+                            <img src={now} alt="" />
+                            <p className="text-[#808089]">Giao siêu tốc 2h</p>
+                        </div>
+                        :
+                        <p className="text-[#808089]">Giao thứ 3, 01/04</p>
+                }
+
             </div>
+
+
         </div>
     );
 }

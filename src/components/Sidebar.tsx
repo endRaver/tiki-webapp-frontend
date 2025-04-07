@@ -49,7 +49,7 @@ const SideBar = () => {
     },
   ];
   return (
-    <div className="w-72 rounded-xl bg-[#FFFFFF]">
+    <div className="hidden md:block w-72 rounded-xl bg-[#FFFFFF]">
       <h1 className="p-[16px] font-medium">Khám phá theo danh mục</h1>
 
       <div className="h-[2px] bg-gray-400"></div>

@@ -33,7 +33,8 @@ const Header = () => {
   ];
 
   return (
-    <>
+   
+    <div className="hidden md:block">
       <section className="flex cursor-pointer justify-center bg-[#EFFFF4] py-3">
         <div className="text-success-100 flex items-center gap-1 text-xs">
           <span>Freeship đơn từ 45k,giảm nhiều hơn cùng</span>
@@ -173,7 +174,8 @@ const Header = () => {
       </nav>
 
       <AuthModal />
-    </>
+    </div>
   );
 };
+
 export default Header;

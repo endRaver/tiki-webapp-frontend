@@ -17,6 +17,7 @@ import carousel_navigate_active from "./carousel_navigate_active.svg";
 import book1 from "./book1.svg";
 import book2 from "./book2.svg";
 import book3 from "./book3.svg";
+import filter from "./filter.svg";
 
 export { book1 };
 export { book2 };
@@ -37,3 +38,4 @@ export { souvenir };
 export { calculator };
 export { dropup };
 export { next_icon };
+export { filter };

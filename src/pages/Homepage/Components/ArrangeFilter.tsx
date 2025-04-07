@@ -14,7 +14,7 @@ const ArrangeFilter = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="relative inline-flex align-middle gap-[7px]">
+        <div className="relative align-middle gap-[7px]  hidden md:flex">
             <span className=" text-gray-500 px-[8px] py-[5px]">Sắp xếp</span>
             <button
                 onClick={() => setIsOpen(!isOpen)}

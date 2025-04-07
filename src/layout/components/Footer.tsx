@@ -56,7 +56,7 @@ const Footer = () => {
     "tsubaki",
   ];
   return (
-    <main className="px-[100px] py-[40px]">
+    <main className="px-[100px] py-[40px] hidden md:block">
       <section className="flex flex-row justify-between">
         <div className="flex flex-row">
           <div className="">
