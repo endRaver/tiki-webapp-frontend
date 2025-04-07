@@ -1,19 +1,19 @@
 import { Product } from "@/types/product";
 import Carousel from "./Carousel";
 
-const RelatedBooks = ({ products }: { products: Product[] }) => {
+const TopDeals = ({ products }: { products: Product[] }) => {
     return (
         <div className="rounded-lg bg-white p-4 flex flex-col gap-y-4">
             {/* Tiêu đề */}
             <div className="flex justify-between items-center">
-                <span className="font-semibold">Sản phẩm tương tự</span>
+                <span className="font-semibold">Top Deals</span>
             </div>
 
             {/* Danh sách sản phẩm và nút điều hướng */}
-            <Carousel products={products} itemsPerPage={8} rows={2}/>
+            <Carousel products={products} itemsPerPage={4} rows={1}/>
             
         </div>
     );
 };
 
-export default RelatedBooks;
+export default TopDeals;

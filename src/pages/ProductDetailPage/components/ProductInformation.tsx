@@ -5,6 +5,7 @@ import ItemDescription from "./ItemDescription";
 import { map } from "lodash";
 import PurchaseAssurance from "./PurchaseAssurance";
 import RelatedBooks from "./RelatedBooks";
+import TopDeals from "./TopDeals";
 
 const ProductInformation = ({ products }: { products: Product []}) => {
   return (
@@ -15,6 +16,7 @@ const ProductInformation = ({ products }: { products: Product []}) => {
       ))}
       <ItemDescription>{products[0].description}</ItemDescription>
       <RelatedBooks products={products} />
+      <TopDeals products={products}/>
       <PurchaseAssurance />
       
     </div>
