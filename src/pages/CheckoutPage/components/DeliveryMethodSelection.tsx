@@ -3,14 +3,11 @@ import {
   delivery_bubble,
 } from "@/assets/icons/checkout_page_icons";
 import Selection from "@/components/ui/Selection";
+import { useCartStore } from "@/store/useCartStore";
 
-const DeliveryMethodSelection = ({
-  shippingType,
-  setShippingType,
-}: {
-  shippingType: "fast" | "saving";
-  setShippingType: (type: "fast" | "saving") => void;
-}) => {
+const DeliveryMethodSelection = () => {
+  const { shippingType, setShippingType } = useCartStore();
+
   return (
     <div className="relative max-w-[500px]">
       <div className="bg-primary-50 border-primary-100 relative z-0 flex w-full flex-col gap-3 rounded-[10px] border p-4">

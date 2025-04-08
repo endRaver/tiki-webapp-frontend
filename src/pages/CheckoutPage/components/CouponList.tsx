@@ -1,17 +1,25 @@
 import { useState } from "react";
 import CouponCard from "./CouponCard";
-import {
-  coupon_img,
-  more_arrow,
-  free_ship,
-} from "@/assets/icons/checkout_page_icons";
+import { more_arrow } from "@/assets/icons/checkout_page_icons";
+import { useCartStore } from "@/store/useCartStore";
+import { map } from "lodash";
 
 const CouponList = () => {
   const [isDiscountExtended, setIsDiscountExtended] = useState(false);
   const [isShippingExtended, setIsShippingExtended] = useState(false);
 
+  const { coupons } = useCartStore();
+
+  const sortedDiscountCoupons = coupons
+    .filter((coupon) => coupon.discountFor === "product")
+    .sort((a, b) => a.minOrderAmount - b.minOrderAmount);
+
+  const sortedShippingCoupons = coupons
+    .filter((coupon) => coupon.discountFor === "shipping")
+    .sort((a, b) => a.minOrderAmount - b.minOrderAmount);
+
   return (
-    <div className="space-y-4 overflow-y-auto px-4">
+    <div className="flex-1 space-y-4 overflow-y-auto px-4">
       <div>
         <div className="flex items-center justify-between">
           <h4 className="text-[#38383d]">Mã Giảm Giá</h4>
@@ -23,33 +31,52 @@ const CouponList = () => {
 
         <div className="mt-4 flex-1 overflow-y-auto">
           <div className="flex flex-col gap-3 py-2">
-            <CouponCard
-              image={coupon_img}
-              title="Giảm 25K"
-              requirement={300}
-              expireDate="01/01/2023"
-            />
-            <CouponCard
-              image={coupon_img}
-              title="Giảm 25K"
-              requirement={300}
-              expireDate="01/01/2023"
-            />
+            {map(sortedDiscountCoupons, (coupon, index) =>
+              isDiscountExtended ? (
+                <CouponCard
+                  key={coupon.code}
+                  type={coupon.discountType}
+                  discount={coupon.discount}
+                  discountFor={coupon.discountFor}
+                  maxDiscount={coupon.maxDiscount}
+                  requirement={coupon.minOrderAmount}
+                  expireDate={coupon.expirationDate}
+                />
+              ) : (
+                index < 2 && (
+                  <CouponCard
+                    key={coupon.code}
+                    type={coupon.discountType}
+                    discount={coupon.discount}
+                    discountFor={coupon.discountFor}
+                    maxDiscount={coupon.maxDiscount}
+                    requirement={coupon.minOrderAmount}
+                    expireDate={coupon.expirationDate}
+                  />
+                )
+              ),
+            )}
           </div>
 
-          <button
-            className="text-primary-300 mb-2 flex w-full cursor-pointer items-center justify-center gap-2 px-4 py-1 text-sm font-medium"
-            onClick={() => setIsDiscountExtended(!isDiscountExtended)}
-          >
-            <span>Xem thêm (7)</span>
-            <img
-              src={more_arrow}
-              alt="more"
-              className={`duration-300 ease-in-out ${
-                !isDiscountExtended ? "rotate-270" : "rotate-90"
-              }`}
-            />
-          </button>
+          {sortedDiscountCoupons.length > 2 && (
+            <button
+              className="text-primary-300 mb-2 flex w-full cursor-pointer items-center justify-center gap-2 px-4 py-1 text-sm font-medium"
+              onClick={() => setIsDiscountExtended(!isDiscountExtended)}
+            >
+              <span>
+                {isDiscountExtended ? "Thu gọn" : "Xem thêm"}
+                {!isDiscountExtended &&
+                  ` (${sortedDiscountCoupons.length - 2})`}
+              </span>
+              <img
+                src={more_arrow}
+                alt="more"
+                className={`duration-300 ease-in-out ${
+                  isDiscountExtended ? "rotate-270" : "rotate-90"
+                }`}
+              />
+            </button>
+          )}
         </div>
       </div>
 
@@ -64,33 +91,48 @@ const CouponList = () => {
 
         <div className="mt-4 flex-1 overflow-y-auto">
           <div className="flex flex-col gap-3 py-2">
-            <CouponCard
-              image={free_ship}
-              title="Giảm 25K"
-              requirement={300}
-              expireDate="01/01/2023"
-            />
-            <CouponCard
-              image={free_ship}
-              title="Giảm 25K"
-              requirement={300}
-              expireDate="01/01/2023"
-            />
+            {map(sortedShippingCoupons, (coupon, index) =>
+              isShippingExtended ? (
+                <CouponCard
+                  key={coupon.code}
+                  type={coupon.discountType}
+                  discount={coupon.discount}
+                  discountFor={coupon.discountFor}
+                  maxDiscount={coupon.maxDiscount}
+                  requirement={coupon.minOrderAmount}
+                  expireDate={coupon.expirationDate}
+                />
+              ) : (
+                index < 2 && (
+                  <CouponCard
+                    key={coupon.code}
+                    type={coupon.discountType}
+                    discount={coupon.discount}
+                    discountFor={coupon.discountFor}
+                    maxDiscount={coupon.maxDiscount}
+                    requirement={coupon.minOrderAmount}
+                    expireDate={coupon.expirationDate}
+                  />
+                )
+              ),
+            )}
           </div>
 
-          <button
-            className="text-primary-300 mb-2 flex w-full cursor-pointer items-center justify-center gap-2 px-4 py-1 text-sm font-medium"
-            onClick={() => setIsShippingExtended(!isShippingExtended)}
-          >
-            <span>Xem thêm (7)</span>
-            <img
-              src={more_arrow}
-              alt="more"
-              className={`duration-300 ease-in-out ${
-                !isShippingExtended ? "rotate-270" : "rotate-90"
-              }`}
-            />
-          </button>
+          {sortedShippingCoupons.length > 2 && (
+            <button
+              className="text-primary-300 mb-2 flex w-full cursor-pointer items-center justify-center gap-2 px-4 py-1 text-sm font-medium"
+              onClick={() => setIsShippingExtended(!isShippingExtended)}
+            >
+              <span>Xem thêm ({sortedShippingCoupons.length - 2})</span>
+              <img
+                src={more_arrow}
+                alt="more"
+                className={`duration-300 ease-in-out ${
+                  !isShippingExtended ? "rotate-270" : "rotate-90"
+                }`}
+              />
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -3,9 +3,12 @@ import { useState } from "react";
 
 import { IoIosCloseCircle } from "react-icons/io";
 import CouponList from "./CouponList";
+// import { useCartStore } from "@/store/useCartStore";
 
 const CouponModal = () => {
   const [code, setCode] = useState("");
+
+
 
   return (
     <dialog id="coupon_modal" className="modal">

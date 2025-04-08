@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   coupon,
@@ -10,25 +10,9 @@ import {
   angle_right_blue,
 } from "@/assets/icons/checkout_page_icons";
 import CouponModal from "./CouponModal";
-import axiosInstance from "@/lib/axios";
-import { Coupon } from "@/types/cart";
 
 const CouponSection = () => {
   const [isCouponActive, setIsCouponActive] = useState(false);
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-
-  useEffect(() => {
-    const fetchCoupons = async () => {
-      try {
-        const response = await axiosInstance.get("/coupons");
-        setCoupons(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchCoupons();
-  }, []);
-
   return (
     <>
       <div className="space-y-4 rounded bg-white p-4 shadow">

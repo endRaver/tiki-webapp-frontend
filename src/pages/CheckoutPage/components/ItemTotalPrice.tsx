@@ -1,44 +1,28 @@
 import { useMemo, useState } from "react";
 import { map } from "lodash";
 
-import { Product } from "@/types/product";
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
 import { toast } from "react-hot-toast";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { formatCurrency } from "@/utils/utils";
-
+import { useCartStore } from "@/store/useCartStore";
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-interface ItemTotalPriceProps {
-  products: (Product & { quantity: number })[];
-  totalShippingPrice: number;
-  paymentMethod: "cash" | "card";
-}
-
-const ItemTotalPrice = ({
-  products,
-  totalShippingPrice,
-  paymentMethod,
-}: ItemTotalPriceProps) => {
+const ItemTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const totalPrice = useMemo(() => {
-    return products.reduce((acc, product) => {
-      return acc + product.current_seller.price * product.quantity;
-    }, 0);
-  }, [products]);
+  const { total, subtotal, totalShippingPrice, cart, paymentMethod } =
+    useCartStore();
 
   const discountPrice = useMemo(() => {
-    return products.reduce((acc, product) => {
+    return cart.reduce((acc, item) => {
       return (
-        acc +
-        (product.original_price - product.current_seller.price) *
-          product.quantity
+        acc + (item.original_price - item.current_seller.price) * item.quantity
       );
     }, 0);
-  }, [products]);
+  }, [cart]);
 
   const savingPrice = useMemo(() => {
     return 25000 + discountPrice; // TODO: change when add shipping price coupon
@@ -59,7 +43,7 @@ const ItemTotalPrice = ({
       const res = await axios.post(
         "http://localhost:5000/api/payments/create-checkout-session",
         {
-          products: products,
+          products: cart,
           couponCodes: ["SUMMER20"],
         },
       );
@@ -81,7 +65,7 @@ const ItemTotalPrice = ({
         <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
 
         <div className="flex items-center gap-1">
-          <span className="text-sm text-gray-500">1 sản phẩm.</span>
+          <span className="text-sm text-gray-500">{cart.length} sản phẩm.</span>
 
           <button
             className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
@@ -105,20 +89,20 @@ const ItemTotalPrice = ({
         }`}
       >
         <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
-          {map(products, (product: Product) => (
+          {map(cart, (item) => (
             <div
-              key={product.name}
+              key={item.name}
               className="flex items-start justify-between text-xs font-medium"
             >
               <div className="flex items-start gap-4">
-                <span className="text-nowrap">1 x</span>
+                <span className="text-nowrap">{item.quantity} x</span>
                 <span className="line-clamp-3 w-full max-w-[156px]">
-                  {product.name}
+                  {item.name}
                 </span>
               </div>
 
               <span className="text-neutral-200">
-                {product.current_seller.price}
+                {formatCurrency(item.current_seller.price)}{" "}
                 <span className="underline underline-offset-2">đ</span>
               </span>
             </div>
@@ -130,7 +114,7 @@ const ItemTotalPrice = ({
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Tổng tiền hàng</span>
           <span className="text-sm text-neutral-200">
-            {formatCurrency(totalPrice)}
+            {formatCurrency(subtotal)}
           </span>
         </div>
 
@@ -166,7 +150,8 @@ const ItemTotalPrice = ({
 
             <div className="flex flex-col items-end gap-0.5">
               <span className="text-danger-100 text-xl font-semibold">
-                110.000 <span className="underline underline-offset-2">đ</span>
+                {formatCurrency(total)}{" "}
+                <span className="underline underline-offset-2">đ</span>
               </span>
               <span className="text-success-100 text-sm">
                 Tiết kiệm{" "}

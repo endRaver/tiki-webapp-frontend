@@ -3,6 +3,7 @@ import {
   delivery_method,
   info,
 } from "@/assets/icons/checkout_page_icons";
+import { useCartStore } from "@/store/useCartStore";
 import { formatCurrency } from "@/utils/utils";
 
 const formatDate = (date: Date) => {
@@ -15,15 +16,15 @@ const formatDate = (date: Date) => {
 
 const DeliveryItem = ({
   children,
-  shippingType,
   shippingPrice,
   shippingDate,
 }: {
   children: React.ReactNode;
-  shippingType: string;
   shippingPrice: number;
   shippingDate: Date;
 }) => {
+  const { shippingType, } = useCartStore();
+
   return (
     <div className="relative rounded-xl border border-[#DDDDE3] px-4 pt-5 pb-4">
       <div className="absolute -top-3.5 left-3 flex items-center bg-white ps-1 pe-3">

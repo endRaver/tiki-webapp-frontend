@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { map, groupBy } from "lodash";
+import { useEffect } from "react";
+import { map } from "lodash";
 
 import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
 
@@ -14,46 +14,15 @@ import ItemInformation from "./components/ItemInformation";
 import { useCartStore } from "@/store/useCartStore";
 
 const CheckoutPage = () => {
-  const [shippingType, setShippingType] = useState<"fast" | "saving">("fast");
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
+  const { shippingType } = useCartStore();
 
-  const { cart, getCartItems } = useCartStore();
+  const { cart, getCartItems, groupCart, totalShippingPrice, getMyCoupons } =
+    useCartStore();
 
   useEffect(() => {
     getCartItems();
-  }, [getCartItems]);
-
-  // Group cart items by store and calculate total shipping price per store
-  const groupCart = useMemo(() => {
-    return map(
-      groupBy(cart, (item) => item.current_seller.seller.store_id),
-      (items) => ({
-        items,
-        totalShippingPrice: Math.max(
-          ...items.map((item) => item.shippingPrice),
-        ),
-        shippingDate: new Date(
-          Math.max(
-            ...items.map((item) => new Date(item.shippingDate).getTime()),
-          ),
-        ),
-      }),
-    );
-  }, [cart]);
-
-  // Calculate total shipping price
-  const totalShippingPrice = useMemo(() => {
-    // If fast, get the highest shipping price per store
-    if (shippingType === "fast") {
-      return groupCart.reduce(
-        (acc, group) => acc + group.totalShippingPrice,
-        0,
-      );
-    }
-
-    // If saving, get the highest shipping price
-    return Math.max(...cart.map((item) => item.shippingPrice));
-  }, [cart, groupCart, shippingType]);
+    getMyCoupons();
+  }, [getCartItems, getMyCoupons]);
 
   return (
     <div className="bg-background">
@@ -66,10 +35,7 @@ const CheckoutPage = () => {
               <h4 className="mb-4 text-lg font-bold">
                 Chọn hình thức giao hàng
               </h4>
-              <DeliveryMethodSelection
-                shippingType={shippingType}
-                setShippingType={setShippingType}
-              />
+              <DeliveryMethodSelection />
 
               {/* Product list */}
               {shippingType === "fast" ? (
@@ -77,7 +43,6 @@ const CheckoutPage = () => {
                   {map(groupCart, (group, storeId) => (
                     <DeliveryItem
                       key={storeId}
-                      shippingType={shippingType}
                       shippingPrice={group.totalShippingPrice}
                       shippingDate={group.shippingDate}
                     >
@@ -90,7 +55,6 @@ const CheckoutPage = () => {
               ) : (
                 <div className="mt-[52px] mb-4 flex flex-col gap-10">
                   <DeliveryItem
-                    shippingType={shippingType}
                     shippingPrice={totalShippingPrice}
                     shippingDate={
                       new Date(
@@ -122,10 +86,7 @@ const CheckoutPage = () => {
                 Chọn hình thức thanh toán
               </h4>
 
-              <PaymentMethodSelection
-                paymentMethod={paymentMethod}
-                setPaymentMethod={setPaymentMethod}
-              />
+              <PaymentMethodSelection />
               <PaymentOffersSection />
             </div>
           </div>
@@ -134,11 +95,7 @@ const CheckoutPage = () => {
           <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
             <CouponSection />
-            <ItemTotalPrice
-              products={cart}
-              totalShippingPrice={totalShippingPrice}
-              paymentMethod={paymentMethod}
-            />
+            <ItemTotalPrice />
           </div>
         </div>
       </div>
