@@ -15,6 +15,7 @@ import UserPage from "./pages/adminPage/UserPage";
 import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
+import NotFound from "./pages/NotFoundPage/NotFound.tsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/detail" element={<ProductDetailPage />} />
+          <Route path="/404" element={<NotFound />} />
         </Route>
 
         {/* Routes cho admin */}
