@@ -12,11 +12,10 @@ import CategoryItem from "./Components/CategoryItem";
 import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
 import ProductItem from "@/components/ui/ProductItem";
-import { useEffect, useState } from "react";
-import { getProductList } from "@/services/ProductService";
+import { useEffect } from "react";
 import RatingStar from "@/components/ui/Rating";
-import { Product } from "@/types/product";
 import BreadCrumb from "@/components/ui/BreadCrumb";
+import { useProductStore } from "@/store/useProductStore";
 
 const categories = [
   {
@@ -56,17 +55,11 @@ const bestBooksSeller = [
 ];
 
 const Homepage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const {products,handleFetchAllProduct,}=useProductStore();
+  useEffect(()=>{
+    handleFetchAllProduct();
+  },[]);
 
-  useEffect(() => {
-    const getProducts = async () => {
-      const res = await getProductList();
-
-      setProducts(res.products);
-    };
-
-    getProducts();
-  }, []);
 
   return (
     <main className="bg-background text-neutral-200">
