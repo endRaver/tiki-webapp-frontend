@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { map } from "lodash";
+import { map, groupBy } from "lodash";
 import { products } from "@/data/fakeData";
 
 import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
@@ -11,12 +11,15 @@ import PaymentOffersSection from "./components/PaymentOffersSection";
 import UserInformation from "./components/UserInformation";
 import CouponSection from "./components/CouponSection";
 import ItemTotalPrice from "./components/ItemTotalPrice";
+import ItemInformation from "./components/ItemInformation";
 
 const productList = products.slice(0, 3);
 const cart = productList.map((product) => ({
   ...product,
   quantity: 2,
 }));
+
+const groupCart = groupBy(cart, (item) => item.current_seller.store_id);
 
 const CheckoutPage = () => {
   const [shippingType, setShippingType] = useState<"fast" | "saving">("fast");
@@ -39,11 +42,25 @@ const CheckoutPage = () => {
               />
 
               {/* Product list */}
-              <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                {map(cart, (item) => (
-                  <DeliveryItem key={item.name} item={item} />
-                ))}
-              </div>
+              {shippingType === "fast" ? (
+                <div className="mt-[52px] mb-4 flex flex-col gap-10">
+                  {map(groupCart, (items, storeId) => (
+                    <DeliveryItem key={storeId}>
+                      {map(items, (item) => (
+                        <ItemInformation key={item._id} item={item} />
+                      ))}
+                    </DeliveryItem>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-[52px] mb-4 flex flex-col gap-10">
+                  <DeliveryItem>
+                    {map(cart, (item) => (
+                      <ItemInformation key={item._id} item={item} />
+                    ))}
+                  </DeliveryItem>
+                </div>
+              )}
 
               <button className="flex cursor-pointer gap-1 border-t border-[#EBEBF0] py-2.5">
                 <img src={coupon} alt="coupon" />
@@ -70,10 +87,7 @@ const CheckoutPage = () => {
           <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
             <CouponSection />
-            <ItemTotalPrice
-              products={cart}
-              shippingType={shippingType}
-            />
+            <ItemTotalPrice products={cart} shippingType={shippingType} />
           </div>
         </div>
       </div>
