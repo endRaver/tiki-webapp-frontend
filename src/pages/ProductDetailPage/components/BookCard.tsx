@@ -3,7 +3,7 @@ import { Product } from "@/types/product";
 
 const BookCard = ({ product }: { product: Product }) => {
     return (
-        <div className=" border border-[#EBEBF0] rounded-lg bg-white w-full flex flex-col gap-y-2 ">
+        <div className=" border border-[#EBEBF0] rounded-lg bg-white w-full h-[230px] flex flex-col gap-y-2 ">
             <div className="w-full flex justify-center">
                 <img className="w-32.5 h-32.5 rounded-t-lg" src={product.images[0].base_url} alt="book image" />
             </div>

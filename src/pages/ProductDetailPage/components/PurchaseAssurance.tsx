@@ -26,7 +26,7 @@ const PurchaseAssurance = () => {
                 </div>
 
                 {/* Mục 3 */}
-                <div className="flex items-start flex py-1 gap-x-1">
+                <div className="flex items-start py-1 gap-x-1">
                     <img src={return_product} alt="return product" />
                     <div>
                         <p className="text-sm">
