@@ -13,15 +13,16 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface ItemTotalPriceProps {
   products: (Product & { quantity: number })[];
-  shippingType: "fast" | "saving";
+  totalShippingPrice: number;
+  paymentMethod: "cash" | "card";
 }
 
-const ItemTotalPrice = ({ products, shippingType }: ItemTotalPriceProps) => {
+const ItemTotalPrice = ({
+  products,
+  totalShippingPrice,
+  paymentMethod,
+}: ItemTotalPriceProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const shippingPrice = useMemo(() => {
-    return shippingType === "fast" ? 25000 : 16000;
-  }, [shippingType]);
 
   const totalPrice = useMemo(() => {
     return products.reduce((acc, product) => {
@@ -44,10 +45,10 @@ const ItemTotalPrice = ({ products, shippingType }: ItemTotalPriceProps) => {
   }, [discountPrice]);
 
   const handlePayment = async () => {
-    // const cart = products.map((product) => ({
-    //   ...product,
-    //   quantity: 1,
-    // }));
+    if (paymentMethod === "cash") {
+      toast.error("Thanh toán tiền mặt không hỗ trợ");
+      return;
+    }
 
     try {
       const stripe = await stripePromise;
@@ -136,7 +137,7 @@ const ItemTotalPrice = ({ products, shippingType }: ItemTotalPriceProps) => {
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Phí vận chuyển</span>
           <span className="text-sm text-neutral-200">
-            {formatCurrency(shippingPrice)}đ
+            {formatCurrency(totalShippingPrice)}đ
           </span>
         </div>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { map, groupBy } from "lodash";
 import { products } from "@/data/fakeData";
 
@@ -13,21 +13,52 @@ import CouponSection from "./components/CouponSection";
 import ItemTotalPrice from "./components/ItemTotalPrice";
 import ItemInformation from "./components/ItemInformation";
 
-const productList = products.slice(0, 3);
-const cart = productList.map((product) => ({
-  ...product,
-  quantity: 2,
-}));
+const randomShippingPrice = () => {
+  return Math.floor(Math.random() * 31 + 20) * 1000;
+};
 
-const groupCart = groupBy(cart, (item) => item.current_seller.store_id);
+const randomDateDelivery = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + Math.floor(Math.random() * 5));
+  return date.toISOString().split("T")[0];
+};
+
+const productList = products.slice(0, 3);
 
 const CheckoutPage = () => {
   const [shippingType, setShippingType] = useState<"fast" | "saving">("fast");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
 
+  const cart = productList.map((product) => ({
+    ...product,
+    quantity: 2,
+    shipping_price: randomShippingPrice(),
+    date_delivery: randomDateDelivery(),
+  }));
+
+  // Group cart items by store and calculate total shipping price per store
+  const groupCart = map(
+    groupBy(cart, (item) => item.current_seller.store_id),
+    (items) => ({
+      items,
+      total_shipping_price: items[0].shipping_price, // Each store group has the same shipping price
+    }),
+  );
+
+  // Calculate total shipping price
+  const totalShippingPrice = useMemo(() => {
+    if (shippingType === "fast") {
+      return groupCart.reduce(
+        (acc, group) => acc + group.total_shipping_price,
+        0,
+      );
+    }
+    return Math.min(...cart.map((item) => item.shipping_price));
+  }, [cart, groupCart, shippingType]);
+
   return (
     <div className="bg-background">
-      <div className="container mx-auto h-[1500px] pt-5">
+      <div className="container mx-auto pt-5">
         <div className="flex gap-5">
           <div className="flex-1 space-y-4">
             {/* Choose delivery method section */}
@@ -44,9 +75,12 @@ const CheckoutPage = () => {
               {/* Product list */}
               {shippingType === "fast" ? (
                 <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                  {map(groupCart, (items, storeId) => (
-                    <DeliveryItem key={storeId}>
-                      {map(items, (item) => (
+                  {map(groupCart, (group, storeId) => (
+                    <DeliveryItem
+                      key={storeId}
+                      shippingPrice={group.total_shipping_price}
+                    >
+                      {map(group.items, (item) => (
                         <ItemInformation key={item._id} item={item} />
                       ))}
                     </DeliveryItem>
@@ -54,7 +88,7 @@ const CheckoutPage = () => {
                 </div>
               ) : (
                 <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                  <DeliveryItem>
+                  <DeliveryItem shippingPrice={totalShippingPrice}>
                     {map(cart, (item) => (
                       <ItemInformation key={item._id} item={item} />
                     ))}
@@ -87,7 +121,11 @@ const CheckoutPage = () => {
           <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
             <CouponSection />
-            <ItemTotalPrice products={cart} shippingType={shippingType} />
+            <ItemTotalPrice
+              products={cart}
+              totalShippingPrice={totalShippingPrice}
+              paymentMethod={paymentMethod}
+            />
           </div>
         </div>
       </div>

@@ -9,8 +9,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [handleCheckAuth]);
 
   if (checkingAuth) {
-    return <div>Checking authentication...</div>;
+    return <div>Checking auth...</div>;
   }
+
 
   return <>{children}</>;
 };

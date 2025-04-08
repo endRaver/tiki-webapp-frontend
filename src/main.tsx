@@ -14,11 +14,11 @@ library.add(fas);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      {/* <AuthProvider> */}
+      <AuthProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      {/* </AuthProvider> */}
+      </AuthProvider>
     </GoogleOAuthProvider>
   </StrictMode>,
 );

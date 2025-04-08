@@ -3,8 +3,15 @@ import {
   delivery_method,
   info,
 } from "@/assets/icons/checkout_page_icons";
+import { formatCurrency } from "@/utils/utils";
 
-const DeliveryItem = ({ children }: { children: React.ReactNode }) => {
+const DeliveryItem = ({
+  children,
+  shippingPrice,
+}: {
+  children: React.ReactNode;
+  shippingPrice: number;
+}) => {
   return (
     <div className="relative rounded-xl border border-[#DDDDE3] px-4 pt-5 pb-4">
       <div className="absolute -top-3.5 left-3 flex items-center bg-white ps-1 pe-3">
@@ -28,7 +35,8 @@ const DeliveryItem = ({ children }: { children: React.ReactNode }) => {
 
             <div className="flex items-center gap-0.5">
               <span className="text-success-100 text-sm font-medium">
-                MIỄN PHÍ
+                {formatCurrency(shippingPrice)}{" "}
+                <span className="underline underline-offset-1">đ</span>
               </span>
               <img src={info} alt="info" />
             </div>
