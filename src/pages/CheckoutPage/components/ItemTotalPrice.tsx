@@ -1,14 +1,77 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { map } from "lodash";
 
 import { Product } from "@/types/product";
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
+import { toast } from "react-hot-toast";
 
-const ItemTotalPrice = ({ products }: { products: Product[] }) => {
+import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
+import { formatCurrency } from "@/utils/utils";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+interface ItemTotalPriceProps {
+  products: (Product & { quantity: number })[];
+  shippingType: "fast" | "saving";
+}
+
+const ItemTotalPrice = ({ products, shippingType }: ItemTotalPriceProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleOpen = () => {
-    setIsOpen((prev) => !prev);
+  const shippingPrice = useMemo(() => {
+    return shippingType === "fast" ? 25000 : 16000;
+  }, [shippingType]);
+
+  const totalPrice = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return acc + product.current_seller.price * product.quantity;
+    }, 0);
+  }, [products]);
+
+  const discountPrice = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return (
+        acc +
+        (product.original_price - product.current_seller.price) *
+          product.quantity
+      );
+    }, 0);
+  }, [products]);
+
+  const savingPrice = useMemo(() => {
+    return 25000 + discountPrice; // TODO: change when add shipping price coupon
+  }, [discountPrice]);
+
+  const handlePayment = async () => {
+    // const cart = products.map((product) => ({
+    //   ...product,
+    //   quantity: 1,
+    // }));
+
+    try {
+      const stripe = await stripePromise;
+      if (!stripe) {
+        toast.error("Stripe failed to initialize");
+        return;
+      }
+      const res = await axios.post(
+        "http://localhost:5000/api/payments/create-checkout-session",
+        {
+          products: products,
+          couponCodes: ["SUMMER20"],
+        },
+      );
+
+      const session = res.data;
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+      if (result.error) {
+        toast.error(result.error.message ?? "Payment failed");
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
   };
 
   return (
@@ -21,7 +84,7 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
 
           <button
             className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
-            onClick={toggleOpen}
+            onClick={() => setIsOpen((prev) => !prev)}
           >
             <span>Xem thông tin</span>
             <img
@@ -54,7 +117,7 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
               </div>
 
               <span className="text-neutral-200">
-                {product.original_price}{" "}
+                {product.current_seller.price}
                 <span className="underline underline-offset-2">đ</span>
               </span>
             </div>
@@ -65,17 +128,23 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
       <div className="space-y-2 border-b border-[#EBEBF0] p-4">
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Tổng tiền hàng</span>
-          <span className="text-sm text-neutral-200">169.000đ</span>
+          <span className="text-sm text-neutral-200">
+            {formatCurrency(totalPrice)}
+          </span>
         </div>
 
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Phí vận chuyển</span>
-          <span className="text-sm text-neutral-200">25.000đ</span>
+          <span className="text-sm text-neutral-200">
+            {formatCurrency(shippingPrice)}đ
+          </span>
         </div>
 
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Giảm giá trực tiếp</span>
-          <span className="text-success-100 text-sm">-59.000đ</span>
+          <span className="text-success-100 text-sm">
+            -{formatCurrency(discountPrice)}đ
+          </span>
         </div>
 
         <div className="flex justify-between">
@@ -101,7 +170,8 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
               <span className="text-success-100 text-sm">
                 Tiết kiệm{" "}
                 <span>
-                  84.000 <span className="underline underline-offset-2">đ</span>
+                  {formatCurrency(savingPrice)}{" "}
+                  <span className="underline underline-offset-2">đ</span>
                 </span>
               </span>
             </div>
@@ -113,7 +183,10 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
           </p>
         </div>
 
-        <button className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300">
+        <button
+          className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300"
+          onClick={handlePayment}
+        >
           Đặt hàng
         </button>
       </div>

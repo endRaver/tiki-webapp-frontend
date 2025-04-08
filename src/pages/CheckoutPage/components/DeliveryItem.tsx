@@ -3,8 +3,10 @@ import {
   delivery_method,
   info,
 } from "@/assets/icons/checkout_page_icons";
+import type { Product } from "@/types/product";
+import { formatCurrency } from "@/utils/utils";
 
-const DeliveryItem = ({ product }: { product: unknown }) => {
+const DeliveryItem = ({ item }: { item: Product & { quantity: number } }) => {
   return (
     <div className="relative rounded-xl border border-[#DDDDE3] px-4 pt-5 pb-4">
       <div className="absolute -top-3.5 left-3 flex items-center bg-white ps-1 pe-3">
@@ -37,23 +39,27 @@ const DeliveryItem = ({ product }: { product: unknown }) => {
 
         <div className="flex items-center gap-2">
           <div className="size-12 bg-cover bg-center">
-            <img src={product.images[0].base_url} alt={product.name} />
+            <img src={item.images[0].base_url} alt={item.name} />
           </div>
 
           <div className="flex w-full flex-col gap-1.5">
-            <h3 className="text-sm text-neutral-600">{product.name}</h3>
+            <h3 className="text-sm text-neutral-600">{item.name}</h3>
 
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm text-neutral-600">SL: x1</span>
+              <span className="text-sm text-neutral-600">
+                SL: x{item.quantity}
+              </span>
 
               <div className="flex items-center gap-1">
-                <span className="text-xs text-neutral-600 line-through">
-                  169.000{" "}
-                  <span className="underline underline-offset-1">đ</span>
-                </span>
+                {item.original_price !== item.current_seller.price && (
+                  <span className="text-xs text-neutral-600 line-through">
+                    {formatCurrency(item.original_price)}{" "}
+                    <span className="underline underline-offset-1">đ</span>
+                  </span>
+                )}
 
                 <span className="text-danger-100 text-sm font-medium">
-                  110.000{" "}
+                  {formatCurrency(item.current_seller.price)}{" "}
                   <span className="underline underline-offset-1">đ</span>
                 </span>
               </div>

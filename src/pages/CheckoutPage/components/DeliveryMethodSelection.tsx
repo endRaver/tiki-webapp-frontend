@@ -4,7 +4,13 @@ import {
 } from "@/assets/icons/checkout_page_icons";
 import Selection from "@/components/ui/Selection";
 
-const DeliveryMethodSelection = () => {
+const DeliveryMethodSelection = ({
+  shippingType,
+  setShippingType,
+}: {
+  shippingType: "fast" | "saving";
+  setShippingType: (type: "fast" | "saving") => void;
+}) => {
   return (
     <div className="relative max-w-[500px]">
       <div className="bg-primary-50 border-primary-100 relative z-0 flex w-full flex-col gap-3 rounded-[10px] border p-4">
@@ -12,6 +18,8 @@ const DeliveryMethodSelection = () => {
           name="delivery-method"
           title="quick-delivery"
           ariaLabel="Giao siêu tốc 2h"
+          isActive={shippingType === "fast"}
+          onClick={() => setShippingType("fast")}
         >
           <div className="flex items-center gap-1">
             <img src={delivery_method} alt="delivery" />
@@ -26,6 +34,8 @@ const DeliveryMethodSelection = () => {
           name="delivery-method"
           title="saving-delivery"
           ariaLabel="Giao tiết kiệm"
+          isActive={shippingType === "saving"}
+          onClick={() => setShippingType("saving")}
         >
           <div className="flex items-center gap-1">
             <span className="text-sm">Giao tiết kiệm</span>

@@ -15,7 +15,8 @@ import UserPage from "./pages/adminPage/UserPage";
 import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
-
+import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
+import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
 function App() {
   return (
     <>
@@ -43,6 +44,12 @@ function App() {
           <Route path="/admin/users/add" element={<AddUserForm />} />
           <Route path="/admin/orders" element={<OrderPage />} />
           <Route path="/admin/orders/return" element={<ReturnOrderPage />} />
+
+          <Route path="/admin/products/create" element={<ProductCreate />} />
+          <Route
+            path="/admin/products/update/:id"
+            element={<ProductSpecificationUpdate />}
+          />
         </Route>
       </Routes>
 

@@ -4,7 +4,13 @@ import { credit_card } from "@/assets/icons/checkout_page_icons";
 
 import Selection from "@/components/ui/Selection";
 
-const PaymentMethodSelection = () => {
+const PaymentMethodSelection = ({
+  paymentMethod,
+  setPaymentMethod,
+}: {
+  paymentMethod: "cash" | "card";
+  setPaymentMethod: (method: "cash" | "card") => void;
+}) => {
   return (
     <div>
       <Selection
@@ -12,6 +18,8 @@ const PaymentMethodSelection = () => {
         title="cash-pay"
         ariaLabel="Thanh toán tiền mặt"
         className="py-4"
+        isActive={paymentMethod === "cash"}
+        onClick={() => setPaymentMethod("cash")}
       >
         <img src={cash_pay} alt="cash-pay" />
 
@@ -25,6 +33,8 @@ const PaymentMethodSelection = () => {
         title="atm-pay"
         ariaLabel="Thanh toán qua ATM"
         className="py-4"
+        isActive={paymentMethod === "card"}
+        onClick={() => setPaymentMethod("card")}
       >
         <img src={credit_card} alt="atm-pay" className="h-8 w-8" />
 

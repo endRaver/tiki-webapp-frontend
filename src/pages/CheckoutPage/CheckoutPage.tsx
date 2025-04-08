@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { map } from "lodash";
 import { products } from "@/data/fakeData";
 
@@ -10,11 +11,17 @@ import PaymentOffersSection from "./components/PaymentOffersSection";
 import UserInformation from "./components/UserInformation";
 import CouponSection from "./components/CouponSection";
 import ItemTotalPrice from "./components/ItemTotalPrice";
-import { Product } from "@/types/product";
 
 const productList = products.slice(0, 3);
+const cart = productList.map((product) => ({
+  ...product,
+  quantity: 2,
+}));
 
 const CheckoutPage = () => {
+  const [shippingType, setShippingType] = useState<"fast" | "saving">("fast");
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
+
   return (
     <div className="bg-background">
       <div className="container mx-auto h-[1500px] pt-5">
@@ -26,12 +33,15 @@ const CheckoutPage = () => {
               <h4 className="mb-4 text-lg font-bold">
                 Chọn hình thức giao hàng
               </h4>
-              <DeliveryMethodSelection />
+              <DeliveryMethodSelection
+                shippingType={shippingType}
+                setShippingType={setShippingType}
+              />
 
               {/* Product list */}
               <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                {map(productList, (product: Product) => (
-                  <DeliveryItem key={product.name} product={product} />
+                {map(cart, (item) => (
+                  <DeliveryItem key={item.name} item={item} />
                 ))}
               </div>
 
@@ -48,7 +58,10 @@ const CheckoutPage = () => {
                 Chọn hình thức thanh toán
               </h4>
 
-              <PaymentMethodSelection />
+              <PaymentMethodSelection
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+              />
               <PaymentOffersSection />
             </div>
           </div>
@@ -57,7 +70,10 @@ const CheckoutPage = () => {
           <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
             <CouponSection />
-            <ItemTotalPrice products={productList} />
+            <ItemTotalPrice
+              products={cart}
+              shippingType={shippingType}
+            />
           </div>
         </div>
       </div>

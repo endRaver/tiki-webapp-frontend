@@ -25,7 +25,7 @@ const ProductItem = ({ product }: { product: Product }) => {
         <div className="p-3">
           <div className="flex items-center gap-4">
             <p className="text-danger-100 relative font-semibold">
-              {product.original_price.toLocaleString("vi-VN")}
+              {product.current_seller.price.toLocaleString("vi-VN")}
               <span className="absolute top-[-5px] text-sm underline underline-offset-1">
                 đ
               </span>
