@@ -16,6 +16,7 @@ import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
 import NotFound from "./pages/NotFoundPage/NotFound.tsx";
+import Confirm from "./pages/ConfirmPage/Confirm.tsx";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/detail" element={<ProductDetailPage />} />
           <Route path="/404" element={<NotFound />} />
+          <Route path="/confirm" element={<Confirm />} />
         </Route>
 
         {/* Routes cho admin */}
