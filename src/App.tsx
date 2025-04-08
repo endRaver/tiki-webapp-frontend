@@ -15,6 +15,7 @@ import UserPage from "./pages/adminPage/UserPage";
 import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
+import CartPage from "./pages/cartPage/CartPage.tsx";
 
 
 
@@ -29,6 +30,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/test" element={<ProductDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
 
         {/* Routes cho admin */}
