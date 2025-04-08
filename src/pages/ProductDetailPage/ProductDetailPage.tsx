@@ -11,7 +11,7 @@ const Detailpage = () => {
       <BreadCrumb />
       <div className="container mx-auto flex gap-6 pb-10">
         <BookImage />
-        <ProductInformation product={products[0]} />
+        <ProductInformation products={products} />
         <Payment />
       </div>
     </div>
