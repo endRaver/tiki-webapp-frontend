@@ -1,49 +1,69 @@
-
 import { now } from "@/assets/icons/home_page_icons";
 import RatingStar from "./Rating";
+import { Product } from "@/types/product";
+import { Link } from "react-router-dom";
 
+const ProductItem = ({ product }: { product: Product }) => {
+  const calculateDiscount = () => {
+    const discountPercentage =
+      100 - (product.current_seller.price / product.original_price) * 100;
+    return discountPercentage.toFixed(0);
+  };
 
-export type ProductModel = {
-    id: string
-    image: string,
-    price: number,
-    author: string,
-    name: string,
-    rating: number,
-    quantity_sold: string,
-}
-interface ProductItemProps {
-    product: ProductModel
-}
-const ProductItem = (props: ProductItemProps) => {
-    const getRandomDiscount = () => {
-        return Math.floor(Math.random() * (40 - 20 + 1)) + 20;
-      };
-    const { product } = props;
-    return (
-        <div className="flex flex-col bg-[#FFFFFF] rounded-2xl cursor-pointer h-[570px]">
-            <div className="relative h-[270px] flex justify-center">
-                <img src={product.image} alt="" />
-                <span className="absolute top-2  right-2 bg-[#F5F5FA] p-1 rounded-xl text-xs font-semibold">AD</span>
-            </div>
-            <div  className="m-3">
-                <div className="flex flex-row gap-4 my-3">
-                    <p className="relative text-[#FF424E] font-bold">{product.price.toLocaleString("vi-VN")}<span className="absolute top-[-5px]">đ</span></p>
-                    <p>{getRandomDiscount()}%</p>
-                </div>
-                <p className="uppercase text-[#808089]">{product.author}</p>
-                <p className="mb-2 mt-0.5">{product.name}</p>
-                <div className="flex flex-row gap-4">
-                    {product.rating && <RatingStar numofStar={5}/>}
-                    <p className="text-[#808089]">|</p>
-                    <p className="text-[#808089]">{product.quantity_sold}</p>
-                </div>
-            </div>
-            <div className="mt-auto flex flex-row  gap-1 m-3  border-t border-gray-300">
-                <img src={now} alt="" />
-                <p className="text-[#808089]">Giao siêu tốc 2h</p>
-            </div>
+  return (
+    <Link to={`/detail`}>
+      <div className="flex h-[567px] cursor-pointer flex-col overflow-hidden rounded-lg bg-white duration-300 hover:shadow-lg">
+        <div
+          className="relative flex h-[276px] justify-center bg-cover bg-center"
+          style={{ backgroundImage: `url(${product.images[0].medium_url})` }}
+        >
+          <span className="absolute top-2 right-2 rounded-lg bg-[#F5F5FA] p-1 text-xs font-semibold">
+            AD
+          </span>
         </div>
-    );
-}
-export default ProductItem
+
+        <div className="p-3">
+          <div className="flex items-center gap-4">
+            <p className="text-danger-100 relative font-semibold">
+              {product.original_price.toLocaleString("vi-VN")}
+              <span className="absolute top-[-5px] text-sm underline underline-offset-1">
+                đ
+              </span>
+            </p>
+
+            {Number(calculateDiscount()) > 0 && (
+              <span className="rounded-lg bg-[#F5F5FA] px-1 py-0.5 text-sm font-medium">
+                {calculateDiscount()}%
+              </span>
+            )}
+          </div>
+
+          {product.authors && product.authors?.length > 0 && (
+            <p className="mt-3.5 text-sm text-neutral-600 uppercase">
+              {product.authors[0].name}
+            </p>
+          )}
+
+          <p className="mt-1 line-clamp-3">{product.name}</p>
+          <div className="flex flex-row items-center gap-1">
+            {product.rating_average > 0 && <RatingStar numofStar={5} />}
+
+            <span className="bg-border-line h-3 w-[1px]" />
+
+            {product.quantity_sold && (
+              <p className="text-sm text-neutral-600">
+                {product.quantity_sold.text}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="border-border-line mx-3 mt-auto mb-2 flex items-center gap-1 border-t pt-2">
+          <img src={now} alt="now" className="h-4" />
+          <span className="text-sm text-neutral-600">Giao siêu tốc 2h</span>
+        </div>
+      </div>
+    </Link>
+  );
+};
+export default ProductItem;
