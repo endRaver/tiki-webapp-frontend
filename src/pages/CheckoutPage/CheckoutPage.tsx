@@ -1,6 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { map, groupBy } from "lodash";
-import { products } from "@/data/fakeData";
 
 import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
 
@@ -12,48 +11,48 @@ import UserInformation from "./components/UserInformation";
 import CouponSection from "./components/CouponSection";
 import ItemTotalPrice from "./components/ItemTotalPrice";
 import ItemInformation from "./components/ItemInformation";
-
-const randomShippingPrice = () => {
-  return Math.floor(Math.random() * 31 + 20) * 1000;
-};
-
-const randomDateDelivery = () => {
-  const date = new Date();
-  date.setDate(date.getDate() + Math.floor(Math.random() * 5));
-  return date.toISOString().split("T")[0];
-};
-
-const productList = products.slice(0, 3);
+import { useCartStore } from "@/store/useCartStore";
 
 const CheckoutPage = () => {
   const [shippingType, setShippingType] = useState<"fast" | "saving">("fast");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
 
-  const cart = productList.map((product) => ({
-    ...product,
-    quantity: 2,
-    shipping_price: randomShippingPrice(),
-    date_delivery: randomDateDelivery(),
-  }));
+  const { cart, getCartItems } = useCartStore();
+
+  useEffect(() => {
+    getCartItems();
+  }, [getCartItems]);
 
   // Group cart items by store and calculate total shipping price per store
-  const groupCart = map(
-    groupBy(cart, (item) => item.current_seller.store_id),
-    (items) => ({
-      items,
-      total_shipping_price: items[0].shipping_price, // Each store group has the same shipping price
-    }),
-  );
+  const groupCart = useMemo(() => {
+    return map(
+      groupBy(cart, (item) => item.current_seller.seller.store_id),
+      (items) => ({
+        items,
+        totalShippingPrice: Math.max(
+          ...items.map((item) => item.shippingPrice),
+        ),
+        shippingDate: new Date(
+          Math.max(
+            ...items.map((item) => new Date(item.shippingDate).getTime()),
+          ),
+        ),
+      }),
+    );
+  }, [cart]);
 
   // Calculate total shipping price
   const totalShippingPrice = useMemo(() => {
+    // If fast, get the highest shipping price per store
     if (shippingType === "fast") {
       return groupCart.reduce(
-        (acc, group) => acc + group.total_shipping_price,
+        (acc, group) => acc + group.totalShippingPrice,
         0,
       );
     }
-    return Math.min(...cart.map((item) => item.shipping_price));
+
+    // If saving, get the highest shipping price
+    return Math.max(...cart.map((item) => item.shippingPrice));
   }, [cart, groupCart, shippingType]);
 
   return (
@@ -78,7 +77,9 @@ const CheckoutPage = () => {
                   {map(groupCart, (group, storeId) => (
                     <DeliveryItem
                       key={storeId}
-                      shippingPrice={group.total_shipping_price}
+                      shippingType={shippingType}
+                      shippingPrice={group.totalShippingPrice}
+                      shippingDate={group.shippingDate}
                     >
                       {map(group.items, (item) => (
                         <ItemInformation key={item._id} item={item} />
@@ -88,7 +89,19 @@ const CheckoutPage = () => {
                 </div>
               ) : (
                 <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                  <DeliveryItem shippingPrice={totalShippingPrice}>
+                  <DeliveryItem
+                    shippingType={shippingType}
+                    shippingPrice={totalShippingPrice}
+                    shippingDate={
+                      new Date(
+                        Math.max(
+                          ...cart.map((item) =>
+                            new Date(item.shippingDate).getTime(),
+                          ),
+                        ),
+                      )
+                    }
+                  >
                     {map(cart, (item) => (
                       <ItemInformation key={item._id} item={item} />
                     ))}

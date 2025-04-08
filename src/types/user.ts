@@ -1,8 +1,9 @@
 import { Product } from "./product";
 
-export type CartItem = {
-  product: string | Product;
+export type CartItem = Product & {
   quantity: number;
+  shippingPrice: number;
+  shippingDate: string;
 };
 
 export type AuthType = "local" | "google";

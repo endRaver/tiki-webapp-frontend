@@ -5,27 +5,46 @@ import {
 } from "@/assets/icons/checkout_page_icons";
 import { formatCurrency } from "@/utils/utils";
 
+const formatDate = (date: Date) => {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  return `${day.toString().padStart(2, "0")}/${month
+    .toString()
+    .padStart(2, "0")}`;
+};
+
 const DeliveryItem = ({
   children,
+  shippingType,
   shippingPrice,
+  shippingDate,
 }: {
   children: React.ReactNode;
+  shippingType: string;
   shippingPrice: number;
+  shippingDate: Date;
 }) => {
   return (
     <div className="relative rounded-xl border border-[#DDDDE3] px-4 pt-5 pb-4">
       <div className="absolute -top-3.5 left-3 flex items-center bg-white ps-1 pe-3">
         <img src={delivery_box} alt="delivery-box" />
         <span className="text-success-100 text-sm">
-          Gói: Giao siêu tốc 2h, trước 13h hôm nay
+          Gói: {shippingType === "fast" ? "Giao siêu tốc 2h" : "Giao tiết kiệm"}
+          , {formatDate(shippingDate)}
         </span>
       </div>
 
       <div className="max-w-[482px] space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={delivery_method} alt="delivery" />
-            <span className="text-xs uppercase">Giao siêu tốc 2h</span>
+            {shippingType === "fast" ? (
+              <>
+                <img src={delivery_method} alt="delivery" />
+                <span className="text-xs uppercase">Giao siêu tốc 2h</span>
+              </>
+            ) : (
+              <span className="text-xs uppercase">Giao tiết kiệm</span>
+            )}
           </div>
 
           <div className="flex items-center gap-2 font-medium">
