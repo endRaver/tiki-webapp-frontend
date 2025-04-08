@@ -31,7 +31,7 @@ const Confirm = () => {
             <div className="w-80 h-fit bg-white rounded-sm">
                 <div className="flex p-4 justify-between border-b border-border-line">
                     <p className="text-sm font-bold">Mã đơn hàng: 861977987</p>
-                    <p className="text-sm font-medium text-[#0B74E5]">Xem đơn hàng</p>
+                    <p className="text-sm font-medium text-[#0B74E5] cursor-pointer">Xem đơn hàng</p>
                 </div>
                 <div className="flex flex-col p-4">
                     <p>Giao thứ 6, trước 13h, 28/3</p>
