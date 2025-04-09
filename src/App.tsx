@@ -2,8 +2,6 @@ import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useUserStore } from "./store/useUserStore";
 
-import MainLayout from "./layout/MainLayout/MainLayout";
-
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import Homepage from "./pages/Homepage/HomePage";
@@ -23,6 +21,7 @@ import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
 import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
 import CartPage from "./pages/CartPage/CartPage";
 import Confirm from "./pages/ConfirmPage/Confirm";
+import MainLayout from "./layout/MainLayout/MainLayout";
 
 function App() {
   const { user } = useUserStore();
