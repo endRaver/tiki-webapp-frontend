@@ -34,7 +34,7 @@ const CarouselItem = ({
 
           <div className="mt-1 flex items-center gap-1 text-neutral-600">
             <div className="flex items-center gap-1">
-              <span className="">Tài trợ bởi</span>
+              <span className="text-nowrap">Tài trợ bởi</span>
               <span className="truncate font-medium text-black">
                 {subtitle}
               </span>
