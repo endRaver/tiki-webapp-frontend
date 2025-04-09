@@ -8,7 +8,7 @@ const Payment = () => {
   const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
   return (
-    <div className="h-102.5 w-80 rounded-lg bg-white p-4 shadow-md">
+    <div className="h-fit max-w-[360px] flex-1 rounded-lg bg-white p-4 shadow-md">
       {/* Tiki Trading Logo */}
       <div className="flex items-center gap-2 border-b border-[#EBEBF0] pb-4">
         <img src={logo} alt="Tiki Trading" className="h-6" />
@@ -51,13 +51,13 @@ const Payment = () => {
 
         {/* Nút hành động */}
         <div className="mt-4 flex flex-col gap-2">
-          <button className="h-10 w-full rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600">
+          <button className="h-10 w-full cursor-pointer rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600">
             Mua ngay
           </button>
-          <button className="w-full rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
+          <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
             Thêm vào giỏ
           </button>
-          <button className="w-full rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
+          <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
             Mua trước trả sau
           </button>
         </div>

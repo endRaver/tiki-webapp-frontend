@@ -17,23 +17,27 @@ import carousel_navigate_active from "./carousel_navigate_active.svg";
 import book1 from "./book1.svg";
 import book2 from "./book2.svg";
 import book3 from "./book3.svg";
+import sidebar_more from "./sidebar_more.svg";
 
-export { book1 };
-export { book2 };
-export { book3 };
-export { carousel_navigate };
-export { carousel_navigate_active };
-export { item_carousel };
-export { arrow_left };
-export { arrow_right };
-export { now };
-export { top_deal };
-export { freeship_extra };
-export { star_fullfill };
-export { star_notfill };
-export { english_books };
-export { vietnames_book };
-export { souvenir };
-export { calculator };
-export { dropup };
-export { next_icon };
+export {
+  book1,
+  book2,
+  book3,
+  carousel_navigate,
+  carousel_navigate_active,
+  item_carousel,
+  arrow_left,
+  arrow_right,
+  now,
+  top_deal,
+  freeship_extra,
+  star_fullfill,
+  star_notfill,
+  english_books,
+  vietnames_book,
+  souvenir,
+  calculator,
+  dropup,
+  next_icon,
+  sidebar_more,
+};

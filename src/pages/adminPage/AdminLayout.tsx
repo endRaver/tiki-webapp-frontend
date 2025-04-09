@@ -5,7 +5,7 @@ import SliderBar from "../adminPage/components/shared/SliderBar";
 
 const AdminLayout: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       {/* Header cố định ở trên cùng */}
       <div className="sticky top-0 z-10">
         <Header />
