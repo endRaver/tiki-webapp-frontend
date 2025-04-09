@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFoundPage/NotFound";
 import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
 import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
 import CartPage from "./pages/cartPage/CartPage";
+import Confirm from "./pages/ConfirmPage/Confirm.tsx";
 
 function App() {
   const { user } = useUserStore();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/detail" element={<ProductDetailPage />} />
           <Route path="/*" element={<NotFound />} />
+          <Route path="/confirm" element={<Confirm />} />
         </Route>
 
         {/* Routes cho admin */}

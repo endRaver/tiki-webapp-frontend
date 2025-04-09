@@ -10,8 +10,16 @@ const TopDeals = ({ products }: { products: Product[] }) => {
             </div>
 
             {/* Danh sách sản phẩm và nút điều hướng */}
-            <Carousel products={products} itemsPerPage={4} rows={1}/>
-            
+            <div className="hidden lg:block">
+                    <Carousel products={products} itemsPerPage={4} rows={1} />
+                </div>
+                <div className="block min-[390px]:hidden sm:block md:block lg:hidden">
+                    <Carousel products={products} itemsPerPage={2} rows={1} />
+                </div>
+                <div className="hidden min-[390px]:block sm:hidden md:hidden lg:hidden">
+                    <Carousel products={products} itemsPerPage={3} rows={1} />
+                </div>
+
         </div>
     );
 };

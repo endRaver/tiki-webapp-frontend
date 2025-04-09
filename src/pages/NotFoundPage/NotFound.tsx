@@ -8,7 +8,7 @@ const NotFound = () => {
             </div>
             <p className="mb-6 text-lg ">Trang bạn tìm kiếm không tồn tại</p>
             <Link to="/">
-                <button className="w-80 font-medium rounded-sm bg-[#0b74e5] text-white px-10 py-2">Tiếp tục mua sắm</button>
+                <button className="cursor-pointer w-80 font-medium rounded-sm bg-[#0b74e5] text-white px-10 py-2">Tiếp tục mua sắm</button>
             </Link>
         </div>
     )
