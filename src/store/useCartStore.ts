@@ -25,6 +25,7 @@ interface CartStore {
   total: number;
   subtotal: number;
   totalShippingPrice: number;
+  shippingDiscount: number;
 
   calculateTotal: () => void;
   handleGetCartItems: () => Promise<CartItem[]>;
@@ -54,6 +55,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   shippingCoupon: null,
   discountCoupon: null,
   productDiscount: 0,
+  shippingDiscount: 0,
 
   total: 0,
   subtotal: 0,
@@ -175,7 +177,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
       0,
     );
 
+    const totalShippingPrice =
+      shippingType === "fast"
+        ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
+        : Math.max(...cart.map((item) => item.shippingPrice));
+
     let productDiscount = 0;
+    let shippingDiscount = 0;
+
     if (discountCoupon) {
       if (discountCoupon.discountType === "percentage") {
         const discount = (discountCoupon.discount / 100) * subtotalDiscount;
@@ -185,22 +194,27 @@ export const useCartStore = create<CartStore>((set, get) => ({
       }
     }
 
-    let totalShippingPrice =
-      shippingType === "fast"
-        ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
-        : Math.max(...cart.map((item) => item.shippingPrice));
-
     if (shippingCoupon) {
       if (shippingCoupon.discount > totalShippingPrice) {
-        totalShippingPrice = 0;
+        shippingDiscount = totalShippingPrice;
       } else {
-        totalShippingPrice = totalShippingPrice - shippingCoupon.discount;
+        shippingDiscount = shippingCoupon.discount;
       }
     }
 
-    const total = subtotalDiscount + totalShippingPrice - productDiscount;
+    const total =
+      subtotalDiscount +
+      totalShippingPrice -
+      productDiscount -
+      shippingDiscount;
 
-    set({ subtotal, total, productDiscount, totalShippingPrice });
+    set({
+      subtotal,
+      total,
+      productDiscount,
+      totalShippingPrice,
+      shippingDiscount,
+    });
   },
 
   handleGetMyCoupons: async () => {
@@ -220,10 +234,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
       if (type === "product") {
         set({ discountCoupon: response.data });
-        toast.success("Discount coupon applied");
+        toast.success(`Mã giảm giá ${couponCode} đã được áp dụng thành công`);
       } else {
         set({ shippingCoupon: response.data });
-        toast.success("Shipping coupon applied");
+        toast.success(`Mã giảm giá ${couponCode} đã được áp dụng thành công`);
       }
 
       get().calculateTotal();
@@ -235,13 +249,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
   removeDiscountCoupon: () => {
     set({ discountCoupon: null });
     get().calculateTotal();
-    toast.success("Discount coupon removed");
   },
 
   removeShippingCoupon: () => {
     set({ shippingCoupon: null });
     get().calculateTotal();
-    toast.success("Shipping coupon removed");
   },
 
   setShippingType: (type: "fast" | "saving") => {

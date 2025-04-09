@@ -89,6 +89,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       await axiosInstance.post("/auth/logout");
       set({ user: null });
+      toast.success("Đăng xuất thành công");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");

@@ -15,15 +15,32 @@ const CouponList = ({
   const [isDiscountExtended, setIsDiscountExtended] = useState(false);
   const [isShippingExtended, setIsShippingExtended] = useState(false);
 
-  const { coupons } = useCartStore();
+  const { coupons, discountCoupon, shippingCoupon } = useCartStore();
 
   const sortedDiscountCoupons = coupons
-    .filter((coupon) => coupon.discountFor === "product")
+    .filter(
+      (coupon) =>
+        coupon.discountFor === "product" &&
+        coupon.code !== discountCoupon?.code,
+    )
     .sort((a, b) => a.minOrderAmount - b.minOrderAmount);
 
   const sortedShippingCoupons = coupons
     .filter((coupon) => coupon.discountFor === "shipping")
     .sort((a, b) => a.minOrderAmount - b.minOrderAmount);
+
+  const shouldShowCoupon = (index: number, type: "discount" | "shipping") => {
+    if (type === "discount") {
+      if (isDiscountExtended) return true;
+      if (discountCoupon) return index < 1;
+      return index < 2;
+    }
+    if (type === "shipping") {
+      if (isShippingExtended) return true;
+      if (shippingCoupon) return index < 1;
+      return index < 2;
+    }
+  };
 
   return (
     <div className="flex-1 space-y-4 overflow-y-auto px-4">
@@ -38,22 +55,23 @@ const CouponList = ({
 
         <div className="mt-4 flex-1 overflow-y-auto">
           <div className="flex flex-col gap-3 py-2">
-            {map(sortedDiscountCoupons, (coupon, index) =>
-              isDiscountExtended ? (
-                <CouponCard
-                  key={coupon.code}
-                  coupon={coupon}
-                  onDisplayCoupon={setDisplayDiscountCoupon}
-                />
-              ) : (
-                index < 2 && (
+            {discountCoupon && (
+              <CouponCard
+                coupon={discountCoupon}
+                onDisplayCoupon={setDisplayDiscountCoupon}
+              />
+            )}
+
+            {map(
+              sortedDiscountCoupons,
+              (coupon, index) =>
+                shouldShowCoupon(index, "discount") && (
                   <CouponCard
                     key={coupon.code}
                     coupon={coupon}
                     onDisplayCoupon={setDisplayDiscountCoupon}
                   />
-                )
-              ),
+                ),
             )}
           </div>
 
@@ -90,22 +108,16 @@ const CouponList = ({
 
         <div className="mt-4 flex-1 overflow-y-auto">
           <div className="flex flex-col gap-3 py-2">
-            {map(sortedShippingCoupons, (coupon, index) =>
-              isShippingExtended ? (
-                <CouponCard
-                  key={coupon.code}
-                  coupon={coupon}
-                  onDisplayCoupon={setDisplayShippingCoupon}
-                />
-              ) : (
-                index < 2 && (
+            {map(
+              sortedShippingCoupons,
+              (coupon, index) =>
+                shouldShowCoupon(index, "shipping") && (
                   <CouponCard
                     key={coupon.code}
                     coupon={coupon}
                     onDisplayCoupon={setDisplayShippingCoupon}
                   />
-                )
-              ),
+                ),
             )}
           </div>
 

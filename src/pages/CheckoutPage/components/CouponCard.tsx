@@ -51,9 +51,13 @@ const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
     onDisplayCoupon(coupon);
   };
 
+  const isCouponApplied =
+    (discountCoupon && discountCoupon.code === coupon.code) ||
+    (shippingCoupon && shippingCoupon.code === coupon.code);
+
   return (
     <div
-      className={`${discountCoupon && discountCoupon.code === coupon.code ? "border-primary-300 bg-primary-50" : "border-gray-200 bg-white"} flex rounded-lg border-2 shadow-md`}
+      className={`${isCouponApplied ? "border-primary-300 bg-primary-50" : "border-gray-200 bg-white"} flex rounded-lg border-2 shadow-md`}
     >
       <div className="p-2">
         <img
@@ -100,8 +104,13 @@ const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
                 ? "opacity-50 grayscale-100"
                 : "cursor-pointer"
             }`}
+            disabled={total < minOrderAmount}
           >
-            {total < minOrderAmount ? "Chưa thỏa mãn" : " Áp Dụng"}
+            {total < minOrderAmount
+              ? "Chưa thỏa mãn"
+              : isCouponApplied
+                ? "Bỏ Chọn"
+                : "Áp Dụng"}
           </button>
         </div>
       </div>

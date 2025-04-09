@@ -4,17 +4,26 @@ import { map } from "lodash";
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
 import { toast } from "react-hot-toast";
 
-import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { formatCurrency } from "@/utils/utils";
 import { useCartStore } from "@/store/useCartStore";
+import axiosInstance from "@/lib/axios";
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const ItemTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { total, subtotal, totalShippingPrice, cart, paymentMethod } =
-    useCartStore();
+  const {
+    total,
+    subtotal,
+    totalShippingPrice,
+    cart,
+    paymentMethod,
+    shippingDiscount,
+    shippingCoupon,
+    discountCoupon,
+    productDiscount,
+  } = useCartStore();
 
   const discountPrice = useMemo(() => {
     return cart.reduce((acc, item) => {
@@ -25,8 +34,8 @@ const ItemTotalPrice = () => {
   }, [cart]);
 
   const savingPrice = useMemo(() => {
-    return 25000 + discountPrice; // TODO: change when add shipping price coupon
-  }, [discountPrice]);
+    return discountPrice + productDiscount + shippingDiscount;
+  }, [discountPrice, shippingDiscount, productDiscount]);
 
   const handlePayment = async () => {
     if (paymentMethod === "cash") {
@@ -40,11 +49,12 @@ const ItemTotalPrice = () => {
         toast.error("Stripe failed to initialize");
         return;
       }
-      const res = await axios.post(
-        "http://localhost:5000/api/payments/create-checkout-session",
+      const res = await axiosInstance.post(
+        "/payments/create-checkout-session",
         {
           products: cart,
-          couponCodes: ["SUMMER20"],
+          couponCodes: [discountCoupon?.code, shippingCoupon?.code],
+          shippingCost: totalShippingPrice,
         },
       );
 
@@ -132,15 +142,32 @@ const ItemTotalPrice = () => {
           </span>
         </div>
 
-        <div className="flex justify-between">
-          <div className="flex items-center gap-1">
-            <span className="text-sm text-neutral-600">
-              Giảm giá vận chuyển
+        {discountCoupon && (
+          <div className="flex justify-between">
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-neutral-600">
+                Mã khuyến mãi từ Tiki
+              </span>
+            </div>
+            <span className="text-success-100 text-sm">
+              -{formatCurrency(productDiscount)}đ
             </span>
-            <img src={info} alt="info" />
           </div>
-          <span className="text-success-100 text-sm">-25.000đ</span>
-        </div>
+        )}
+
+        {shippingCoupon && (
+          <div className="flex justify-between">
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-neutral-600">
+                Giảm giá vận chuyển
+              </span>
+              <img src={info} alt="info" />
+            </div>
+            <span className="text-success-100 text-sm">
+              -{formatCurrency(shippingDiscount)}đ
+            </span>
+          </div>
+        )}
 
         <div className="mb-4.5 border-t border-[#EBEBF0] pt-2.5">
           <div className="mb-2.5 flex justify-between">
