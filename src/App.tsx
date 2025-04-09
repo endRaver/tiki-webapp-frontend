@@ -25,7 +25,6 @@ import Confirm from "./pages/ConfirmPage/Confirm.tsx";
 
 function App() {
   const { user } = useUserStore();
-  
 
   return (
     <>
@@ -38,9 +37,8 @@ function App() {
             element={user ? <CheckoutPage /> : <NotFound />}
           />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/test" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/detail" element={<ProductDetailPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/*" element={<NotFound />} />
           <Route path="/confirm" element={<Confirm />} />
         </Route>

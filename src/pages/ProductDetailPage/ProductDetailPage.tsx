@@ -5,17 +5,18 @@ import ProductInformation from "./components/ProductInformation";
 
 import { products } from "@/data/fakeData";
 
-const Detailpage = () => {
+const ProductDetailPage = () => {
   return (
     <div className="bg-background">
       <BreadCrumb />
-      <div className="hidden lg:flex container mx-auto gap-6 pb-10 px-2">
+      <div className="container mx-auto hidden pb-10 sm:gap-2 lg:flex lg:gap-4 xl:gap-6">
         <BookImage />
         <ProductInformation products={products} />
         <Payment />
       </div>
-      <div className="hidden relative md:flex sm:flex lg:hidden container mx-auto gap-6 pb-10 px-2">
-        <div className="flex flex-col gap-6 h-fit w-2/5 sticky top-0">
+
+      <div className="relative container mx-auto hidden px-2 pb-10 sm:flex sm:gap-2 md:flex lg:hidden lg:gap-4 xl:gap-6">
+        <div className="sticky top-0 flex h-fit w-2/5 flex-col sm:gap-2 lg:gap-4 xl:gap-6">
           <BookImage />
           <Payment />
         </div>
@@ -23,14 +24,14 @@ const Detailpage = () => {
           <ProductInformation products={products} />
         </div>
       </div>
-      <div className="flex sm:hidden md:hidden lg:hidden flex-col items-center container mx-auto gap-6 pb-10 px-2">
+
+      <div className="container mx-auto flex flex-col items-center px-2 pb-10 sm:hidden sm:gap-2 md:hidden lg:hidden lg:gap-4 xl:gap-6">
         <BookImage />
         <Payment />
         <ProductInformation products={products} />
       </div>
-      
     </div>
   );
 };
 
-export default Detailpage;
+export default ProductDetailPage;

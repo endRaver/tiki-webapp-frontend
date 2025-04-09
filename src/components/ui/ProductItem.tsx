@@ -11,7 +11,7 @@ const ProductItem = ({ product }: { product: Product }) => {
   };
 
   return (
-    <Link to={`/detail`}>
+    <Link to={`/product/${product._id}`}>
       <div className="flex h-[567px] cursor-pointer flex-col overflow-hidden rounded-lg bg-white duration-300 hover:shadow-lg">
         <div
           className="relative flex h-[276px] justify-center bg-cover bg-center"

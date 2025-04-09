@@ -64,7 +64,7 @@ const Carousel = ({ products, itemsPerPage, rows }: CarouselProps) => {
           <button
             onClick={prevSlide}
             className="absolute top-1/2 left-2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow"
-        >
+          >
             <IoIosArrowBack size={24} color="#0A68FF" />
           </button>
         )}
@@ -73,8 +73,8 @@ const Carousel = ({ products, itemsPerPage, rows }: CarouselProps) => {
         {currentIndex < maxIndex && (
           <button
             onClick={nextSlide}
-          className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow"
-        >
+            className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow"
+          >
             <IoIosArrowForward size={24} color="#0A68FF" />
           </button>
         )}
