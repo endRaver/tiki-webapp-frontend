@@ -1,29 +1,45 @@
-import React from 'react';
+// CartPage.tsx
+import React, { useState } from 'react';
+import CartHeader from './components/CartHeader';
 import CartList from './components/CartList';
-import FreeGiftList from './components/FreeGiftList';
 import AddOnList from './components/AddOnList';
 import CartSummary from './components/CartSummary';
 
 const CartPage: React.FC = () => {
+    const [selectAll, setSelectAll] = useState(false);
+    const [itemCount, setItemCount] = useState(9); // Initial item count based on your data
+
+    const handleSelectAll = () => {
+        setSelectAll((prev) => !prev);
+    };
+
+    const handleClearCart = () => {
+        // This will be passed to CartList to trigger the modal
+    };
+
     return (
-        <div className="bg-background min-h-screen px-8 pt-6 pb-2">
-            <div className="lg:px-10">
-                <div className="text-[20px] font-inter font-bold mb-[12px]">
+        <div className="bg-background min-h-screen px-6 pt-6 pb-2">
+            <div className="lg:px-10"> {/* Add padding-top to account for the fixed header */}
+                <div className="text-[20px] font-inter font-[500] text-black">
                     GIỎ HÀNG
                 </div>
-
                 <div className="flex flex-col lg:flex-row">
                     {/* Left Section: Cart List, Free Gift List, Add-On List */}
                     <div className="flex-1 space-y-4 min-w-0 mr-5">
                         {/* Cart List Section */}
-                        <div className="">
-                            <CartList />
-                        </div>
-
-                        {/* Free Gift List Section */}
-                        <div className="rounded bg-white px-4 pt-4 shadow">
-                            <h4 className="mb-4 text-lg font-bold text-gray-800">Quà tặng miễn phí</h4>
-                            <FreeGiftList />
+                        <div>
+                            <CartHeader
+                                onClearCart={handleClearCart}
+                                selectAll={selectAll}
+                                onSelectAll={handleSelectAll}
+                                itemCount={itemCount}
+                            />
+                            <CartList
+                                onClearCart={handleClearCart}
+                                selectAll={selectAll}
+                                onSelectAll={handleSelectAll}
+                                itemCount={itemCount}
+                            />
                         </div>
 
                         {/* Add-On List Section */}

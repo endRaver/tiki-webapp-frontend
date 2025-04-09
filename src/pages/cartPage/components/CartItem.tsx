@@ -1,4 +1,3 @@
-// components/CartItem.tsx
 import React from 'react';
 
 interface CartItemProps {
@@ -8,6 +7,9 @@ interface CartItemProps {
   discountedPrice: number;
   discount: number;
   quantity: number;
+  shippingDate: string;
+  isSelected: boolean;
+  onSelect: () => void;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
@@ -20,15 +22,23 @@ const CartItem: React.FC<CartItemProps> = ({
   discountedPrice,
   discount,
   quantity,
+  shippingDate,
+  isSelected,
+  onSelect,
   onIncrease,
   onDecrease,
   onRemove,
 }) => {
   return (
-    <div className="bg-[#ffffff] flex items-center py-3 px-4">
+    <div className="flex items-center py-3 px-4">
       {/* Hình ảnh và tên sản phẩm */}
-      <div className="w-[500px] flex items-center">
-        <input type="checkbox" className="h-[18px] w-[18px] mr-2 " />
+      <div className="flex items-center w-[500px]">
+        <input
+          type="checkbox"
+          className="mr-2 h-[18px] w-[18px] border-1 border-[#c4c4cf] hover:border-[#0b74e5] appearance-none rounded-sm cursor-pointer checked:bg-[#0b74e5] transition-colors duration-200"
+          checked={isSelected}
+          onChange={onSelect}
+        />
         <img
           src={image}
           alt={name}
@@ -38,16 +48,16 @@ const CartItem: React.FC<CartItemProps> = ({
               'https://via.placeholder.com/64x64?text=Image+Not+Found';
           }}
         />
-        <div className='w-[484px]'>
+        <div className="flex-1">
           <h3 className="text-sm font-medium text-gray-800 line-clamp-2">{name}</h3>
           <p className="text-yellow-500 text-xs mt-1">
             Không thể giao đến địa chỉ đang chọn
           </p>
-          <p className="text-xs text-gray-500 mt-1">Giao thứ 4, 09/04</p>
+          <p className="text-xs text-gray-500 mt-1">{shippingDate}</p>
         </div>
       </div>
       {/* Đơn giá */}
-      <div className="w-[180px] text-center mr-6">
+      <div className="w-[180px] text-center">
         <div className="flex flex-col items-center">
           <span className="text-gray-500 line-through text-xs">
             {originalPrice.toLocaleString()}đ
@@ -59,7 +69,7 @@ const CartItem: React.FC<CartItemProps> = ({
         </div>
       </div>
       {/* Số lượng */}
-      <div className="w-[120px] text-center mr-3">
+      <div className="w-[120px] text-center">
         <div className="flex items-center justify-center border border-gray-300 rounded">
           <button
             onClick={onDecrease}
@@ -77,18 +87,18 @@ const CartItem: React.FC<CartItemProps> = ({
         </div>
       </div>
       {/* Thành tiền */}
-      <div className="w-[120px] text-center mr-3">
+      <div className="w-[120px] text-center">
         <p className="text-red-500 font-bold text-sm">
           {(discountedPrice * quantity).toLocaleString()}đ
         </p>
       </div>
       {/* Trash bin button */}
-      <div className="w-[40px] text-center">
+      <div className="w-[40px] ml-auto text-right">
         <button onClick={onRemove} className="text-gray-500 hover:text-red-500">
           <img
             src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/trash.svg"
             alt="Trash Icon"
-            className="h-5 w-5"
+            className="h-[18px] w-[18px]"
           />
         </button>
       </div>

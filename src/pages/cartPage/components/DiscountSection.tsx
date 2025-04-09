@@ -1,6 +1,7 @@
 // components/DiscountSection.tsx
 import React from 'react';
 import { discoutIcon } from '@/assets/icons/cart_page_icons';
+import { linkDiscountIcon } from '@/assets/icons/cart_page_icons';
 
 interface DiscountSectionProps {
   hasDiscount: boolean;
@@ -30,19 +31,18 @@ const DiscountSection: React.FC<DiscountSectionProps> = ({
         </div>
       ) : (
         // Case 2: No Discount Applied
-        <div className="flex justify-between items-center">
+        <div className="flex items-center">
           <div className="flex items-center">
             <img src={discoutIcon} alt="Discount Icon" className="h-4 w-4 mr-2" />
-            <span className="text-sm text-gray-600">
+            <span className="text-[14px] font-normal text-[#27272a]">
               Thêm mã khuyến mãi của Shop
             </span>
           </div>
           <button
             onClick={onAddCoupon}
-            className="text-blue-500 text-sm font-medium hover:underline"
           >
-            Thêm
           </button>
+          <img src={linkDiscountIcon} alt="" />
         </div>
       )}
     </div>
