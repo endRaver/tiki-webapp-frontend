@@ -16,8 +16,14 @@ import { useCartStore } from "@/store/useCartStore";
 const CheckoutPage = () => {
   const { shippingType } = useCartStore();
 
-  const { cart, getCartItems, groupCart, totalShippingPrice, getMyCoupons } =
-    useCartStore();
+  const {
+    cart,
+    getCartItems,
+    groupCart,
+    totalShippingPrice,
+    getMyCoupons,
+    coupons,
+  } = useCartStore();
 
   useEffect(() => {
     getCartItems();
@@ -94,7 +100,8 @@ const CheckoutPage = () => {
           {/* Checkout summary */}
           <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
-            <CouponSection />
+
+            {coupons.length > 0 && <CouponSection />}
             <ItemTotalPrice />
           </div>
         </div>

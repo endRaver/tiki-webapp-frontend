@@ -9,10 +9,6 @@ import { map, groupBy } from "lodash";
 
 interface CartStore {
   cart: CartItem[];
-  coupons: Coupon[];
-  shippingCoupon: Coupon | null;
-  discountCoupon: Coupon | null;
-  appliedCoupon: string[] | null;
   shippingType: "fast" | "saving";
   paymentMethod: "cash" | "card";
   groupCart: {
@@ -20,6 +16,12 @@ interface CartStore {
     totalShippingPrice: number;
     shippingDate: Date;
   }[];
+
+  coupons: Coupon[];
+  shippingCoupon: Coupon | null;
+  discountCoupon: Coupon | null;
+  isShippingCouponApplied: boolean;
+  isDiscountCouponApplied: boolean;
 
   total: number;
   subtotal: number;
@@ -32,19 +34,23 @@ interface CartStore {
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   setShippingType: (type: "fast" | "saving") => void;
   setPaymentMethod: (method: "cash" | "card") => void;
+
   getMyCoupons: () => Promise<void>;
   applyCoupon: (couponCode: string) => Promise<void>;
+  setDiscountCoupon: (coupon: Coupon) => void;
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
   cart: [],
+  groupCart: [],
   coupons: [],
-  shippingCoupon: null,
-  discountCoupon: null,
   shippingType: "fast",
   paymentMethod: "cash",
-  appliedCoupon: null,
-  groupCart: [],
+
+  shippingCoupon: null,
+  discountCoupon: null,
+  isShippingCouponApplied: false,
+  isDiscountCouponApplied: false,
 
   total: 0,
   subtotal: 0,
@@ -201,9 +207,29 @@ export const useCartStore = create<CartStore>((set, get) => ({
       const response = await axiosInstance.post("/coupons/validate", {
         couponCode,
       });
-      set({ appliedCoupon: response.data });
+      set({ discountCoupon: response.data });
     } catch (error) {
       console.error(error);
     }
+  },
+
+  setDiscountCoupon: (coupon: Coupon) => {
+    set({ discountCoupon: coupon });
+  },
+
+  setShippingCoupon: (coupon: Coupon) => {
+    set({ shippingCoupon: coupon });
+  },
+
+  removeDiscountCoupon: () => {
+    set({ isDiscountCouponApplied: false });
+    get().calculateTotal();
+    toast.success("Discount coupon removed");
+  },
+
+  removeShippingCoupon: () => {
+    set({ isShippingCouponApplied: false });
+    get().calculateTotal();
+    toast.success("Shipping coupon removed");
   },
 }));
