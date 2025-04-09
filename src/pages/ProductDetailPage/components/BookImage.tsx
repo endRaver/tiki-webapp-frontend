@@ -8,7 +8,7 @@ const BookImage = () => {
   const [isFrontImg, setIsFrontImg] = useState(false);
 
   return (
-    <div className="h-fit max-w-100 flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0">
+    <div className="md:max-w-100 w-full h-fit flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0">
       <div className="mb-4 px-4">
         {/* Main Image */}
         <div className="mb-2 flex justify-center rounded-lg border border-gray-300">

@@ -8,7 +8,7 @@ const Payment = () => {
   const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
   return (
-    <div className="h-fit max-w-[360px] flex-1 rounded-lg bg-white p-4 shadow-md">
+    <div className="md:max-w-[360px] w-full h-fit flex-1 rounded-lg bg-white p-4">
       {/* Tiki Trading Logo */}
       <div className="flex items-center gap-2 border-b border-[#EBEBF0] pb-4">
         <img src={logo} alt="Tiki Trading" className="h-6" />
