@@ -3,8 +3,15 @@ import CouponCard from "./CouponCard";
 import { more_arrow } from "@/assets/icons/checkout_page_icons";
 import { useCartStore } from "@/store/useCartStore";
 import { map } from "lodash";
+import { Coupon } from "@/types/user";
 
-const CouponList = () => {
+const CouponList = ({
+  setDisplayDiscountCoupon,
+  setDisplayShippingCoupon,
+}: {
+  setDisplayDiscountCoupon: (coupon: Coupon) => void;
+  setDisplayShippingCoupon: (coupon: Coupon) => void;
+}) => {
   const [isDiscountExtended, setIsDiscountExtended] = useState(false);
   const [isShippingExtended, setIsShippingExtended] = useState(false);
 
@@ -35,23 +42,15 @@ const CouponList = () => {
               isDiscountExtended ? (
                 <CouponCard
                   key={coupon.code}
-                  type={coupon.discountType}
-                  discount={coupon.discount}
-                  discountFor={coupon.discountFor}
-                  maxDiscount={coupon.maxDiscount}
-                  requirement={coupon.minOrderAmount}
-                  expireDate={coupon.expirationDate}
+                  coupon={coupon}
+                  onDisplayCoupon={setDisplayDiscountCoupon}
                 />
               ) : (
                 index < 2 && (
                   <CouponCard
                     key={coupon.code}
-                    type={coupon.discountType}
-                    discount={coupon.discount}
-                    discountFor={coupon.discountFor}
-                    maxDiscount={coupon.maxDiscount}
-                    requirement={coupon.minOrderAmount}
-                    expireDate={coupon.expirationDate}
+                    coupon={coupon}
+                    onDisplayCoupon={setDisplayDiscountCoupon}
                   />
                 )
               ),
@@ -95,23 +94,15 @@ const CouponList = () => {
               isShippingExtended ? (
                 <CouponCard
                   key={coupon.code}
-                  type={coupon.discountType}
-                  discount={coupon.discount}
-                  discountFor={coupon.discountFor}
-                  maxDiscount={coupon.maxDiscount}
-                  requirement={coupon.minOrderAmount}
-                  expireDate={coupon.expirationDate}
+                  coupon={coupon}
+                  onDisplayCoupon={setDisplayShippingCoupon}
                 />
               ) : (
                 index < 2 && (
                   <CouponCard
                     key={coupon.code}
-                    type={coupon.discountType}
-                    discount={coupon.discount}
-                    discountFor={coupon.discountFor}
-                    maxDiscount={coupon.maxDiscount}
-                    requirement={coupon.minOrderAmount}
-                    expireDate={coupon.expirationDate}
+                    coupon={coupon}
+                    onDisplayCoupon={setDisplayShippingCoupon}
                   />
                 )
               ),

@@ -17,10 +17,11 @@ import { Coupon } from "@/types/user";
 const CouponSection = () => {
   const {
     coupons,
+
     discountCoupon,
-    setDiscountCoupon,
-    isDiscountCouponApplied,
-    isShippingCouponApplied,
+    shippingCoupon,
+
+    handleApplyCoupon,
     removeDiscountCoupon,
     removeShippingCoupon,
   } = useCartStore();
@@ -36,10 +37,24 @@ const CouponSection = () => {
   const [displayDiscountCoupon, setDisplayDiscountCoupon] = useState<Coupon>(
     sortedDiscountCoupons[0],
   );
+  const [displayShippingCoupon, setDisplayShippingCoupon] = useState<Coupon>(
+    sortedShippingCoupons[0],
+  );
 
-  const handleToggleApplyDiscountCoupon = () => {
-    
-
+  const toggleApplyDiscountCoupon = (type: "product" | "shipping") => {
+    if (type === "product") {
+      if (!discountCoupon) {
+        handleApplyCoupon(displayDiscountCoupon.code, type);
+      } else {
+        removeDiscountCoupon();
+      }
+    } else {
+      if (!shippingCoupon) {
+        handleApplyCoupon(displayShippingCoupon.code, type);
+      } else {
+        removeShippingCoupon();
+      }
+    }
   };
 
   return (
@@ -59,7 +74,7 @@ const CouponSection = () => {
           <div className="relative flex items-center">
             <div className="absolute top-0 left-0 z-0">
               <img
-                src={isDiscountCouponApplied ? coupon_active : coupon_inactive}
+                src={discountCoupon ? coupon_active : coupon_inactive}
                 alt="coupon"
                 className="h-full w-full object-cover"
               />
@@ -84,10 +99,10 @@ const CouponSection = () => {
                     className="cursor-pointer"
                   />
                   <button
-                    onClick={handleToggleApplyDiscountCoupon}
+                    onClick={() => toggleApplyDiscountCoupon("product")}
                     className="cursor-pointer rounded bg-[#017FFF] px-3 py-1 text-xs font-medium text-white"
                   >
-                    {isDiscountCouponApplied ? "Áp Dụng" : "Bỏ chọn"}
+                    {!discountCoupon ? "Áp Dụng" : "Bỏ chọn"}
                   </button>
                 </div>
               </div>
@@ -100,7 +115,7 @@ const CouponSection = () => {
           <div className="relative flex items-center">
             <div className="absolute top-0 left-0 z-0">
               <img
-                src={isShippingCouponApplied ? coupon_active : coupon_inactive}
+                src={shippingCoupon ? coupon_active : coupon_inactive}
                 alt="coupon"
                 className="h-full w-full object-cover"
               />
@@ -113,7 +128,7 @@ const CouponSection = () => {
 
               <div className="flex flex-1 items-center justify-between gap-1">
                 <span className="text-[13px] font-medium text-neutral-100">
-                  Giảm {sortedShippingCoupons[0].discount / 1000}K
+                  Giảm {displayShippingCoupon.discount / 1000}K
                 </span>
 
                 <div className="me-1 flex items-center gap-1">
@@ -122,8 +137,11 @@ const CouponSection = () => {
                     alt="info-blue"
                     className="cursor-pointer"
                   />
-                  <button className="cursor-pointer rounded bg-[#017FFF] px-3 py-1 text-xs font-medium text-white">
-                    {isShippingCouponApplied ? "Áp Dụng" : "Bỏ chọn"}
+                  <button
+                    className="cursor-pointer rounded bg-[#017FFF] px-3 py-1 text-xs font-medium text-white"
+                    onClick={() => toggleApplyDiscountCoupon("shipping")}
+                  >
+                    {!shippingCoupon ? "Áp Dụng" : "Bỏ chọn"}
                   </button>
                 </div>
               </div>
@@ -147,7 +165,10 @@ const CouponSection = () => {
           <img src={angle_right_blue} alt="angle-right" />
         </button>
       </div>
-      <CouponModal />
+      <CouponModal
+        setDisplayDiscountCoupon={setDisplayDiscountCoupon}
+        setDisplayShippingCoupon={setDisplayShippingCoupon}
+      />
     </>
   );
 };

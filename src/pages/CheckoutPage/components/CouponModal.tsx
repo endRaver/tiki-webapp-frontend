@@ -3,12 +3,16 @@ import { useState } from "react";
 
 import { IoIosCloseCircle } from "react-icons/io";
 import CouponList from "./CouponList";
-// import { useCartStore } from "@/store/useCartStore";
+import { Coupon } from "@/types/user";
 
-const CouponModal = () => {
+const CouponModal = ({
+  setDisplayDiscountCoupon,
+  setDisplayShippingCoupon,
+}: {
+  setDisplayDiscountCoupon: (coupon: Coupon) => void;
+  setDisplayShippingCoupon: (coupon: Coupon) => void;
+}) => {
   const [code, setCode] = useState("");
-
-
 
   return (
     <dialog id="coupon_modal" className="modal">
@@ -54,7 +58,10 @@ const CouponModal = () => {
           </button>
         </div>
 
-        <CouponList />
+        <CouponList
+          setDisplayDiscountCoupon={setDisplayDiscountCoupon}
+          setDisplayShippingCoupon={setDisplayShippingCoupon}
+        />
 
         <form method="dialog" className="px-4 py-3">
           <button className="btn bg-primary-300 w-full font-medium text-white">

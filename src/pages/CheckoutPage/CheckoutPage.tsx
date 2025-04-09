@@ -14,21 +14,20 @@ import ItemInformation from "./components/ItemInformation";
 import { useCartStore } from "@/store/useCartStore";
 
 const CheckoutPage = () => {
-  const { shippingType } = useCartStore();
-
   const {
     cart,
-    getCartItems,
     groupCart,
     totalShippingPrice,
-    getMyCoupons,
+    shippingType,
     coupons,
+    handleGetCartItems,
+    handleGetMyCoupons,
   } = useCartStore();
 
   useEffect(() => {
-    getCartItems();
-    getMyCoupons();
-  }, [getCartItems, getMyCoupons]);
+    handleGetCartItems();
+    handleGetMyCoupons();
+  }, [handleGetCartItems, handleGetMyCoupons]);
 
   return (
     <div className="bg-background">
