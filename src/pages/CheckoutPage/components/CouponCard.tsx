@@ -1,38 +1,116 @@
-import { info_blue } from "@/assets/icons/checkout_page_icons";
+import {
+  info_blue,
+  coupon_img,
+  free_ship,
+} from "@/assets/icons/checkout_page_icons";
+import { useCartStore } from "@/store/useCartStore";
+import { Coupon } from "@/types/user";
+import { format } from "date-fns";
 
 interface CouponCardProps {
-  image: string;
-  title: string;
-  requirement: number;
-  expireDate: string;
+  coupon: Coupon;
+  onDisplayCoupon: (coupon: Coupon) => void;
 }
 
-const CouponCard = ({
-  image,
-  title,
-  requirement,
-  expireDate,
-}: CouponCardProps) => {
+const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
+  const formatDate = (date: string) => {
+    return format(new Date(date), "dd/MM/yy");
+  };
+  const {
+    discountType,
+    discount,
+    discountFor,
+    maxDiscount,
+    minOrderAmount,
+    expirationDate,
+  } = coupon;
+
+  const { total } = useCartStore();
+  const {
+    discountCoupon,
+    shippingCoupon,
+    handleApplyCoupon,
+    removeDiscountCoupon,
+    removeShippingCoupon,
+  } = useCartStore();
+
+  const onApplyCoupon = async () => {
+    if (discountFor === "product") {
+      if (discountCoupon && discountCoupon.code === coupon.code) {
+        removeDiscountCoupon();
+      } else {
+        await handleApplyCoupon(coupon.code, discountFor);
+      }
+    } else {
+      if (shippingCoupon && shippingCoupon.code === coupon.code) {
+        removeShippingCoupon();
+      } else {
+        await handleApplyCoupon(coupon.code, discountFor);
+      }
+    }
+    onDisplayCoupon(coupon);
+  };
+
+  const isCouponApplied =
+    (discountCoupon && discountCoupon.code === coupon.code) ||
+    (shippingCoupon && shippingCoupon.code === coupon.code);
+
   return (
-    <div className="flex rounded-lg border border-gray-200 bg-white shadow-md">
+    <div
+      className={`${isCouponApplied ? "border-primary-300 bg-primary-50" : "border-gray-200 bg-white"} flex rounded-lg border-2 shadow-md`}
+    >
       <div className="p-2">
-        <img src={image} alt="coupon" className="size-[116px] rounded-lg" />
+        <img
+          src={discountFor === "product" ? coupon_img : free_ship}
+          alt="coupon"
+          className={`size-[116px] rounded-lg ${
+            total < minOrderAmount ? "opacity-50 grayscale-100" : ""
+          }`}
+        />
       </div>
 
-      <div className="relative flex flex-1 flex-col justify-between p-3">
+      <div
+        className={`relative flex flex-1 flex-col justify-between p-3 ${
+          total < minOrderAmount ? "opacity-50" : ""
+        }`}
+      >
         <button className="absolute top-3 right-3 cursor-pointer">
-          <img src={info_blue} alt="info" />
+          <img
+            src={info_blue}
+            alt="info"
+            className={`${total < minOrderAmount ? "grayscale-100" : ""}`}
+          />
         </button>
         <div>
-          <h3 className="font-medium text-neutral-100">{title}</h3>
-          <span className="text-xs text-[#787878]">{`Cho đơn hàng từ ${requirement}K`}</span>
+          {discountType === "percentage" ? (
+            <h3 className="font-medium text-neutral-100">
+              Giảm {`${discount}%`} tối đa {`${maxDiscount / 1000}K`}
+            </h3>
+          ) : (
+            <h3 className="font-medium text-neutral-100">
+              Giảm {`${discount / 1000}K`}
+            </h3>
+          )}
+          <span className="text-xs text-[#787878]">{`Cho đơn hàng từ ${minOrderAmount / 1000}K`}</span>
         </div>
 
         <div className="flex items-end justify-between">
-          <span className="text-xs text-[#787878]">{`HSD: ${expireDate}`}</span>
+          <span className="text-xs text-[#787878]">{`HSD: ${formatDate(expirationDate)}`}</span>
 
-          <button className="cursor-pointer rounded bg-[#017fff] px-3 py-0.5 text-sm text-white">
-            Áp Dụng
+          <button
+            onClick={onApplyCoupon}
+            className={`rounded bg-[#017fff] px-3 py-0.5 text-sm text-white ${
+              total < minOrderAmount
+                ? "opacity-50 grayscale-100"
+                : "cursor-pointer"
+            }`}
+            disabled={total < minOrderAmount}
+          >
+            {total < minOrderAmount
+              ? "Chưa thỏa mãn"
+              : isCouponApplied
+                ? "Bỏ Chọn"
+                : "Áp Dụng"}
           </button>
         </div>
       </div>

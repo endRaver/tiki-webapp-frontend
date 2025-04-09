@@ -8,11 +8,54 @@ import {
   coupon_inactive,
   info_blue,
   angle_right_blue,
+  discount_coupon_logo,
 } from "@/assets/icons/checkout_page_icons";
 import CouponModal from "./CouponModal";
+import { useCartStore } from "@/store/useCartStore";
+import { Coupon } from "@/types/user";
 
 const CouponSection = () => {
-  const [isCouponActive, setIsCouponActive] = useState(false);
+  const {
+    coupons,
+
+    discountCoupon,
+    shippingCoupon,
+
+    handleApplyCoupon,
+    removeDiscountCoupon,
+    removeShippingCoupon,
+  } = useCartStore();
+
+  const sortedDiscountCoupons = coupons
+    .filter((coupon) => coupon.discountFor === "product")
+    .sort((a, b) => a.minOrderAmount - b.minOrderAmount);
+
+  const sortedShippingCoupons = coupons
+    .filter((coupon) => coupon.discountFor === "shipping")
+    .sort((a, b) => a.minOrderAmount - b.minOrderAmount);
+
+  const [displayDiscountCoupon, setDisplayDiscountCoupon] = useState<Coupon>(
+    sortedDiscountCoupons[0],
+  );
+  const [displayShippingCoupon, setDisplayShippingCoupon] = useState<Coupon>(
+    sortedShippingCoupons[0],
+  );
+
+  const toggleApplyDiscountCoupon = (type: "product" | "shipping") => {
+    if (type === "product") {
+      if (!discountCoupon) {
+        handleApplyCoupon(displayDiscountCoupon.code, type);
+      } else {
+        removeDiscountCoupon();
+      }
+    } else {
+      if (!shippingCoupon) {
+        handleApplyCoupon(displayShippingCoupon.code, type);
+      } else {
+        removeShippingCoupon();
+      }
+    }
+  };
 
   return (
     <>
@@ -26,41 +69,85 @@ const CouponSection = () => {
           </div>
         </div>
 
-        <div className="relative flex items-center">
-          <div className="absolute top-0 left-0 z-0">
-            <img
-              src={isCouponActive ? coupon_active : coupon_inactive}
-              alt="coupon"
-              className="h-full w-full object-cover"
-            />
-          </div>
-
-          <div className="relative z-10 flex w-full items-center gap-4 p-2">
-            <div className="size-11 overflow-hidden rounded-lg">
-              <img src={free_ship} alt="free-ship" />
+        {/* Discount coupons */}
+        {sortedDiscountCoupons.length > 0 && (
+          <div className="relative flex items-center">
+            <div className="absolute top-0 left-0 z-0">
+              <img
+                src={discountCoupon ? coupon_active : coupon_inactive}
+                alt="coupon"
+                className="h-full w-full object-cover"
+              />
             </div>
 
-            <div className="flex flex-1 items-center justify-between gap-1">
-              <span className="text-[13px] font-medium text-neutral-100">
-                Giảm 25K
-              </span>
+            <div className="relative z-10 flex w-full items-center gap-4 p-2">
+              <div className="size-11 overflow-hidden rounded-lg">
+                <img src={discount_coupon_logo} alt="free-ship" />
+              </div>
 
-              <div className="me-1 flex items-center gap-1">
-                <img
-                  src={info_blue}
-                  alt="info-blue"
-                  className="cursor-pointer"
-                />
-                <button
-                  onClick={() => setIsCouponActive(!isCouponActive)}
-                  className="cursor-pointer rounded bg-[#017FFF] px-3 py-1 text-xs font-medium text-white"
-                >
-                  {isCouponActive ? "Áp Dụng" : "Bỏ chọn"}
-                </button>
+              <div className="flex flex-1 items-center justify-between gap-1">
+                <span className="text-[13px] font-medium text-neutral-100">
+                  {displayDiscountCoupon.discountType === "percentage"
+                    ? `Giảm ${displayDiscountCoupon.discount}%`
+                    : `Giảm ${displayDiscountCoupon.discount / 1000}K`}
+                </span>
+
+                <div className="me-1 flex items-center gap-1">
+                  <img
+                    src={info_blue}
+                    alt="info-blue"
+                    className="cursor-pointer"
+                  />
+                  <button
+                    onClick={() => toggleApplyDiscountCoupon("product")}
+                    className="cursor-pointer rounded bg-[#017FFF] px-3 py-1 text-xs font-medium text-white"
+                  >
+                    {!discountCoupon ? "Áp Dụng" : "Bỏ chọn"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Shipping coupons */}
+        {sortedShippingCoupons.length > 0 && (
+          <div className="relative flex items-center">
+            <div className="absolute top-0 left-0 z-0">
+              <img
+                src={shippingCoupon ? coupon_active : coupon_inactive}
+                alt="coupon"
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            <div className="relative z-10 flex w-full items-center gap-4 p-2">
+              <div className="size-11 overflow-hidden rounded-lg">
+                <img src={free_ship} alt="free-ship" />
+              </div>
+
+              <div className="flex flex-1 items-center justify-between gap-1">
+                <span className="text-[13px] font-medium text-neutral-100">
+                  Giảm {displayShippingCoupon.discount / 1000}K
+                </span>
+
+                <div className="me-1 flex items-center gap-1">
+                  <img
+                    src={info_blue}
+                    alt="info-blue"
+                    className="cursor-pointer"
+                  />
+                  <button
+                    className="cursor-pointer rounded bg-[#017FFF] px-3 py-1 text-xs font-medium text-white"
+                    onClick={() => toggleApplyDiscountCoupon("shipping")}
+                  >
+                    {!shippingCoupon ? "Áp Dụng" : "Bỏ chọn"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <button
           className="flex cursor-pointer items-center gap-2"
@@ -78,7 +165,10 @@ const CouponSection = () => {
           <img src={angle_right_blue} alt="angle-right" />
         </button>
       </div>
-      <CouponModal />
+      <CouponModal
+        setDisplayDiscountCoupon={setDisplayDiscountCoupon}
+        setDisplayShippingCoupon={setDisplayShippingCoupon}
+      />
     </>
   );
 };

@@ -1,8 +1,9 @@
 import { Product } from "./product";
 
-export type CartItem = {
-  product: string | Product;
+export type CartItem = Product & {
   quantity: number;
+  shippingPrice: number;
+  shippingDate: string;
 };
 
 export type AuthType = "local" | "google";
@@ -23,6 +24,21 @@ export type User = {
   resetPasswordExpiresAt?: Date | string;
   verificationToken?: string;
   verificationTokenExpiresAt?: Date | string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Coupon = {
+  _id: string;
+  code: string;
+  discount: number;
+  maxDiscount: number;
+  discountType: "percentage" | "amount";
+  discountFor: "product" | "shipping";
+  minOrderAmount: number;
+  expirationDate: string;
+  isActive: boolean;
+  userId: string;
   createdAt: string;
   updatedAt: string;
 };

@@ -1,5 +1,5 @@
+import { useEffect } from "react";
 import { map } from "lodash";
-import { products } from "@/data/fakeData";
 
 import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
 
@@ -10,14 +10,28 @@ import PaymentOffersSection from "./components/PaymentOffersSection";
 import UserInformation from "./components/UserInformation";
 import CouponSection from "./components/CouponSection";
 import ItemTotalPrice from "./components/ItemTotalPrice";
-import { Product } from "@/types/product";
-
-const productList = products.slice(0, 3);
+import ItemInformation from "./components/ItemInformation";
+import { useCartStore } from "@/store/useCartStore";
 
 const CheckoutPage = () => {
+  const {
+    cart,
+    groupCart,
+    totalShippingPrice,
+    shippingType,
+    coupons,
+    handleGetCartItems,
+    handleGetMyCoupons,
+  } = useCartStore();
+
+  useEffect(() => {
+    handleGetCartItems();
+    handleGetMyCoupons();
+  }, [handleGetCartItems, handleGetMyCoupons]);
+
   return (
     <div className="bg-background">
-      <div className="container mx-auto h-[1500px] pt-5">
+      <div className="container mx-auto pt-5">
         <div className="flex gap-5">
           <div className="flex-1 space-y-4">
             {/* Choose delivery method section */}
@@ -29,11 +43,40 @@ const CheckoutPage = () => {
               <DeliveryMethodSelection />
 
               {/* Product list */}
-              <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                {map(productList, (product: Product) => (
-                  <DeliveryItem key={product.name} product={product} />
-                ))}
-              </div>
+              {shippingType === "fast" ? (
+                <div className="mt-[52px] mb-4 flex flex-col gap-10">
+                  {map(groupCart, (group, storeId) => (
+                    <DeliveryItem
+                      key={storeId}
+                      shippingPrice={group.totalShippingPrice}
+                      shippingDate={group.shippingDate}
+                    >
+                      {map(group.items, (item) => (
+                        <ItemInformation key={item._id} item={item} />
+                      ))}
+                    </DeliveryItem>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-[52px] mb-4 flex flex-col gap-10">
+                  <DeliveryItem
+                    shippingPrice={totalShippingPrice}
+                    shippingDate={
+                      new Date(
+                        Math.max(
+                          ...cart.map((item) =>
+                            new Date(item.shippingDate).getTime(),
+                          ),
+                        ),
+                      )
+                    }
+                  >
+                    {map(cart, (item) => (
+                      <ItemInformation key={item._id} item={item} />
+                    ))}
+                  </DeliveryItem>
+                </div>
+              )}
 
               <button className="flex cursor-pointer gap-1 border-t border-[#EBEBF0] py-2.5">
                 <img src={coupon} alt="coupon" />
@@ -56,8 +99,9 @@ const CheckoutPage = () => {
           {/* Checkout summary */}
           <div className="w-[320px] min-w-[320px] space-y-3">
             <UserInformation />
-            <CouponSection />
-            <ItemTotalPrice products={productList} />
+
+            {coupons.length > 0 && <CouponSection />}
+            <ItemTotalPrice />
           </div>
         </div>
       </div>

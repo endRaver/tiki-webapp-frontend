@@ -75,8 +75,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
       set({ user: response.data });
 
-      toast.success("Logged in successfully");
-      return { success: true, message: "Logged in successfully" };
+      toast.success(response.data.message);
+      return { success: true, message: response.data.message };
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       return { success: false, message: axiosError.response?.data?.message };
@@ -89,6 +89,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       await axiosInstance.post("/auth/logout");
       set({ user: null });
+      toast.success("Đăng xuất thành công");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");

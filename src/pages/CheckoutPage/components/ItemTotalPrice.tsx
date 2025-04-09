@@ -1,14 +1,72 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { map } from "lodash";
 
-import { Product } from "@/types/product";
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
+import { toast } from "react-hot-toast";
 
-const ItemTotalPrice = ({ products }: { products: Product[] }) => {
+import { loadStripe } from "@stripe/stripe-js";
+import { formatCurrency } from "@/utils/utils";
+import { useCartStore } from "@/store/useCartStore";
+import axiosInstance from "@/lib/axios";
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+const ItemTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleOpen = () => {
-    setIsOpen((prev) => !prev);
+  const {
+    total,
+    subtotal,
+    totalShippingPrice,
+    cart,
+    paymentMethod,
+    shippingDiscount,
+    shippingCoupon,
+    discountCoupon,
+    productDiscount,
+  } = useCartStore();
+
+  const discountPrice = useMemo(() => {
+    return cart.reduce((acc, item) => {
+      return (
+        acc + (item.original_price - item.current_seller.price) * item.quantity
+      );
+    }, 0);
+  }, [cart]);
+
+  const savingPrice = useMemo(() => {
+    return discountPrice + productDiscount + shippingDiscount;
+  }, [discountPrice, shippingDiscount, productDiscount]);
+
+  const handlePayment = async () => {
+    if (paymentMethod === "cash") {
+      toast.error("Thanh toán tiền mặt không hỗ trợ");
+      return;
+    }
+
+    try {
+      const stripe = await stripePromise;
+      if (!stripe) {
+        toast.error("Stripe failed to initialize");
+        return;
+      }
+      const res = await axiosInstance.post(
+        "/payments/create-checkout-session",
+        {
+          products: cart,
+          couponCodes: [discountCoupon?.code, shippingCoupon?.code],
+          shippingCost: totalShippingPrice,
+        },
+      );
+
+      const session = res.data;
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+      if (result.error) {
+        toast.error(result.error.message ?? "Payment failed");
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
   };
 
   return (
@@ -17,11 +75,11 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
         <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
 
         <div className="flex items-center gap-1">
-          <span className="text-sm text-gray-500">1 sản phẩm.</span>
+          <span className="text-sm text-gray-500">{cart.length} sản phẩm.</span>
 
           <button
             className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
-            onClick={toggleOpen}
+            onClick={() => setIsOpen((prev) => !prev)}
           >
             <span>Xem thông tin</span>
             <img
@@ -41,20 +99,20 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
         }`}
       >
         <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
-          {map(products, (product: Product) => (
+          {map(cart, (item) => (
             <div
-              key={product.name}
+              key={item.name}
               className="flex items-start justify-between text-xs font-medium"
             >
               <div className="flex items-start gap-4">
-                <span className="text-nowrap">1 x</span>
+                <span className="text-nowrap">{item.quantity} x</span>
                 <span className="line-clamp-3 w-full max-w-[156px]">
-                  {product.name}
+                  {item.name}
                 </span>
               </div>
 
               <span className="text-neutral-200">
-                {product.original_price}{" "}
+                {formatCurrency(item.current_seller.price)}{" "}
                 <span className="underline underline-offset-2">đ</span>
               </span>
             </div>
@@ -65,28 +123,51 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
       <div className="space-y-2 border-b border-[#EBEBF0] p-4">
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Tổng tiền hàng</span>
-          <span className="text-sm text-neutral-200">169.000đ</span>
+          <span className="text-sm text-neutral-200">
+            {formatCurrency(subtotal)}
+          </span>
         </div>
 
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Phí vận chuyển</span>
-          <span className="text-sm text-neutral-200">25.000đ</span>
+          <span className="text-sm text-neutral-200">
+            {formatCurrency(totalShippingPrice)}đ
+          </span>
         </div>
 
         <div className="flex justify-between">
           <span className="text-sm text-neutral-600">Giảm giá trực tiếp</span>
-          <span className="text-success-100 text-sm">-59.000đ</span>
+          <span className="text-success-100 text-sm">
+            -{formatCurrency(discountPrice)}đ
+          </span>
         </div>
 
-        <div className="flex justify-between">
-          <div className="flex items-center gap-1">
-            <span className="text-sm text-neutral-600">
-              Giảm giá vận chuyển
+        {discountCoupon && (
+          <div className="flex justify-between">
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-neutral-600">
+                Mã khuyến mãi từ Tiki
+              </span>
+            </div>
+            <span className="text-success-100 text-sm">
+              -{formatCurrency(productDiscount)}đ
             </span>
-            <img src={info} alt="info" />
           </div>
-          <span className="text-success-100 text-sm">-25.000đ</span>
-        </div>
+        )}
+
+        {shippingCoupon && (
+          <div className="flex justify-between">
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-neutral-600">
+                Giảm giá vận chuyển
+              </span>
+              <img src={info} alt="info" />
+            </div>
+            <span className="text-success-100 text-sm">
+              -{formatCurrency(shippingDiscount)}đ
+            </span>
+          </div>
+        )}
 
         <div className="mb-4.5 border-t border-[#EBEBF0] pt-2.5">
           <div className="mb-2.5 flex justify-between">
@@ -96,12 +177,14 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
 
             <div className="flex flex-col items-end gap-0.5">
               <span className="text-danger-100 text-xl font-semibold">
-                110.000 <span className="underline underline-offset-2">đ</span>
+                {formatCurrency(total)}{" "}
+                <span className="underline underline-offset-2">đ</span>
               </span>
               <span className="text-success-100 text-sm">
                 Tiết kiệm{" "}
                 <span>
-                  84.000 <span className="underline underline-offset-2">đ</span>
+                  {formatCurrency(savingPrice)}{" "}
+                  <span className="underline underline-offset-2">đ</span>
                 </span>
               </span>
             </div>
@@ -113,7 +196,10 @@ const ItemTotalPrice = ({ products }: { products: Product[] }) => {
           </p>
         </div>
 
-        <button className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300">
+        <button
+          className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300"
+          onClick={handlePayment}
+        >
           Đặt hàng
         </button>
       </div>

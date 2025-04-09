@@ -9,7 +9,7 @@ export type Category = {
   is_leaf: boolean;
 };
 
-export type CurrentSeller = {
+export type Seller = {
   _id: string;
   name: string;
   link: string;
@@ -17,12 +17,16 @@ export type CurrentSeller = {
   store_id: number;
   is_best_store: boolean;
   is_offline_installment_supported: boolean | null;
-  price: number;
-  product_id: string;
-  sku: string;
   __v: number;
   createdAt: string;
   updatedAt: string;
+};
+
+export type CurrentSeller = {
+  seller: Seller;
+  price: number;
+  product_id: string;
+  sku: string;
 };
 
 export type ProductImage = {
