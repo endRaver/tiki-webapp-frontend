@@ -71,7 +71,7 @@ const SideBar = () => {
   }, []);
   return (
     <div className={` rounded-xl bg-[#FFFFFF] transition-all duration-300 ease-in-out
-        ${isExpanded ? "block w-72" : `${isSidebarOpen ? "w-full h-full absolute left-0 z-10  translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none w-0"}`} `}>
+        ${isExpanded ? "block w-72" : `${isSidebarOpen ? "w-full h-full absolute left-0 top-16 z-10  translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none w-0"}`} `}>
       <h1 className="p-[16px] font-medium">Khám phá theo danh mục</h1>
 
 

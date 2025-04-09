@@ -69,7 +69,7 @@ const Homepage = () => {
         <SideBar />
 
         <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-          <div className="flex rounded-lg bg-white p-4 align-middle">
+          <div className="flex rounded-lg bg-white p-4 align-middle hidden md:flex">
             <h1 className="text-[28px] leading-[42px] font-semibold">
               Nhà Sách Tiki
             </h1>
@@ -138,7 +138,7 @@ const Homepage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 ">
             {products.map((item) => (
               <ProductItem key={item._id} product={item} />
             ))}
