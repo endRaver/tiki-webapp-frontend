@@ -19,24 +19,24 @@ const ProductFilter = () => {
             </div>
             <div className="rounded-2xl bg-[#FFFFFF] px-[16px] py-[12px] hidden md:flex flex-col">
                 <h1 className="font-medium ">Tất cả sản phẩm</h1>
-                <div className="mt-[25px] mb-[36px] flex cursor-pointer flex-row align-middle">
-                    <div className="flex flex-row gap-[8px]">
+                <div className="mt-[25px] mb-[36px] flex flex-wrap cursor-pointer flex-row align-middle">
+                    <div className="flex flex-row gap-[8px] flex-wrap">
                         <input type="checkbox" className="cursor-pointer " />
                         <img src={now} alt="" />
                         <span >Giao siêu tốc 2H</span>
                     </div>
-                    <div className="flex flex-row gap-[8px]">
+                    <div className="flex flex-row gap-[8px] flex-wrap">
                         <span className="px-8 text-gray-300 ">|</span>
                         <input type="checkbox" className="cursor-pointer" />
                         <img src={top_deal} alt="" />
                         <span >Giá rẻ</span>
                     </div>
-                    <div className="flex flex-row gap-[8px]">
+                    <div className="flex flex-row gap-[8px] flex-wrap">
                         <span className="px-8 text-gray-300">|</span>
                         <input type="checkbox" className="cursor-pointer  " />
                         <img src={freeship_extra} alt="" />
                     </div>
-                    <div className="flex flex-row gap-[8px]   ">
+                    <div className="flex flex-row gap-[8px]  flex-wrap ">
                         <span className="px-8 text-gray-300  ">|</span>
                         <input type="checkbox" className="cursor-pointer " />
                         <RatingStar numofStar={4} />

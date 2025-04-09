@@ -1,9 +1,8 @@
 import { dropup } from "@/assets/icons/home_page_icons";
-import { useState } from "react";
-
+import { useSidebar } from "@/contexts/HomeContext";
+import { useEffect, useState } from "react";
 const SideBar = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   const toggleDropdown = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
@@ -48,8 +47,28 @@ const SideBar = () => {
       items: ["Trang sức", "Đồ trang trí", "Gấu bông", "Thiệp chúc mừng"],
     },
   ];
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const { isSidebarOpen } = useSidebar();
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 765) {
+        setIsExpanded(false);
+      } else {
+        setIsExpanded(true);
+      }
+    };
+    // Set initial state
+    handleResize();
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   return (
-    <div className="hidden md:block w-72 rounded-xl bg-[#FFFFFF]">
+      <div className={` rounded-xl bg-[#FFFFFF] transition-all duration-300 ease-in-out
+        ${isExpanded ? "block w-72" : `${isSidebarOpen ?"w-full h-full absolute left-0 z-10  translate-x-0 opacity-100":"-translate-x-full opacity-0 pointer-events-none w-0" }` } `}>
       <h1 className="p-[16px] font-medium">Khám phá theo danh mục</h1>
 
       <div className="h-[2px] bg-gray-400"></div>
@@ -83,3 +102,4 @@ const SideBar = () => {
   );
 };
 export default SideBar;
+

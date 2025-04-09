@@ -5,7 +5,7 @@ import {
   souvenir,
   vietnames_book,
 } from "@/assets/icons/home_page_icons";
-import SideBar from "@/components/Sidebar";
+import SideBar from "@/layout/components/Sidebar";
 import CategoryItem from "./Components/CategoryItem";
 import Carousel from "./Components/Carousel";
 import ProductItem, { ProductModel } from "@/components/ui/ProductItem";

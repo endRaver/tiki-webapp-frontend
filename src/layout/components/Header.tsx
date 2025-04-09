@@ -6,7 +6,6 @@ import {
   icon_search,
   tikiLogo,
 } from "../../assets/icons/header_icons";
-
 import {
   nav_discount,
   nav_exchange,
@@ -33,7 +32,7 @@ const Header = () => {
   ];
 
   return (
-   
+    
     <div className="hidden md:block">
       <section className="flex cursor-pointer justify-center bg-[#EFFFF4] py-3">
         <div className="text-success-100 flex items-center gap-1 text-xs">
