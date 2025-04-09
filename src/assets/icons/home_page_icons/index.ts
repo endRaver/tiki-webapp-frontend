@@ -5,6 +5,7 @@ import vietnames_book from "./vietnames_book.svg";
 import souvenir from "./souvenir.svg";
 import calculator from "./calculator.svg";
 import now from "./now.svg";
+import filter from "./filter.svg";
 import top_deal from "./top_deal.svg";
 import freeship_extra from "./freeship_extra.svg";
 import star_fullfill from "./star_fullfill.svg";
@@ -40,4 +41,5 @@ export {
   dropup,
   next_icon,
   sidebar_more,
+  filter
 };

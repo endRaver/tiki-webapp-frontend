@@ -15,7 +15,7 @@ const RatingStar: React.FC<RatingStarProps> = ({ numofStar }) => {
   ));
 
   return (
-    <div className="flex flex-row flex-wrap">
+    <div className="flex flex-row flex-nowrap">
       {filledStars}
       {emptyStars}
     </div>

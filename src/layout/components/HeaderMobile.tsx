@@ -14,16 +14,16 @@ const HeaderMobile = () => {
                             <img src={horizontal_divider} alt="" />
                             <img src={horizontal_divider} alt="" />
                         </div>
-                        : 
+                        :
                         <div className="flex flex-col gap-1 justify-center align-middle cursor-pointer" onClick={toggleSidebar}>
-                            <FontAwesomeIcon icon="fa-solid fa-x" style={{color: "#ffffff",}} />
+                            <FontAwesomeIcon icon="fa-solid fa-x" style={{ color: "#ffffff", }} />
                         </div>
                 }
                 <div className="bg-[#FFFFFF] flex p-1">
                     <img src={icon_search} alt="" />
                     <input type="text" className="focus:outline-none" placeholder="Bạn đang tìm kiếm gì" />
                 </div>
-                <div className="relative flex items-center gap-4">
+                <div className="relative flex items-center gap-4 cursor-pointer">
                     <img
                         src={header_img_Cart}
                         alt="cart"
@@ -35,8 +35,8 @@ const HeaderMobile = () => {
                 </div>
 
             </div>
-            <div className="flex justify-center">
-                <div className="mt-5 mx-1 flex rounded-2xl gap-2 bg-[#FFE880] py-4 px-12">
+            <div className="flex justify-center cursor-pointer">
+                <div className="mt-5 flex justify-center rounded-2xl gap-2 bg-[#FFE880] py-4 px-12">
                     <img src={day30} alt="" />
                     <span className="font-bold text-nowrap">đổi ý & miễn phí trả hàng</span>
                     <img src={right} alt="" />
