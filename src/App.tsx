@@ -21,7 +21,7 @@ import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
 import NotFound from "./pages/NotFoundPage/NotFound";
 import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
 import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
-import CartPage from "./pages/cartPage/CartPage";
+import CartPage from "./pages/CartPage/CartPage";
 import Confirm from "./pages/ConfirmPage/Confirm";
 
 function App() {

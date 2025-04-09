@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import UserInformation from './UserInformation';
-import CouponSection from './CouponSection';
+import React, { useState } from "react";
+import UserInformation from "./UserInformation";
+import CouponSection from "./CouponSection";
 
 const CartSummary: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,15 +8,15 @@ const CartSummary: React.FC = () => {
   // Sample product data (replace with actual data from your cart)
   const products = [
     {
-      name: 'Sữa Rửa Mặt 3-Nuby 1 Bình sữa chống sặc có hẹp Nuby',
+      name: "Sữa Rửa Mặt 3-Nuby 1 Bình sữa chống sặc có hẹp Nuby",
       original_price: 50000,
     },
     {
-      name: 'Dầu gội xả cho trẻ từ 6 tuổi trở lên Kodomo SILK',
+      name: "Dầu gội xả cho trẻ từ 6 tuổi trở lên Kodomo SILK",
       original_price: 58000,
     },
     {
-      name: 'Dụng Cụ Chà Gót Chân CERAMIC PEDICURE',
+      name: "Dụng Cụ Chà Gót Chân CERAMIC PEDICURE",
       original_price: 65000,
     },
   ];
@@ -26,11 +26,15 @@ const CartSummary: React.FC = () => {
   };
 
   // Calculate totals (replace with actual logic based on your cart data)
-  const totalItemPrice = products.reduce((sum, product) => sum + product.original_price, 0);
+  const totalItemPrice = products.reduce(
+    (sum, product) => sum + product.original_price,
+    0,
+  );
   const shippingFee = 25000;
   const directDiscount = 59000;
   const shippingDiscount = 25000;
-  const totalPayment = totalItemPrice + shippingFee - directDiscount - shippingDiscount;
+  const totalPayment =
+    totalItemPrice + shippingFee - directDiscount - shippingDiscount;
   const totalSavings = directDiscount + shippingDiscount;
 
   return (
@@ -47,7 +51,9 @@ const CartSummary: React.FC = () => {
         <div className="space-y-1 border-b border-[#EBEBF0] p-4">
           <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
           <div className="flex items-center gap-1">
-            <span className="text-sm text-gray-500">{products.length} sản phẩm.</span>
+            <span className="text-sm text-gray-500">
+              {products.length} sản phẩm.
+            </span>
             <button
               className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
               onClick={toggleOpen}
@@ -55,7 +61,7 @@ const CartSummary: React.FC = () => {
               <span>Xem thông tin</span>
               <svg
                 className={`h-4 w-4 text-blue-500 transition-transform duration-300 ease-in-out ${
-                  isOpen ? 'rotate-180' : ''
+                  isOpen ? "rotate-180" : ""
                 }`}
                 fill="none"
                 stroke="currentColor"
@@ -76,7 +82,7 @@ const CartSummary: React.FC = () => {
         {/* Product List (Collapsible) */}
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            isOpen ? 'max-h-[500px]' : 'max-h-0'
+            isOpen ? "max-h-[500px]" : "max-h-0"
           }`}
         >
           <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
@@ -92,7 +98,7 @@ const CartSummary: React.FC = () => {
                   </span>
                 </div>
                 <span className="text-neutral-200">
-                  {product.original_price.toLocaleString()}{' '}
+                  {product.original_price.toLocaleString()}{" "}
                   <span className="underline underline-offset-2">đ</span>
                 </span>
               </div>
@@ -125,7 +131,9 @@ const CartSummary: React.FC = () => {
 
           <div className="flex justify-between">
             <div className="flex items-center gap-1">
-              <span className="text-sm text-neutral-600">Giảm giá vận chuyển</span>
+              <span className="text-sm text-neutral-600">
+                Giảm giá vận chuyển
+              </span>
               <svg
                 className="h-4 w-4 text-gray-500"
                 fill="none"
@@ -153,13 +161,13 @@ const CartSummary: React.FC = () => {
               </h4>
               <div className="flex flex-col items-end gap-0.5">
                 <span className="text-danger-100 text-xl font-semibold">
-                  {totalPayment.toLocaleString()}{' '}
+                  {totalPayment.toLocaleString()}{" "}
                   <span className="underline underline-offset-2">đ</span>
                 </span>
                 <span className="text-success-100 text-sm">
-                  Tiết kiệm{' '}
+                  Tiết kiệm{" "}
                   <span>
-                    {totalSavings.toLocaleString()}{' '}
+                    {totalSavings.toLocaleString()}{" "}
                     <span className="underline underline-offset-2">đ</span>
                   </span>
                 </span>

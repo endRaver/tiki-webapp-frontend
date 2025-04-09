@@ -1,9 +1,10 @@
 // CartPage.tsx
 import React, { useState } from 'react';
+
+import CartSummary from './components/CartSummary';
+import AddOnList from './components/AddOnList';
 import CartHeader from './components/CartHeader';
 import CartList from './components/CartList';
-import AddOnList from './components/AddOnList';
-import CartSummary from './components/CartSummary';
 
 const CartPage: React.FC = () => {
     const [selectAll, setSelectAll] = useState(false);

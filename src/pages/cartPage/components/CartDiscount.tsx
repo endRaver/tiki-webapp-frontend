@@ -1,7 +1,5 @@
-// components/CartDiscount.tsx
-import React from 'react';
-import DiscountSection from './DiscountSection';
-import FreeshipSection from './FreeshipSection';
+import DiscountSection from "./DiscountSection";
+import FreeshipSection from "./FreeshipSection";
 
 interface CartDiscountProps {
   hasDiscount: boolean;
@@ -14,7 +12,10 @@ const CartDiscount: React.FC<CartDiscountProps> = ({
 }) => {
   return (
     <div>
-      <DiscountSection hasDiscount={hasDiscount} discountAmount={discountAmount} />
+      <DiscountSection
+        hasDiscount={hasDiscount}
+        discountAmount={discountAmount}
+      />
       <FreeshipSection hasDiscount={hasDiscount} />
     </div>
   );
