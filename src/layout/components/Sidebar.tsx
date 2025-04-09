@@ -1,10 +1,10 @@
 import { sidebar_more } from "@/assets/icons/home_page_icons";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useSidebar } from "@/contexts/HomeContext";
+import { useEffect, useState } from "react";
 const SideBar = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   const toggleDropdown = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
@@ -50,12 +50,30 @@ const SideBar = () => {
       items: ["Trang sức", "Đồ trang trí", "Gấu bông", "Thiệp chúc mừng"],
     },
   ];
-
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const { isSidebarOpen } = useSidebar();
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 765) {
+        setIsExpanded(false);
+      } else {
+        setIsExpanded(true);
+      }
+    };
+    // Set initial state
+    handleResize();
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   return (
-    <div className="h-fit max-w-60 min-w-60 flex-1 rounded-lg bg-[#FFFFFF] text-neutral-200">
-      <h1 className="border-border-line text- border-b p-4 text-sm font-semibold">
-        Khám phá theo danh mục
-      </h1>
+    <div className={` rounded-xl bg-[#FFFFFF] transition-all duration-300 ease-in-out
+        ${isExpanded ? "block w-72" : `${isSidebarOpen ? "w-full h-full absolute left-0 z-10  translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none w-0"}`} `}>
+      <h1 className="p-[16px] font-medium">Khám phá theo danh mục</h1>
+
 
       {categories.map((category, index) => (
         <div key={category.title} className="border-border-line border-b">
@@ -97,3 +115,4 @@ const SideBar = () => {
   );
 };
 export default SideBar;
+

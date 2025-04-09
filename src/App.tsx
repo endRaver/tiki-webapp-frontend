@@ -1,6 +1,5 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
-import MainLayout from "./layout/Mainlayout/MainLayout.tsx";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import ProfilePage from "./pages/Profilepage/ProfilePage";
 import Homepage from "./pages/Homepage/HomePage";
@@ -15,8 +14,9 @@ import UserPage from "./pages/adminPage/UserPage";
 import AddUserForm from "./pages/adminPage/components/user/UserAdd";
 import OrderPage from "./pages/adminPage/OrderPage";
 import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
-import CartPage from "./pages/cartPage/CartPage.tsx";
 import NotFound from "./pages/NotFoundPage/NotFound.tsx";
+import MainLayout from "./layout/MainLayout.tsx";
+import CartPage from "./pages/cartPage/cartPage.tsx";
 
 
 function App() {

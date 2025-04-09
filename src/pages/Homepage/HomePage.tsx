@@ -4,18 +4,18 @@ import {
   freeship_extra,
   now,
   souvenir,
-  top_deal,
   vietnames_book,
+  top_deal,
 } from "@/assets/icons/home_page_icons";
-import SideBar from "@/components/Sidebar";
+import SideBar from "@/layout/components/Sidebar";
 import CategoryItem from "./Components/CategoryItem";
-import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
-import ProductItem from "@/components/ui/ProductItem";
-import { useEffect } from "react";
 import RatingStar from "@/components/ui/Rating";
 import BreadCrumb from "@/components/ui/BreadCrumb";
 import { useProductStore } from "@/store/useProductStore";
+import ProductItem from "@/components/ui/ProductItem";
+import { useEffect } from "react";
+import ArrangeFilter from "./Components/ArrangeFilter";
 
 const categories = [
   {
@@ -150,7 +150,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-      <section className="my-10 flex w-full flex-col gap-10">
+      <section className="my-10 flex w-full flex-col gap-10 hidden md:block">
         <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
           <span className="font-medium">Tìm kiếm liên quan</span>
         </div>
