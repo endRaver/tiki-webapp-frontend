@@ -1,7 +1,8 @@
 import { logo, minus, official, plus } from "@/assets/icons/detail_page_icons";
+import { Product } from "@/types/product";
 import { useState } from "react";
 
-const Payment = () => {
+const Payment = ({product}:{product:Product}) => {
   const [quantity, setQuantity] = useState(1);
 
   const increaseQuantity = () => setQuantity(quantity + 1);
@@ -45,7 +46,7 @@ const Payment = () => {
         <div className="mt-4">
           <span className="text-base font-semibold text-black">Tạm tính</span>
           <div className="mt-2 text-2xl font-semibold text-black">
-            {(quantity * 110000).toLocaleString()}đ
+            {(quantity * product.original_price).toLocaleString()}đ
           </div>
         </div>
 
