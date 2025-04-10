@@ -16,7 +16,7 @@ const TopDeals = () => {
         <Carousel products={products} itemsPerPage={4} rows={1} />
       </div>
       <div className="hidden xl:block 2xl:hidden">
-        <Carousel products={products} itemsPerPage={4} rows={1} />
+        <Carousel products={products} itemsPerPage={3} rows={1} />
       </div>
       <div className="block min-[390px]:hidden sm:block lg:block xl:hidden">
         <Carousel products={products} itemsPerPage={2} rows={1} />

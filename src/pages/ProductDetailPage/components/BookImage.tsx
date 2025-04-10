@@ -31,6 +31,7 @@ const BookImage = () => {
       setIsMainImg(currentProduct?.images[0]._id);
     }
   }, [currentProduct]);
+
   return (
     <div className="h-fit w-full flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0 md:max-w-100">
       <div className="mb-4 px-4">
@@ -39,11 +40,15 @@ const BookImage = () => {
           {currentProduct?.images.map(
             (img) =>
               isMainImg === img._id && (
-                <img
+                <div
                   key={img._id}
-                  src={img.base_url}
-                  alt={img.label ? img.label : ""}
                   className="h-92 w-92 rounded-lg"
+                  style={{
+                    backgroundImage: `url(${img.base_url})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
                 />
               ),
           )}

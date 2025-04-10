@@ -1,6 +1,6 @@
 import RatingStar from "@/components/ui/Rating";
 import { useProductStore } from "@/store/useProductStore";
-import { map } from "lodash";
+import { isEmpty, map } from "lodash";
 
 const TitleSection = () => {
   const { currentProduct } = useProductStore();
@@ -16,18 +16,20 @@ const TitleSection = () => {
 
   return (
     <div className="h-fit flex-1 rounded-lg bg-white p-4">
-      <span className="text-[13px]">
-        Tác giả:{" "}
-        {currentProduct?.authors &&
-          map(currentProduct?.authors, (author, index, array) => (
-            <span key={author._id} className="text-primary-400">
-              {author.name}
-              {index < array.length - 1 ? ", " : ""}
-            </span>
-          ))}
-      </span>
+      {!isEmpty(currentProduct?.authors) && (
+        <span className="text-[13px]">
+          Tác giả:{" "}
+          {currentProduct?.authors &&
+            map(currentProduct?.authors, (author, index, array) => (
+              <span key={author._id} className="text-primary-400">
+                {author.name}
+                {index < array.length - 1 ? ", " : ""}
+              </span>
+            ))}
+        </span>
+      )}
 
-      <h1 className="text-xl font-medium text-neutral-100">
+      <h1 className="mt-1.5 text-xl font-medium text-neutral-100">
         {currentProduct?.name}
       </h1>
 
@@ -48,20 +50,26 @@ const TitleSection = () => {
           </span>
         </p>
 
-        <span className="rounded-lg bg-[#F5F5FA] px-1 py-0.5 text-xs">
-          -{calculateDiscount()}%
-        </span>
-
-        <p className="relative me-2 text-sm text-neutral-600 line-through">
-          {Math.floor(
-            Number(
-              currentProduct?.current_seller.price.toLocaleString("vi-VN"),
-            ),
-          ).toFixed(3)}
-          <span className="absolute top-[-5px] text-sm underline underline-offset-1">
-            đ
+        {currentProduct?.current_seller.price !==
+          currentProduct?.original_price && (
+          <span className="rounded-lg bg-[#F5F5FA] px-1 py-0.5 text-xs">
+            -{calculateDiscount()}%
           </span>
-        </p>
+        )}
+
+        {currentProduct?.current_seller.price !==
+          currentProduct?.original_price && (
+          <p className="relative me-2 text-sm text-neutral-600 line-through">
+            {Math.floor(
+              Number(
+                currentProduct?.current_seller.price.toLocaleString("vi-VN"),
+              ),
+            ).toFixed(3)}
+            <span className="absolute top-[-5px] text-sm underline underline-offset-1">
+              đ
+            </span>
+          </p>
+        )}
       </div>
     </div>
   );
