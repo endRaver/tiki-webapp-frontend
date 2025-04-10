@@ -4,6 +4,7 @@ import { FaChevronLeft, FaPlus, FaTrash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import axiosInstance from "@/lib/axios";
 
 type ProductFormData = {
   name: string;
@@ -144,7 +145,8 @@ const ProductCreate: React.FC = () => {
         formData.append("images", image);
       });
 
-      await axios.post("http://localhost:5000/api/products", formData, {
+
+      await axiosInstance.post("/products", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -152,11 +154,21 @@ const ProductCreate: React.FC = () => {
 
       toast.success("Product created successfully");
       // Reset form or redirect
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message || "Failed to create product");
+    } catch (error: any) {
+      if (error.response) {
+        // Lỗi từ phía server trả về
+        console.error("❌ Server responded with error:");
+        console.error("Status:", error.response.status);
+        console.error("Message:", error.response.data?.message || "No message");
+        console.error("Details:", error.response.data);
+      } else if (error.request) {
+        // Yêu cầu được gửi nhưng không nhận được phản hồi
+        console.error("❌ No response received from server:");
+        console.error(error.request);
       } else {
-        toast.error("Failed to create product");
+        // Lỗi khác
+        console.error("❌ Error setting up request:");
+        console.error("Message:", error.message);
       }
     } finally {
       setLoading(false);
@@ -193,11 +205,10 @@ const ProductCreate: React.FC = () => {
                 type="text"
                 {...register("name", { required: "Name is required" })}
                 placeholder="Enter product name"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.name
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.name
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-red-500">
@@ -215,11 +226,10 @@ const ProductCreate: React.FC = () => {
                 type="text"
                 {...register("category", { required: "Category is required" })}
                 placeholder="Enter category name"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.category
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.category
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
               />
               {errors.category && (
                 <p className="mt-1 text-sm text-red-500">
@@ -238,11 +248,10 @@ const ProductCreate: React.FC = () => {
                 type="text"
                 {...register("authors", { required: "Authors are required" })}
                 placeholder="John Doe, Jane Smith"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.authors
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.authors
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
               />
               {errors.authors && (
                 <p className="mt-1 text-sm text-red-500">
@@ -262,11 +271,10 @@ const ProductCreate: React.FC = () => {
                   required: "Seller ID is required",
                 })}
                 placeholder="Enter seller ID"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.seller_id
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.seller_id
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
               />
               {errors.seller_id && (
                 <p className="mt-1 text-sm text-red-500">
@@ -287,11 +295,10 @@ const ProductCreate: React.FC = () => {
                   min: { value: 0, message: "Price must be positive" },
                 })}
                 placeholder="Enter price"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.price
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.price
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
               />
               {errors.price && (
                 <p className="mt-1 text-sm text-red-500">
@@ -312,11 +319,10 @@ const ProductCreate: React.FC = () => {
                   min: { value: 0, message: "Price must be positive" },
                 })}
                 placeholder="Enter seller price"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.seller_price
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.seller_price
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
               />
               {errors.seller_price && (
                 <p className="mt-1 text-sm text-red-500">
@@ -367,11 +373,10 @@ const ProductCreate: React.FC = () => {
                   required: "Short description is required",
                 })}
                 placeholder="Enter short description"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.short_description
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.short_description
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
                 rows={3}
               />
               {errors.short_description && (
@@ -391,11 +396,10 @@ const ProductCreate: React.FC = () => {
                   required: "Description is required",
                 })}
                 placeholder="Enter full description"
-                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.description
+                className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.description
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-blue-500"
-                }`}
+                  }`}
                 rows={5}
               />
               {errors.description && (
