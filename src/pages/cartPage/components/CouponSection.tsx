@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 
 const CouponSection: React.FC = () => {
   const [isCouponActive, setIsCouponActive] = useState(false);
@@ -52,7 +52,7 @@ const CouponSection: React.FC = () => {
 
             <div className="me-1 flex items-center gap-1">
               <svg
-                className="h-4 w-4 text-blue-500 cursor-pointer"
+                className="h-4 w-4 cursor-pointer text-blue-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

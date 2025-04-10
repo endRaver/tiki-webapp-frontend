@@ -1,5 +1,4 @@
 // components/DiscountSection.tsx
-import React from 'react';
 import { discoutIcon } from '@/assets/icons/cart_page_icons';
 import { linkDiscountIcon } from '@/assets/icons/cart_page_icons';
 

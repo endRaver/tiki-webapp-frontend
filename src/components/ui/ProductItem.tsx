@@ -12,7 +12,7 @@ const ProductItem = ({ product }: { product: Product }) => {
 
   return (
     <Link to={`/product/${product._id}`}>
-      <div className="flex min-h-[350px] min-w-[180px] cursor-pointer flex-col overflow-hidden rounded-lg bg-white duration-300 hover:shadow-lg sm:min-h-[460px] md:min-h-[567px]">
+      <div className="flex min-h-[350px] min-w-[180px] cursor-pointer flex-col overflow-hidden rounded-lg bg-white duration-300 hover:shadow-lg sm:min-h-[460px] md:min-h-[500px] xl:min-h-[567px]">
         <div
           className="relative flex aspect-square justify-center bg-cover bg-center"
           style={{ backgroundImage: `url(${product.images[0].medium_url})` }}

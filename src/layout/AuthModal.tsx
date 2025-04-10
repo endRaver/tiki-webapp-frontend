@@ -37,6 +37,7 @@ const AuthModal = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (response) => {
       await handleGoogleLogin(response.access_token);
+      window.location.reload();
       handleCloseModal();
     },
     onError: (error) => {
