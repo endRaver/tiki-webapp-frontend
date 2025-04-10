@@ -1,16 +1,23 @@
 import { arrow_right, book_info } from "@/assets/icons/detail_page_icons";
-import { Product } from "@/types/product";
+import { useProductStore } from "@/store/useProductStore";
 import { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-// import products from "@/assets/fakeData";
 const ITEMS_PER_PAGE = 6;
 
-const BookImage = ({ product }: { product: Product }) => {
-  const [isMainImg, setIsMainImg] = useState(product.images[0]._id);
-  const [isThumbnailImg, setIsThumbnailImg] = useState(product.images[0]._id);
+const BookImage = () => {
+  const { currentProduct } = useProductStore();
+
+  const [isMainImg, setIsMainImg] = useState(
+    currentProduct?.images[0]?._id ?? "",
+  );
+  const [isThumbnailImg, setIsThumbnailImg] = useState(
+    currentProduct?.images[0]?._id ?? "",
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const maxIndex = Math.ceil(product.images.length / ITEMS_PER_PAGE) - 1;
+
+  const maxIndex =
+    Math.ceil((currentProduct?.images?.length ?? 0) / ITEMS_PER_PAGE) - 1;
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev < maxIndex ? prev + 1 : 0));
@@ -19,39 +26,48 @@ const BookImage = ({ product }: { product: Product }) => {
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : maxIndex));
   };
-  useEffect( () => {
-    setIsMainImg(product.images[0]._id);
-  }, [product]);
+  useEffect(() => {
+    if (currentProduct) {
+      setIsMainImg(currentProduct?.images[0]._id);
+    }
+  }, [currentProduct]);
   return (
-    <div className="md:max-w-100 w-full h-fit flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0">
+    <div className="h-fit w-full flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0 md:max-w-100">
       <div className="mb-4 px-4">
         {/* Main Image */}
         <div className="mb-2 flex justify-center rounded-lg border border-gray-300">
-          {product.images.map((img) => (
-            isMainImg === img._id ? <>
-              <img
-                src={img.base_url}
-                alt={img.label ? img.label : ""}
-                className="w-92 h-92 rounded-lg"
-              />
-            </> : ""
-          ))}
-
+          {currentProduct?.images.map(
+            (img) =>
+              isMainImg === img._id && (
+                <img
+                  key={img._id}
+                  src={img.base_url}
+                  alt={img.label ? img.label : ""}
+                  className="h-92 w-92 rounded-lg"
+                />
+              ),
+          )}
         </div>
 
         {/* Thumbnail Section */}
         <div className="relative overflow-hidden">
-          <div className="flex gap-2 transition-transform duration-500"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-
-            {product.images.map((img) => (
-              <img
-                src={img.base_url}
-                alt="Thumbnail 1"
-                className={`w-13.5 cursor-pointer rounded-sm ${isThumbnailImg === img._id ? "border-2 border-[#0A68FF]" : "border border-[#EBEBF0]"}`}
+          <div
+            className="flex gap-2 transition-transform duration-500"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {currentProduct?.images.map((img) => (
+              <button
+                key={img._id}
                 onClick={() => setIsThumbnailImg(img._id)}
                 onMouseOver={() => setIsMainImg(img._id)}
-              />
+                onFocus={() => setIsMainImg(img._id)}
+              >
+                <img
+                  src={img.base_url}
+                  alt="Thumbnail 1"
+                  className={`w-13.5 cursor-pointer rounded-sm ${isThumbnailImg === img._id ? "border-2 border-[#0A68FF]" : "border border-[#EBEBF0]"}`}
+                />
+              </button>
             ))}
           </div>
           {/* Nút điều hướng trái */}
@@ -73,8 +89,6 @@ const BookImage = ({ product }: { product: Product }) => {
               <IoIosArrowForward size={24} color="#0A68FF" />
             </button>
           )}
-
-
         </div>
       </div>
 

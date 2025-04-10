@@ -1,7 +1,9 @@
-import { Product } from "@/types/product";
+import { useProductStore } from "@/store/useProductStore";
 import Carousel from "./Carousel";
 
-const TopDeals = ({ products }: { products: Product[] }) => {
+const TopDeals = () => {
+  const { products } = useProductStore();
+
   return (
     <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">
       {/* Tiêu đề */}
