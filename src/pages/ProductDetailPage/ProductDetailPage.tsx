@@ -2,10 +2,29 @@ import BreadCrumb from "@/components/ui/BreadCrumb";
 import BookImage from "./components/BookImage";
 import Payment from "./components/Payment";
 import ProductInformation from "./components/ProductInformation";
+import { useProductStore } from "@/store/useProductStore";
+import { useEffect, useState } from "react";
+import { Product } from "@/types/product";
+import { useParams } from "react-router-dom";
 
-import { products } from "@/data/fakeData";
 
 const ProductDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const [product ,setProduct]=useState<Product>();
+
+  const { products, handleGetProductById } = useProductStore();
+  async function getProductDetail(productId: string|undefined) {
+    try {
+      const data = await handleGetProductById(productId);
+      setProduct(data)
+      
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  }
+  useEffect( () => {
+    getProductDetail(id);
+  }, []);
   return (
     <div className="bg-background">
       <BreadCrumb />
@@ -35,3 +54,7 @@ const ProductDetailPage = () => {
 };
 
 export default ProductDetailPage;
+function handleGetProductById(): any {
+  throw new Error("Function not implemented.");
+}
+
