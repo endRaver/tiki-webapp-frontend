@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import UserInformation from "./UserInformation";
 import CouponSection from "./CouponSection";
 

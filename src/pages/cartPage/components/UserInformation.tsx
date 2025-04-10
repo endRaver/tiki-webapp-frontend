@@ -1,5 +1,3 @@
-import React from 'react';
-
 const UserInformation: React.FC = () => {
   return (
     <div className="space-y-3 rounded bg-white p-4 shadow">

@@ -38,6 +38,7 @@ const LoginModal = ({
       if (res.success) {
         reset();
         onClose();
+        window.location.reload();
       } else {
         setError("email", { message: res.message });
       }

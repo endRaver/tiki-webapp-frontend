@@ -62,7 +62,7 @@ const Homepage = () => {
     <main className="bg-background text-neutral-200">
       <BreadCrumb />
 
-      <section className="md:container md:mx-auto flex gap-6">
+      <section className="flex gap-6 md:container md:mx-auto">
         <SideBar />
 
         <div className="flex flex-1 flex-col gap-4 overflow-hidden">
@@ -87,7 +87,7 @@ const Homepage = () => {
             </div>
           </div>
 
-          <div className="container mx-auto mt-3 flex items-center justify-center gap-1 rounded-lg bg-[#FFE880] py-2">
+          <div className="container mx-auto mt-3 flex items-center justify-center gap-1 rounded-lg bg-[#FFE880] py-2 md:hidden">
             <img src={return_days} alt="return_days" />
             <p className="text-sm font-bold">đổi ý & miễn phí trả hàng</p>
           </div>
@@ -102,7 +102,7 @@ const Homepage = () => {
             <ItemFilterMobile />
           </div>
 
-          <div className="container mx-auto grid grid-cols-2 gap-2 md:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="container mx-auto grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-2 md:gap-4 lg:grid-cols-4">
             {products.map((item) => (
               <ProductItem key={item._id} product={item} />
             ))}

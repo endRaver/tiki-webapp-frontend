@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import CartDiscount from "./CartDiscount";
 import ConfirmationModal from "./ConfirmationModal";
 import CartItem from "./CartItem";
-import CartDiscount from "./CartDiscount";
 
 // Dữ liệu giỏ hàng với 9 sản phẩm từ 2 nhà sách
 const initialCartItems = [

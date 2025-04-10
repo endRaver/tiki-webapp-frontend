@@ -1,5 +1,4 @@
 // ConfirmationModal.tsx
-import React from 'react';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -21,25 +20,27 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg">
-        <div className="flex items-center mb-4">
-          <span className="text-orange-500 mr-2">⚠️</span>
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+      <div className="w-[400px] rounded-lg bg-white p-6 shadow-lg">
+        <div className="mb-4 flex items-center">
+          <span className="mr-2 text-orange-500">⚠️</span>
           <h2 className="text-lg font-semibold">Xóa sản phẩm</h2>
         </div>
-        <p className="text-sm text-gray-600 mb-2">{message}</p>
-        <p className="text-sm text-gray-800 font-medium">{itemName}</p>
-        <p className="text-red-600 font-semibold mt-2">{price.toLocaleString()}đ</p>
-        <div className="flex justify-end mt-6 space-x-3">
+        <p className="mb-2 text-sm text-gray-600">{message}</p>
+        <p className="text-sm font-medium text-gray-800">{itemName}</p>
+        <p className="mt-2 font-semibold text-red-600">
+          {price.toLocaleString()}đ
+        </p>
+        <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onConfirm}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
           >
             Xác Nhận
           </button>
           <button
             onClick={onCancel}
-            className="border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
+            className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
           >
             Hủy
           </button>

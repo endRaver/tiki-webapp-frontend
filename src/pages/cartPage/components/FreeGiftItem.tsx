@@ -1,5 +1,4 @@
 // components/FreeGiftItem.tsx
-import React from 'react';
 
 interface FreeGiftItemProps {
   image: string;
@@ -15,7 +14,7 @@ const FreeGiftItem: React.FC<FreeGiftItemProps> = ({
   onSelect,
 }) => {
   return (
-    <div className="flex items-center border border-gray-200 p-4 rounded-lg">
+    <div className="flex items-center rounded-lg border border-gray-200 p-4">
       {/* Checkbox */}
       <input
         type="checkbox"
@@ -28,16 +27,18 @@ const FreeGiftItem: React.FC<FreeGiftItemProps> = ({
       <img
         src={image}
         alt={name}
-        className="w-24 h-24 object-cover mr-4 rounded"
+        className="mr-4 h-24 w-24 rounded object-cover"
         onError={(e) => {
           e.currentTarget.src =
-            'https://via.placeholder.com/96x96?text=Image+Not+Found';
+            "https://via.placeholder.com/96x96?text=Image+Not+Found";
         }}
       />
 
       {/* Chỉ hiển thị tên */}
       <div className="flex-1">
-        <h3 className="text-sm font-medium text-gray-800 line-clamp-2">{name}</h3>
+        <h3 className="line-clamp-2 text-sm font-medium text-gray-800">
+          {name}
+        </h3>
       </div>
     </div>
   );
