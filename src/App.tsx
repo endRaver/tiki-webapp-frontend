@@ -22,7 +22,7 @@ import NotFound from "./pages/NotFoundPage/NotFound";
 import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
 import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
 import Confirm from "./pages/ConfirmPage/Confirm";
-import CartPage from "./pages/CartPage/CartPage";
+import CartPage from "./pages/cartPage/cartPage";
 
 function App() {
   const { user } = useUserStore();
