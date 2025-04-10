@@ -1,21 +1,19 @@
 import {
   calculator,
   english_books,
-  freeship_extra,
-  now,
   souvenir,
-  top_deal,
   vietnames_book,
+  return_days,
 } from "@/assets/icons/home_page_icons";
-import SideBar from "@/components/Sidebar";
+import SideBar from "@/layout/MainLayout/components/Sidebar";
 import CategoryItem from "./Components/CategoryItem";
-import ArrangeFilter from "./Components/ArrangeFilter";
 import Carousel from "./Components/Carousel";
 import ProductItem from "@/components/ui/ProductItem";
 import { useEffect } from "react";
-import RatingStar from "@/components/ui/Rating";
 import BreadCrumb from "@/components/ui/BreadCrumb";
 import { useProductStore } from "@/store/useProductStore";
+import ItemFilterDesktop from "./Components/ItemFilterDesktop";
+import ItemFilterMobile from "./Components/ItemFilterMobile";
 
 const categories = [
   {
@@ -55,21 +53,20 @@ const bestBooksSeller = [
 ];
 
 const Homepage = () => {
-  const {products,handleFetchAllProduct,}=useProductStore();
-  useEffect(()=>{
+  const { products, handleFetchAllProduct } = useProductStore();
+  useEffect(() => {
     handleFetchAllProduct();
-  },[]);
-
+  }, []);
 
   return (
     <main className="bg-background text-neutral-200">
       <BreadCrumb />
 
-      <section className="container mx-auto flex gap-6">
+      <section className="md:container md:mx-auto flex gap-6">
         <SideBar />
 
         <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-          <div className="flex rounded-lg bg-white p-4 align-middle">
+          <div className="container mx-auto hidden rounded-lg bg-white p-4 align-middle md:flex">
             <h1 className="text-[28px] leading-[42px] font-semibold">
               Nhà Sách Tiki
             </h1>
@@ -77,7 +74,7 @@ const Homepage = () => {
 
           <Carousel />
 
-          <div className="rounded-lg bg-white px-4 py-3">
+          <div className="container mx-auto hidden rounded-lg bg-white px-4 py-3 md:block">
             <span className="font-semibold">Khám phá theo danh mục</span>
             <div className="mt-3 flex flex-row gap-3">
               {categories.map((category, index) => (
@@ -90,55 +87,22 @@ const Homepage = () => {
             </div>
           </div>
 
-          <div className="rounded-lg bg-[#FFFFFF] px-4 py-4.5">
-            <span className="font-semibold">Tất cả sản phẩm</span>
-
-            <div className="space-y-9 py-5.5">
-              <div className="flex cursor-pointer align-middle">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
-                  />
-                  <img src={now} alt="now" className="h-[17px]" />
-                  <span className="text-sm text-nowrap">Giao siêu tốc 2H</span>
-                </div>
-
-                <span className="bg-border-line mx-4 h-6 w-[1px]" />
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
-                  />
-                  <img src={top_deal} alt="top_deal" />
-                  <span className="text-sm text-nowrap">Siêu rẻ</span>
-                </div>
-
-                <span className="bg-border-line mx-4 h-6 w-[1px]" />
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
-                  />
-                  <img src={freeship_extra} alt="freeship" />
-                </div>
-
-                <span className="bg-border-line mx-4 h-6 w-[1px]" />
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-md checked:bg-primary-200 bg-[#f5f5fa] text-white"
-                  />
-                  <RatingStar numofStar={4} />
-                  <span className="text-sm text-nowrap">từ 4 sao</span>
-                </div>
-              </div>
-
-              <ArrangeFilter />
-            </div>
+          <div className="container mx-auto mt-3 flex items-center justify-center gap-1 rounded-lg bg-[#FFE880] py-2">
+            <img src={return_days} alt="return_days" />
+            <p className="text-sm font-bold">đổi ý & miễn phí trả hàng</p>
           </div>
 
-          <div className="grid grid-cols-4 gap-4">
+          {/* Item Filter desktop */}
+          <div className="container mx-auto hidden rounded-lg bg-white px-4 py-4.5 sm:block">
+            <ItemFilterDesktop />
+          </div>
+
+          {/* Item Filter mobile */}
+          <div className="block sm:hidden">
+            <ItemFilterMobile />
+          </div>
+
+          <div className="container mx-auto grid grid-cols-2 gap-2 md:gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4">
             {products.map((item) => (
               <ProductItem key={item._id} product={item} />
             ))}
@@ -150,6 +114,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
+
       <section className="my-10 flex w-full flex-col gap-10">
         <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
           <span className="font-medium">Tìm kiếm liên quan</span>

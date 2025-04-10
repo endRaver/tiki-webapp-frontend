@@ -54,7 +54,7 @@ const Carousel = () => {
   };
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="hidden w-full overflow-hidden md:block">
       <div className="relative">
         {/* Ảnh */}
         <div

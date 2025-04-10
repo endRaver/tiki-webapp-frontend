@@ -18,6 +18,9 @@ import book1 from "./book1.svg";
 import book2 from "./book2.svg";
 import book3 from "./book3.svg";
 import sidebar_more from "./sidebar_more.svg";
+import filter from "./filter.svg";
+import return_days from "./return_days.svg";
+import change_price from "./change_price.svg";
 
 export {
   book1,
@@ -40,4 +43,7 @@ export {
   dropup,
   next_icon,
   sidebar_more,
+  filter,
+  return_days,
+  change_price,
 };

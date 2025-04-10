@@ -52,7 +52,7 @@ const SideBar = () => {
   ];
 
   return (
-    <div className="h-fit max-w-60 min-w-60 flex-1 rounded-lg bg-[#FFFFFF] text-neutral-200">
+    <div className="hidden h-fit max-w-60 min-w-60 flex-1 rounded-lg bg-[#FFFFFF] text-neutral-200 md:block ">
       <h1 className="border-border-line text- border-b p-4 text-sm font-semibold">
         Khám phá theo danh mục
       </h1>
