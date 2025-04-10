@@ -7,6 +7,7 @@ import menu from "./menu.svg";
 import cart_mobile from "./cart_mobile.svg";
 import back_mobile from "./back_mobile.svg";
 import search from "./search.svg";
+import logo_slogan from "./logo_slogan.svg";
 
 export {
   header_account,
@@ -18,4 +19,5 @@ export {
   cart_mobile,
   back_mobile,
   search,
+  logo_slogan,
 };

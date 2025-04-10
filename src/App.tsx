@@ -2,7 +2,7 @@ import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useUserStore } from "./store/useUserStore";
 
-import MainLayout from "./layout/MainLayout/MainLayout";
+import MainLayout from "./layout/Mainlayout/MainLayout";
 
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
