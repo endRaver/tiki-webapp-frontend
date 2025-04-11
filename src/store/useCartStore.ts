@@ -29,7 +29,7 @@ interface CartStore {
 
   calculateTotal: () => void;
   handleGetCartItems: () => Promise<CartItem[]>;
-  handleAddToCart: (product: Product) => Promise<void>;
+  handleAddToCart: (product: Product, quantity?: number) => Promise<void>;
   handleRemoveFromCart: (productId: string) => Promise<void>;
   handleUpdateQuantity: (productId: string, quantity: number) => Promise<void>;
   setShippingType: (type: "fast" | "saving") => void;
@@ -40,6 +40,7 @@ interface CartStore {
     couponCode: string,
     type: "product" | "shipping",
   ) => Promise<void>;
+  handleClearCart: () => Promise<void>;
 
   removeDiscountCoupon: () => void;
   removeShippingCoupon: () => void;
@@ -86,32 +87,35 @@ export const useCartStore = create<CartStore>((set, get) => ({
     } catch (error) {
       set({ cart: [] });
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message ?? "Failed to fetch cart");
+        console.log(error.response?.data?.message);
       }
       return [];
     }
   },
 
-  handleAddToCart: async (product) => {
+  handleAddToCart: async (product, quantity = 1) => {
     try {
-      const response = await axiosInstance.post("/carts", {
+      await axiosInstance.post("/carts", {
         productId: product._id,
+        quantity,
       });
 
-      set((prevState) => {
-        const existingItem = prevState.cart.find(
-          (item) => item._id === product._id,
-        );
+      await get().handleGetCartItems();
 
-        const newCart = existingItem
-          ? prevState.cart.map((item) =>
-              item._id === product._id
-                ? { ...item, quantity: item.quantity + 1 }
-                : item,
-            )
-          : [...prevState.cart, response.data];
-        return { cart: newCart };
-      });
+      // set((prevState) => {
+      //   const existingItem = prevState.cart.find(
+      //     (item) => item._id === product._id,
+      //   );
+
+      //   const newCart = existingItem
+      //     ? prevState.cart.map((item) =>
+      //         item._id === product._id
+      //           ? { ...item, quantity: item.quantity + 1 }
+      //           : item,
+      //       )
+      //     : [...prevState.cart, response.data];
+      //   return { cart: newCart };
+      // });
 
       toast.success("Product added to cart");
     } catch (error) {
@@ -263,5 +267,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   setPaymentMethod: (method: "cash" | "card") => {
     set({ paymentMethod: method });
+  },
+
+  handleClearCart: async () => {
+    try {
+      await axiosInstance.delete("/carts/delete-all");
+      set({ cart: [], groupCart: [] });
+      get().calculateTotal();
+    } catch (error) {
+      console.error(error);
+    }
   },
 }));

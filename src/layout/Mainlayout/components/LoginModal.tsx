@@ -10,6 +10,7 @@ import {
 } from "react-hook-form";
 
 import { AuthForm, FormResponse } from "../../AuthModal";
+import { useNavigate } from "react-router-dom";
 
 type LoginModalProps = {
   setModalType: (modalType: string) => void;
@@ -31,6 +32,7 @@ const LoginModal = ({
 }: LoginModalProps) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const { handleLogin, loading } = useUserStore();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: AuthForm) => {
     try {
@@ -38,6 +40,7 @@ const LoginModal = ({
       if (res.success) {
         reset();
         onClose();
+        navigate("/");
         window.location.reload();
       } else {
         setError("email", { message: res.message });

@@ -33,6 +33,10 @@ interface UserStore {
     success: boolean;
     message: string | undefined;
   }>;
+  handleResetPassword: (
+    token: string,
+    newPassword: string,
+  ) => Promise<{ success: boolean; message: string | undefined }>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -74,6 +78,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
       });
 
       set({ user: response.data });
+      console.log(response.data);
 
       toast.success(response.data.message);
       return { success: true, message: response.data.message };
@@ -173,6 +178,28 @@ export const useUserStore = create<UserStore>((set, get) => ({
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       return { success: false, message: axiosError.response?.data?.message };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleResetPassword: async (token: string, newPassword: string) => {
+    set({ loading: true });
+
+    try {
+      const response = await axiosInstance.post(
+        `/auth/reset-password/${token}`,
+        { password: newPassword },
+      );
+
+      toast.success("Đặt lại mật khẩu thành công");
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errorMessage =
+        axiosError.response?.data?.message ?? "Đã có lỗi xảy ra";
+      toast.error(errorMessage);
+      return { success: false, message: errorMessage };
     } finally {
       set({ loading: false });
     }

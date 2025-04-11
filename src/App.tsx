@@ -22,8 +22,10 @@ import NotFound from "./pages/NotFoundPage/NotFound";
 import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
 import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
 import Confirm from "./pages/ConfirmPage/Confirm";
-import CartPage from "./pages/CartPage/CartPage";
+
+import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 import MainLayout from "./layout/MainLayout/MainLayout";
+import CartPage from "./pages/CartPage/CartPage";
 
 function App() {
   const { user } = useUserStore();
@@ -36,14 +38,21 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Homepage />} />
           <Route
+            path="/reset-password/:token"
+            element={<ResetPasswordPage />}
+          />
+          <Route
             path="/checkout"
             element={user ? <CheckoutPage /> : <NotFound />}
           />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route
+            path="/profile"
+            element={user ? <ProfilePage /> : <NotFound />}
+          />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/*" element={<NotFound />} />
-          <Route path="/confirm" element={<Confirm />} />
+          <Route path="/purchase-success" element={<Confirm />} />
         </Route>
 
         {/* Routes cho admin */}

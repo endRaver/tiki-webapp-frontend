@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { freeship_extra } from "@/assets/icons/home_page_icons";
 import {
   header_account,
@@ -18,8 +18,9 @@ import {
 } from "../../../assets/icons/navbar_header_icons";
 import AuthModal from "../../AuthModal";
 import { useUserStore } from "@/store/useUserStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
+import { useCartStore } from "@/store/useCartStore";
 
 const Header = () => {
   const recommendTags = [
@@ -37,6 +38,9 @@ const Header = () => {
 
   const { user, handleLogout } = useUserStore();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const { cart, handleGetCartItems } = useCartStore();
+  const [cartQuantity, setCartQuantity] = useState(0);
+  const location = useLocation();
 
   const handleOpenModal = () => {
     if (isEmpty(user)) {
@@ -46,6 +50,20 @@ const Header = () => {
       if (modal) modal.showModal();
     }
   };
+
+  useEffect(() => {
+    setCartQuantity(
+      cart
+        ? cart.reduce((acc, item) => acc + (Number(item.quantity) || 0), 0)
+        : 0,
+    );
+  }, [cart]);
+
+  useEffect(() => {
+    if (user) {
+      handleGetCartItems();
+    }
+  }, [handleGetCartItems, location.pathname, user]);
 
   return (
     <>
@@ -148,16 +166,16 @@ const Header = () => {
 
               <span className="h-5 w-0.5 bg-[#EBEBF0]" />
 
-              <Link to="/checkout" className="relative flex items-center gap-4">
+              <a href="/checkout" className="relative flex items-center gap-4">
                 <img
                   src={header_img_Cart}
                   alt="cart"
                   className="rounded-lg p-[2px] hover:bg-[#90b9e5]"
                 />
                 <span className="absolute -top-0 -right-2 rounded-full bg-red-500 px-1 py-0.5 text-[8px] font-bold text-white">
-                  0
+                  {cartQuantity}
                 </span>
-              </Link>
+              </a>
             </div>
           </div>
 

@@ -1,23 +1,63 @@
-import { logo, minus, official, plus } from "@/assets/icons/detail_page_icons";
-import { useProductStore } from "@/store/useProductStore";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
+
+import { useProductStore } from "@/store/useProductStore";
+import { useCartStore } from "@/store/useCartStore";
+import { useUserStore } from "@/store/useUserStore";
+
+import { logo, official } from "@/assets/icons/detail_page_icons";
+import { FaPlus, FaMinus } from "react-icons/fa6";
 
 const Payment = () => {
+  const { user } = useUserStore();
   const { currentProduct } = useProductStore();
+  const { handleAddToCart } = useCartStore();
+  const navigate = useNavigate();
 
   const [quantity, setQuantity] = useState(1);
 
   const increaseQuantity = () => setQuantity(quantity + 1);
   const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
+  const handleOpenModal = () => {
+    if (isEmpty(user)) {
+      const modal = document.getElementById(
+        "auth_modal",
+      ) as HTMLDialogElement | null;
+      if (modal) modal.showModal();
+    }
+  };
+
+  const onAddToCart = () => {
+    if (!user) {
+      handleOpenModal();
+      return;
+    }
+    if (currentProduct) {
+      handleAddToCart(currentProduct, quantity);
+    }
+  };
+
+  const onBuyNow = () => {
+    if (!user) {
+      handleOpenModal();
+      return;
+    }
+    if (currentProduct) {
+      handleAddToCart(currentProduct, quantity);
+      navigate("/checkout");
+    }
+  };
+
   return (
-    <div className="md:max-w-[360px] w-full h-fit flex-1 rounded-lg bg-white p-4">
+    <div className="h-fit w-full flex-1 rounded-lg bg-white p-4 md:max-w-[360px]">
       {/* Tiki Trading Logo */}
       <div className="flex items-center gap-2 border-b border-[#EBEBF0] pb-4">
         <img src={logo} alt="Tiki Trading" className="h-6" />
         <div>
           <p className="text-sm font-medium">Tiki Trading</p>
-          <img src={official} alt="" />
+          <img src={official} alt="official" />
         </div>
       </div>
 
@@ -28,18 +68,19 @@ const Payment = () => {
           <div className="mt-2 flex items-center gap-2">
             <button
               onClick={decreaseQuantity}
-              className="h-8 w-8.5 rounded-sm border border-[#A6A6B0] px-1.75 py-1.5 hover:bg-[#ececec]"
+              className="btn h-8 w-8.5 rounded-sm border border-[#A6A6B0] px-1.75 py-1.5 hover:bg-[#ececec] disabled:bg-transparent! disabled:opacity-50"
+              disabled={quantity === 1}
             >
-              <img className="w-5" src={minus} alt="" />
+              <FaMinus color="#787878" />
             </button>
             <div className="flex h-8 w-10 items-center justify-center rounded-sm border border-[#A6A6B0] text-center">
               {quantity}
             </div>
             <button
               onClick={increaseQuantity}
-              className="h-8 w-8.5 rounded-sm border border-[#A6A6B0] px-1.75 py-1.5 hover:bg-[#ececec]"
+              className="btn h-8 w-8.5 rounded-sm border border-[#A6A6B0] px-1.75 py-1.5 hover:bg-[#ececec]"
             >
-              <img className="w-5" src={plus} alt="" />
+              <FaPlus color="#787878" />
             </button>
           </div>
         </div>
@@ -48,16 +89,25 @@ const Payment = () => {
         <div className="mt-4">
           <span className="text-base font-semibold text-black">Tạm tính</span>
           <div className="mt-2 text-2xl font-semibold text-black">
-            {(quantity * (currentProduct?.original_price ?? 0)).toLocaleString()}đ
+            {(
+              quantity * (currentProduct?.original_price ?? 0)
+            ).toLocaleString()}
+            đ
           </div>
         </div>
 
         {/* Nút hành động */}
         <div className="mt-4 flex flex-col gap-2">
-          <button className="h-10 w-full cursor-pointer rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600">
+          <button
+            className="btn h-10 w-full cursor-pointer rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600"
+            onClick={onBuyNow}
+          >
             Mua ngay
           </button>
-          <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
+          <button
+            className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
+            onClick={onAddToCart}
+          >
             Thêm vào giỏ
           </button>
           <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">

@@ -10,9 +10,9 @@ const DetailInformation = ({
     <div className="space-y-1 rounded-lg bg-white p-4">
       <span className="font-semibold">{specifications.name}</span>
 
-      <div className="mt-3 grid grid-cols-2 text-sm">
+      <div className="mt-3 text-sm">
         {map(specifications.attributes, (item, index) => (
-          <>
+          <div className="grid grid-cols-2" key={item.name}>
             <span
               className={`${index < specifications.attributes.length - 1 ? "border-border-line" : "border-transparent"} border-b py-2 text-neutral-600`}
             >
@@ -23,7 +23,7 @@ const DetailInformation = ({
             >
               {item.value}
             </span>
-          </>
+          </div>
         ))}
       </div>
     </div>
