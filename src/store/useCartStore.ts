@@ -2,7 +2,6 @@ import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { AxiosError } from "axios";
-
 import { Product } from "@/types/product";
 import { CartItem, Coupon } from "@/types/user";
 import { map, groupBy } from "lodash";
@@ -38,11 +37,15 @@ interface CartStore {
   handleGetMyCoupons: () => Promise<void>;
   handleApplyCoupon: (
     couponCode: string,
-    type: "product" | "shipping",
+    type: "product" | "shipping"
   ) => Promise<void>;
 
   removeDiscountCoupon: () => void;
   removeShippingCoupon: () => void;
+
+  // Thêm các hàm để quản lý isSelected
+  toggleSelectItem: (productId: string) => void;
+  toggleSelectAll: (selectAll: boolean) => void;
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -64,27 +67,31 @@ export const useCartStore = create<CartStore>((set, get) => ({
   handleGetCartItems: async () => {
     try {
       const response = await axiosInstance.get("/carts");
-
+      console.log("Cart API Response:", response.data);
+      const cartWithSelection = response.data.map((item: CartItem) => ({
+        ...item,
+        isSelected: false, // Khởi tạo isSelected cho từng sản phẩm
+      }));
       const groupCart = map(
-        groupBy(response.data, (item) => item.current_seller.seller.store_id),
+        groupBy(cartWithSelection, (item) => item.current_seller.seller.store_id),
         (items) => ({
           items,
           totalShippingPrice: Math.max(
-            ...items.map((item) => item.shippingPrice),
+            ...items.map((item) => item.shippingPrice || 0)
           ),
           shippingDate: new Date(
             Math.max(
-              ...items.map((item) => new Date(item.shippingDate).getTime()),
-            ),
+              ...items.map((item) => new Date(item.shippingDate).getTime())
+            )
           ),
-        }),
+        })
       );
-
-      set({ cart: response.data, groupCart });
+      set({ cart: cartWithSelection, groupCart });
       get().calculateTotal();
-      return response.data;
+      return cartWithSelection;
     } catch (error) {
-      set({ cart: [] });
+      console.error("Fetch Cart Error:", error);
+      set({ cart: [], groupCart: [] });
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message ?? "Failed to fetch cart");
       }
@@ -100,24 +107,25 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
       set((prevState) => {
         const existingItem = prevState.cart.find(
-          (item) => item._id === product._id,
+          (item) => item._id === product._id
         );
 
         const newCart = existingItem
           ? prevState.cart.map((item) =>
               item._id === product._id
                 ? { ...item, quantity: item.quantity + 1 }
-                : item,
+                : item
             )
-          : [...prevState.cart, response.data];
+          : [...prevState.cart, { ...response.data, isSelected: false }];
         return { cart: newCart };
       });
 
       toast.success("Product added to cart");
+      get().calculateTotal();
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          error.response?.data?.message ?? "Failed to add product to cart",
+          error.response?.data?.message ?? "Failed to add product to cart"
         );
       }
     }
@@ -133,10 +141,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
       });
 
       toast.success("Product removed from cart");
+      get().calculateTotal();
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          error.response?.data?.message ?? "Failed to remove product from cart",
+          error.response?.data?.message ?? "Failed to remove product from cart"
         );
       }
     }
@@ -148,16 +157,17 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
       set((prevState) => {
         const newCart = prevState.cart.map((item) =>
-          item._id === productId ? { ...item, quantity } : item,
+          item._id === productId ? { ...item, quantity } : item
         );
         return { cart: newCart };
       });
 
       toast.success("Quantity updated");
+      get().calculateTotal();
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          error.response?.data?.message ?? "Failed to update quantity",
+          error.response?.data?.message ?? "Failed to update quantity"
         );
       }
     }
@@ -167,25 +177,35 @@ export const useCartStore = create<CartStore>((set, get) => ({
     const { cart, shippingCoupon, shippingType, groupCart, discountCoupon } =
       get();
 
-    const subtotal = cart.reduce(
+    // Chỉ tính các sản phẩm được chọn
+    const selectedItems = cart.filter((item) => item.isSelected);
+
+    const subtotal = selectedItems.reduce(
       (sum, item) => sum + item.original_price * item.quantity,
-      0,
+      0
     );
 
-    const subtotalDiscount = cart.reduce(
+    const subtotalDiscount = selectedItems.reduce(
       (sum, item) => sum + item.current_seller.price * item.quantity,
-      0,
+      0
     );
 
     const totalShippingPrice =
       shippingType === "fast"
-        ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
-        : Math.max(...cart.map((item) => item.shippingPrice));
+        ? groupCart.reduce((acc, group) => {
+            const selectedGroupItems = group.items.filter((item) => item.isSelected);
+            return selectedGroupItems.length > 0
+              ? acc + group.totalShippingPrice
+              : acc;
+          }, 0)
+        : selectedItems.length > 0
+        ? Math.max(...selectedItems.map((item) => item.shippingPrice || 0))
+        : 0;
 
     let productDiscount = 0;
     let shippingDiscount = 0;
 
-    if (discountCoupon) {
+    if (discountCoupon && selectedItems.length > 0) {
       if (discountCoupon.discountType === "percentage") {
         const discount = (discountCoupon.discount / 100) * subtotalDiscount;
         productDiscount = Math.min(discount, discountCoupon.maxDiscount);
@@ -194,7 +214,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       }
     }
 
-    if (shippingCoupon) {
+    if (shippingCoupon && selectedItems.length > 0) {
       if (shippingCoupon.discount > totalShippingPrice) {
         shippingDiscount = totalShippingPrice;
       } else {
@@ -263,5 +283,28 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   setPaymentMethod: (method: "cash" | "card") => {
     set({ paymentMethod: method });
+  },
+
+  // Hàm để toggle trạng thái chọn của một sản phẩm
+  toggleSelectItem: (productId: string) => {
+    set((prevState) => {
+      const newCart = prevState.cart.map((item) =>
+        item._id === productId ? { ...item, isSelected: !item.isSelected } : item
+      );
+      return { cart: newCart };
+    });
+    get().calculateTotal();
+  },
+
+  // Hàm để chọn hoặc bỏ chọn tất cả sản phẩm
+  toggleSelectAll: (selectAll: boolean) => {
+    set((prevState) => {
+      const newCart = prevState.cart.map((item) => ({
+        ...item,
+        isSelected: selectAll,
+      }));
+      return { cart: newCart };
+    });
+    get().calculateTotal();
   },
 }));

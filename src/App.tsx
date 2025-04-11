@@ -24,6 +24,7 @@ import ProductSpecificationUpdate from "./pages/adminPage/components/product/Pro
 import Confirm from "./pages/ConfirmPage/Confirm";
 import CartPage from "./pages/CartPage/CartPage";
 import MainLayout from "./layout/MainLayout/MainLayout";
+import Login from "./pages/LoginPage/LoginPage";
 
 function App() {
   const { user } = useUserStore();
@@ -44,6 +45,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/*" element={<NotFound />} />
           <Route path="/confirm" element={<Confirm />} />
+          <Route path="/login" element={<Login/>} />
         </Route>
 
         {/* Routes cho admin */}
