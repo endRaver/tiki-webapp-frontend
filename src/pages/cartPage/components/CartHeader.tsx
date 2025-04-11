@@ -21,7 +21,7 @@ const CartHeader: React.FC<CartHeaderProps> = ({
         <div className="flex items-center w-[500px]">
           <input
             type="checkbox"
-            className="mr-2 h-[18px] w-[18px] border-1 border-[#c4c4cf] hover:border-[#0b74e5] appearance-none rounded-sm cursor-pointer checked:bg-[#0b74e5] transition-colors duration-200"
+            className="relative h-[18px] w-[18px] cursor-pointer appearance-none rounded-sm border border-[#c4c4cf] transition-colors duration-200 checked:bg-[#0b74e5] before:absolute before:left-[2px] before:top-[-3px] before:text-white before:text-[14px] before:content-[''] checked:before:content-['✓']"
             checked={selectAll}
             onChange={onSelectAll}
           />

@@ -29,6 +29,7 @@ interface CartListProps {
   itemCount: number;
   onUpdateQuantity: (id: string, newQuantity: number) => void;
   onRemoveFromCart: (id: string) => void;
+  onUpdateSelection: (updatedItems: CartItemType[]) => void; // Thêm prop để cập nhật trạng thái isSelected
 }
 
 const CartList: React.FC<CartListProps> = ({
@@ -39,6 +40,7 @@ const CartList: React.FC<CartListProps> = ({
   itemCount,
   onUpdateQuantity,
   onRemoveFromCart,
+  onUpdateSelection, // Thêm prop
 }) => {
   const discountAmount = useMemo(() => {
     const total = cartItems.reduce(
@@ -71,14 +73,14 @@ const CartList: React.FC<CartListProps> = ({
         ? { ...item, isSelected: !allSelected }
         : item
     );
-    onSelectAll();
+    onUpdateSelection(updatedItems); // Cập nhật trạng thái isSelected
   };
 
   const handleSelectItem = (id: string) => {
     const updatedItems = cartItems.map((item) =>
       item.id === id ? { ...item, isSelected: !item.isSelected } : item
     );
-    onSelectAll();
+    onUpdateSelection(updatedItems); // Cập nhật trạng thái isSelected
   };
 
   const handleIncrease = (id: string) => {
@@ -98,6 +100,11 @@ const CartList: React.FC<CartListProps> = ({
   const handleRemove = (id: string) => {
     setModalAction("remove");
     setItemToRemove(id);
+    setIsModalOpen(true);
+  };
+
+  const handleClearCartWithModal = () => {
+    setModalAction("clear");
     setIsModalOpen(true);
   };
 
@@ -152,8 +159,9 @@ const CartList: React.FC<CartListProps> = ({
                     type="checkbox"
                     checked={allSelected}
                     onChange={() => handleSelectSeller(sellerName)}
-                    className="h-[18px] w-[18px] cursor-pointer appearance-none rounded-sm border-1 border-[#c4c4cf] transition-colors duration-200 checked:bg-[#0b74e5]"
+                    className="relative h-[18px] w-[18px] cursor-pointer appearance-none rounded-sm border border-[#c4c4cf] transition-colors duration-200 checked:bg-[#0b74e5] before:absolute before:left-[2px] before:top-[-3px] before:text-white before:text-[14px] before:content-[''] checked:before:content-['✓']"
                   />
+
                   <img
                     src="https://salt.tikicdn.com/ts/upload/30/24/79/8317b36e87e7c0920e33de0ab5c21b62.png"
                     alt=""

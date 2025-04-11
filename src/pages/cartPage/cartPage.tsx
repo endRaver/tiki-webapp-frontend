@@ -74,7 +74,7 @@ const CartPage: React.FC = () => {
     };
 
     fetchCartItems();
-  }, []); // Dependency array rỗng để chỉ gọi 1 lần
+  }, []);
 
   const handleSelectAll = () => {
     setSelectAll((prev) => !prev);
@@ -83,8 +83,21 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const handleClearCart = () => {
-    // Logic này sẽ được xử lý trong CartList (mở modal xác nhận)
+  const handleUpdateSelection = (updatedItems: CartItemType[]) => {
+    setCartItems(updatedItems);
+    // Kiểm tra nếu tất cả sản phẩm đều được chọn để cập nhật selectAll
+    const allSelected = updatedItems.every((item) => item.isSelected);
+    setSelectAll(allSelected);
+  };
+
+  const handleClearCart = async () => {
+    try {
+      await axiosInstance.delete("/carts");
+      setCartItems([]);
+      setSelectAll(false);
+    } catch (err) {
+      setError("Không thể xóa giỏ hàng.");
+    }
   };
 
   const handleUpdateQuantity = async (id: string, newQuantity: number) => {
@@ -137,6 +150,7 @@ const CartPage: React.FC = () => {
                 itemCount={itemCount}
                 onUpdateQuantity={handleUpdateQuantity}
                 onRemoveFromCart={handleRemoveFromCart}
+                onUpdateSelection={handleUpdateSelection} // Truyền prop mới
               />
             </div>
 
