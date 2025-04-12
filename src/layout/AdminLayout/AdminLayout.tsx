@@ -1,5 +1,5 @@
-import Header from "@/pages/adminPage/components/shared/Header";
-import SliderBar from "@/pages/adminPage/components/shared/SliderBar";
+import Header from "@/pages/AdminPage/components/shared/Header";
+import SliderBar from "@/pages/AdminPage/components/shared/SliderBar";
 import { Outlet } from "react-router-dom";
 
 const AdminLayout = () => {

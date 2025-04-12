@@ -131,13 +131,13 @@ const Header = () => {
                   {isOpenDropdown && (
                     <div className="absolute top-10 right-2 z-50 w-52 rounded-lg bg-white py-2 shadow-md">
                       <Link
-                        to="/profile"
+                        to="/profile/user-info"
                         className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200"
                       >
                         <span>Tài khoản của tôi</span>
                       </Link>
                       <Link
-                        to="/orders"
+                        to="/profile/order"
                         className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200"
                       >
                         <span>Đơn hàng của tôi</span>

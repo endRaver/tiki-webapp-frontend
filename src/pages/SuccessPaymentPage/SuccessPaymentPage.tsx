@@ -5,9 +5,11 @@ import { useCartStore } from "@/store/useCartStore";
 import axiosInstance from "@/lib/axios";
 import { Loader2 } from "lucide-react";
 import Confetti from "react-confetti";
+
 const Confirm = () => {
   const [isProcessing, setIsProcessing] = useState(true);
-  const { handleClearCart } = useCartStore();
+  const { cart, totalShippingPrice, shippingDiscount, handleClearCart } =
+    useCartStore();
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -15,6 +17,9 @@ const Confirm = () => {
       try {
         await axiosInstance.post("/payments/checkout-success", {
           sessionId,
+          shippingPrice: totalShippingPrice,
+          shippingDate: cart[0].shippingDate,
+          shippingDiscount: shippingDiscount,
         });
         handleClearCart();
       } catch (error) {
@@ -33,7 +38,7 @@ const Confirm = () => {
       setIsProcessing(false);
       setError("No session ID found in the URL");
     }
-  }, [handleClearCart]);
+  }, [handleClearCart, cart, totalShippingPrice]);
 
   if (isProcessing)
     return (
