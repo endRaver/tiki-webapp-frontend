@@ -5,7 +5,7 @@ import {
   vietnames_book,
   return_days,
 } from "@/assets/icons/home_page_icons";
-import SideBar from "@/layout/MainLayout/components/Sidebar";
+import SideBar from "@/layout/Mainlayout111/components/Sidebar";
 import CategoryItem from "./Components/CategoryItem";
 import Carousel from "./Components/Carousel";
 import ProductItem from "@/components/ui/ProductItem";
@@ -115,7 +115,7 @@ const Homepage = () => {
         </div>
       </section>
 
-      <section className="my-10 flex w-full flex-col gap-10">
+      <section className="my-10 hidden w-full flex-col gap-10 md:flex">
         <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
           <span className="font-medium">Tìm kiếm liên quan</span>
         </div>
@@ -128,7 +128,7 @@ const Homepage = () => {
             {bestBooksSeller.map((book, index) => (
               <li key={index} className="flex flex-row justify-between">
                 <p>
-                  1.<a className="cursor-pointer text-[#0B74E5]">{book.name}</a>
+                  1.<span className="cursor-pointer text-[#0B74E5]">{book.name}</span>
                 </p>{" "}
                 <span>{book.price.toLocaleString("vi-VN")}đ</span>
               </li>

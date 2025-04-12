@@ -12,7 +12,7 @@ const HeaderMobile = () => {
   return (
     <div className="md:hidden">
       <div className="flex justify-around gap-5 bg-[#1BA8FF] p-2.5 align-middle">
-        <img src={back} alt="" />
+        <img src={back} alt="back" />
 
         <div className="flex flex-col justify-center gap-1 align-middle">
           <img src={horizontal_divider} alt="" />

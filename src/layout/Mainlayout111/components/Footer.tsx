@@ -61,7 +61,7 @@ const Footer = () => {
   const isHome = path === "/";
 
   return (
-    <main className="container mx-auto pb-8">
+    <main className="container mx-auto hidden pb-8 md:block">
       <section className="flex justify-between pt-10 pb-4">
         <div className="flex flex-col gap-3">
           <div className="font-medium">Hỗ trợ khách hàng</div>

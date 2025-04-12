@@ -1,7 +1,6 @@
-import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../adminPage/components/shared/Header";
-import SliderBar from "../adminPage/components/shared/SliderBar";
+import Header from "../adminPage111/components/shared/Header";
+import SliderBar from "../adminPage111/components/shared/SliderBar";
 
 const AdminLayout: React.FC = () => {
   return (

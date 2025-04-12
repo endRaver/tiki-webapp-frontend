@@ -175,7 +175,7 @@ const Header = () => {
                 <span className="absolute -top-0 -right-2 rounded-full bg-red-500 px-1 py-0.5 text-[8px] font-bold text-white">
                   {cartQuantity}
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
 

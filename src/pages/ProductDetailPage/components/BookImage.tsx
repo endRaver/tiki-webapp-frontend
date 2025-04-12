@@ -36,16 +36,16 @@ const BookImage = () => {
     <div className="h-fit w-full flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0 md:max-w-100">
       <div className="mb-4 px-4">
         {/* Main Image */}
-        <div className="mb-2 flex justify-center rounded-lg border border-gray-300">
+        <div className="mb-2 flex h-96 w-full justify-center rounded-lg border border-gray-300">
           {currentProduct?.images.map(
             (img) =>
               isMainImg === img._id && (
                 <div
                   key={img._id}
-                  className="h-92 w-92 rounded-lg"
+                  className="h-full w-full rounded-lg"
                   style={{
                     backgroundImage: `url(${img.base_url})`,
-                    backgroundSize: "cover",
+                    backgroundSize: "contain",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                   }}
@@ -66,6 +66,7 @@ const BookImage = () => {
                 onClick={() => setIsThumbnailImg(img._id)}
                 onMouseOver={() => setIsMainImg(img._id)}
                 onFocus={() => setIsMainImg(img._id)}
+                className="m-0 flex h-auto w-13.5 flex-shrink-0 border-none bg-transparent p-0"
               >
                 <img
                   src={img.base_url}

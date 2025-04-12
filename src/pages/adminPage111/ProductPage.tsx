@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import ProductList from "../adminPage/components/product/ProductList";
-import ProductFilter from "../adminPage/components/product/ProductFilter";
+import { useState } from "react";
+import ProductList from "../adminPage111/components/product/ProductList";
+import ProductFilter from "../adminPage111/components/product/ProductFilter";
 
 const ProductPage: React.FC = () => {
   const [products, setProducts] = useState([
@@ -33,14 +33,19 @@ const ProductPage: React.FC = () => {
       },
       images: [
         {
-          base_url: "https://salt.tikicdn.com/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
+          base_url:
+            "https://salt.tikicdn.com/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
           is_gallery: true,
           label: null,
           position: null,
-          large_url: "https://salt.tikicdn.com/cache/w1200/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
-          medium_url: "https://salt.tikicdn.com/cache/w300/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
-          small_url: "https://salt.tikicdn.com/cache/200x280/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
-          thumbnail_url: "https://salt.tikicdn.com/cache/200x280/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
+          large_url:
+            "https://salt.tikicdn.com/cache/w1200/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
+          medium_url:
+            "https://salt.tikicdn.com/cache/w300/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
+          small_url:
+            "https://salt.tikicdn.com/cache/200x280/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
+          thumbnail_url:
+            "https://salt.tikicdn.com/cache/200x280/ts/product/57/44/86/19de0644beef19b9b885d0942f7d6f25.jpg",
           _id: "67ec40685051d57679596c7f",
         },
       ],
@@ -58,39 +63,46 @@ const ProductPage: React.FC = () => {
     },
   ]);
 
-  const handleProductFilterChange = (filters: { name: string; category: string; brand: string }) => {
+  const handleProductFilterChange = (filters: {
+    name: string;
+    category: string;
+    brand: string;
+  }) => {
     console.log("Product filters:", filters);
   };
 
   return (
     <div className="p-6">
-      <div className="flex space-x-2 mb-4">
-        <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
+      <div className="mb-4 flex space-x-2">
+        <button className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100">
           ALL ({products.length})
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-blue-500 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-blue-500 hover:bg-gray-100">
           Selling (0)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-orange-500 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-orange-500 hover:bg-gray-100">
           Sắp giới hạn hiện thị (0)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-red-500 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-red-500 hover:bg-gray-100">
           Gợi ý sp Top Deal (0)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100">
           Out of stock (0)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100">
           Draft (1)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100">
           Reviewing (0)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-orange-500 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-orange-500 hover:bg-gray-100">
           Violated (1)
         </button>
       </div>
-      <ProductFilter products={products} onFilterChange={handleProductFilterChange} />
+      <ProductFilter
+        products={products}
+        onFilterChange={handleProductFilterChange}
+      />
       <ProductList products={products} />
     </div>
   );

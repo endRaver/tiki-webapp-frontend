@@ -37,7 +37,7 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      <div className="container mx-auto flex flex-col items-center px-2 pb-10 sm:hidden sm:gap-2 md:hidden lg:hidden lg:gap-4 xl:gap-6">
+      <div className="container mx-auto flex flex-col items-center space-y-4 pt-4 pb-10 sm:hidden sm:gap-2 md:hidden lg:hidden lg:gap-4 xl:gap-6">
         <BookImage />
         <Payment />
         <ProductInformation />

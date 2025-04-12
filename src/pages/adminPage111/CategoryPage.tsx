@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import CategoryList from "../adminPage/components/category/CategoryList.tsx";
-import CategoryFilter from "../adminPage/components/category/CategoryFilter";
+import { useState } from "react";
+import CategoryList from "../adminPage111/components/category/CategoryList.tsx";
+import CategoryFilter from "../adminPage111/components/category/CategoryFilter";
 
 const CategoryPage: React.FC = () => {
   const [categories, setCategories] = useState([
@@ -26,18 +26,21 @@ const CategoryPage: React.FC = () => {
 
   return (
     <div className="p-6">
-      <div className="flex space-x-2 mb-4">
-        <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
+      <div className="mb-4 flex space-x-2">
+        <button className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100">
           ALL ({categories.length})
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-blue-500 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-blue-500 hover:bg-gray-100">
           Active (0)
         </button>
-        <button className="px-4 py-2 border border-gray-300 rounded text-orange-500 hover:bg-gray-100">
+        <button className="rounded border border-gray-300 px-4 py-2 text-orange-500 hover:bg-gray-100">
           Inactive (0)
         </button>
       </div>
-      <CategoryFilter categories={categories} onFilterChange={handleCategoryFilterChange} />
+      <CategoryFilter
+        categories={categories}
+        onFilterChange={handleCategoryFilterChange}
+      />
       <CategoryList categories={categories} />
     </div>
   );
