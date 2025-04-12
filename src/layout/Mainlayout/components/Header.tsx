@@ -166,7 +166,7 @@ const Header = () => {
 
               <span className="h-5 w-0.5 bg-[#EBEBF0]" />
 
-              <a href="/checkout" className="relative flex items-center gap-4">
+              <Link to="/cart" className="relative flex items-center gap-4">
                 <img
                   src={header_img_Cart}
                   alt="cart"

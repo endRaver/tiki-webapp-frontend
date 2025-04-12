@@ -1,41 +1,68 @@
 import { useMemo, useState } from "react";
 import { map } from "lodash";
-
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
 import { toast } from "react-hot-toast";
-
 import { loadStripe } from "@stripe/stripe-js";
 import { formatCurrency } from "@/utils/utils";
 import { useCartStore } from "@/store/useCartStore";
 import axiosInstance from "@/lib/axios";
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-const ItemTotalPrice = () => {
+interface CartItemType {
+  id: string;
+  seller: {
+    name: string;
+    link: string;
+  };
+  image: string;
+  name: string;
+  originalPrice: number;
+  discountedPrice: number;
+  discount: number;
+  quantity: number;
+  shippingDate: string;
+  isSelected: boolean;
+}
+
+interface ItemTotalPriceProps {
+  selectedItems: CartItemType[];
+}
+
+const ItemTotalPrice: React.FC<ItemTotalPriceProps> = ({ selectedItems }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { paymentMethod, shippingType, shippingCoupon, discountCoupon } = useCartStore();
 
-  const {
-    total,
-    subtotal,
-    totalShippingPrice,
-    cart,
-    paymentMethod,
-    shippingDiscount,
-    shippingCoupon,
-    discountCoupon,
-    productDiscount,
-  } = useCartStore();
+  // Tính toán dựa trên selectedItems
+  const subtotal = selectedItems.reduce(
+    (sum, item) => sum + item.originalPrice * item.quantity,
+    0
+  );
+  const subtotalDiscount = selectedItems.reduce(
+    (sum, item) => sum + item.discountedPrice * item.quantity,
+    0
+  );
+  const totalShippingPrice = selectedItems.length > 0 ? 25000 : 0; // Phí vận chuyển cố định
 
-  const discountPrice = useMemo(() => {
-    return cart.reduce((acc, item) => {
-      return (
-        acc + (item.original_price - item.current_seller.price) * item.quantity
-      );
-    }, 0);
-  }, [cart]);
+  let productDiscount = 0;
+  let shippingDiscount = 0;
 
-  const savingPrice = useMemo(() => {
-    return discountPrice + productDiscount + shippingDiscount;
-  }, [discountPrice, shippingDiscount, productDiscount]);
+  if (discountCoupon) {
+    if (discountCoupon.discountType === "percentage") {
+      const discount = (discountCoupon.discount / 100) * subtotalDiscount;
+      productDiscount = Math.min(discount, discountCoupon.maxDiscount);
+    } else {
+      productDiscount = discountCoupon.discount;
+    }
+  }
+
+  if (shippingCoupon) {
+    shippingDiscount = Math.min(shippingCoupon.discount, totalShippingPrice);
+  }
+
+  const total = subtotalDiscount + totalShippingPrice - productDiscount - shippingDiscount;
+  const discountPrice = subtotal - subtotalDiscount;
+  const savingPrice = discountPrice + productDiscount + shippingDiscount;
 
   const handlePayment = async () => {
     if (paymentMethod === "cash") {
@@ -49,14 +76,18 @@ const ItemTotalPrice = () => {
         toast.error("Stripe failed to initialize");
         return;
       }
-      const res = await axiosInstance.post(
-        "/payments/create-checkout-session",
-        {
-          products: cart,
-          couponCodes: [discountCoupon?.code, shippingCoupon?.code],
-          shippingCost: totalShippingPrice,
-        },
-      );
+      const res = await axiosInstance.post("/payments/create-checkout-session", {
+        products: selectedItems.map((item) => ({
+          _id: item.id,
+          name: item.name,
+          images: [{ base_url: item.image }],
+          original_price: item.originalPrice,
+          current_seller: { price: item.discountedPrice },
+          quantity: item.quantity,
+        })),
+        couponCodes: [discountCoupon?.code, shippingCoupon?.code],
+        shippingCost: totalShippingPrice,
+      });
 
       const session = res.data;
       const result = await stripe.redirectToCheckout({ sessionId: session.id });
@@ -66,6 +97,7 @@ const ItemTotalPrice = () => {
       }
     } catch (error) {
       console.error("Error creating checkout session:", error);
+      toast.error("Payment failed");
     }
   };
 
@@ -73,10 +105,8 @@ const ItemTotalPrice = () => {
     <div className="rounded bg-white shadow">
       <div className="space-y-1 border-b border-[#EBEBF0] p-4">
         <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
-
         <div className="flex items-center gap-1">
-          <span className="text-sm text-gray-500">{cart.length} sản phẩm.</span>
-
+          <span className="text-sm text-gray-500">{selectedItems.length} sản phẩm.</span>
           <button
             className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
             onClick={() => setIsOpen((prev) => !prev)}
@@ -99,9 +129,9 @@ const ItemTotalPrice = () => {
         }`}
       >
         <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
-          {map(cart, (item) => (
+          {map(selectedItems, (item) => (
             <div
-              key={item.name}
+              key={item.id}
               className="flex items-start justify-between text-xs font-medium"
             >
               <div className="flex items-start gap-4">
@@ -110,9 +140,8 @@ const ItemTotalPrice = () => {
                   {item.name}
                 </span>
               </div>
-
               <span className="text-neutral-200">
-                {formatCurrency(item.current_seller.price)}{" "}
+                {formatCurrency(item.discountedPrice * item.quantity)}{" "}
                 <span className="underline underline-offset-2">đ</span>
               </span>
             </div>
@@ -174,7 +203,6 @@ const ItemTotalPrice = () => {
             <h4 className="text-sm font-medium text-neutral-200">
               Tổng tiền thanh toán
             </h4>
-
             <div className="flex flex-col items-end gap-0.5">
               <span className="text-danger-100 text-xl font-semibold">
                 {formatCurrency(total)}{" "}

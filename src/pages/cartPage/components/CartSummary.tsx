@@ -1,41 +1,60 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Thêm useNavigate
 import UserInformation from "./UserInformation";
 import CouponSection from "./CouponSection";
 
-const CartSummary: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface CartItemType {
+  id: string;
+  seller: {
+    name: string;
+    link: string;
+  };
+  image: string;
+  name: string;
+  originalPrice: number;
+  discountedPrice: number;
+  discount: number;
+  quantity: number;
+  shippingDate: string;
+  isSelected: boolean;
+}
 
-  // Sample product data (replace with actual data from your cart)
-  const products = [
-    {
-      name: "Sữa Rửa Mặt 3-Nuby 1 Bình sữa chống sặc có hẹp Nuby",
-      original_price: 50000,
-    },
-    {
-      name: "Dầu gội xả cho trẻ từ 6 tuổi trở lên Kodomo SILK",
-      original_price: 58000,
-    },
-    {
-      name: "Dụng Cụ Chà Gót Chân CERAMIC PEDICURE",
-      original_price: 65000,
-    },
-  ];
+interface CartSummaryProps {
+  cartItems: CartItemType[];
+}
+
+const CartSummary: React.FC<CartSummaryProps> = ({ cartItems }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate(); // Khởi tạo useNavigate
 
   const toggleOpen = () => {
     setIsOpen((prev) => !prev);
   };
 
-  // Calculate totals (replace with actual logic based on your cart data)
-  const totalItemPrice = products.reduce(
-    (sum, product) => sum + product.original_price,
-    0,
+  // Lọc các sản phẩm được chọn
+  const selectedItems = cartItems.filter((item) => item.isSelected);
+
+  // Tính toán tổng tiền, giảm giá, phí vận chuyển
+  const totalItemPrice = selectedItems.reduce(
+    (sum, item) => sum + item.discountedPrice * item.quantity,
+    0
   );
-  const shippingFee = 25000;
-  const directDiscount = 59000;
-  const shippingDiscount = 25000;
-  const totalPayment =
-    totalItemPrice + shippingFee - directDiscount - shippingDiscount;
+  const shippingFee = selectedItems.length > 0 ? 25000 : 0; // Phí vận chuyển (giả sử 25k nếu có sản phẩm)
+  const directDiscount = totalItemPrice >= 139000 ? 5000 : 0; // Giảm giá trực tiếp
+  const shippingDiscount = selectedItems.length > 0 ? 25000 : 0; // Giảm giá vận chuyển
+  const totalPayment = totalItemPrice + shippingFee - directDiscount - shippingDiscount;
   const totalSavings = directDiscount + shippingDiscount;
+
+  // Xử lý khi bấm "Thanh toán"
+  const handleCheckout = () => {
+    if (selectedItems.length === 0) {
+      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+      return;
+    }
+
+    // Điều hướng đến CheckoutPage và truyền danh sách sản phẩm được chọn
+    navigate("/checkout", { state: { selectedItems } });
+  };
 
   return (
     <div className="space-y-3">
@@ -52,7 +71,7 @@ const CartSummary: React.FC = () => {
           <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
           <div className="flex items-center gap-1">
             <span className="text-sm text-gray-500">
-              {products.length} sản phẩm.
+              {selectedItems.length} sản phẩm.
             </span>
             <button
               className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
@@ -86,19 +105,19 @@ const CartSummary: React.FC = () => {
           }`}
         >
           <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
-            {products.map((product) => (
+            {selectedItems.map((product) => (
               <div
-                key={product.name}
+                key={product.id}
                 className="flex items-start justify-between text-xs font-medium"
               >
                 <div className="flex items-start gap-4">
-                  <span className="text-nowrap">1 x</span>
+                  <span className="text-nowrap">{product.quantity} x</span>
                   <span className="line-clamp-3 w-full max-w-[156px]">
                     {product.name}
                   </span>
                 </div>
                 <span className="text-neutral-200">
-                  {product.original_price.toLocaleString()}{" "}
+                  {(product.discountedPrice * product.quantity).toLocaleString()}{" "}
                   <span className="underline underline-offset-2">đ</span>
                 </span>
               </div>
@@ -180,7 +199,10 @@ const CartSummary: React.FC = () => {
             </p>
           </div>
 
-          <button className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300">
+          <button
+            className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300"
+            onClick={handleCheckout} // Thêm sự kiện onClick để điều hướng
+          >
             Thanh toán
           </button>
         </div>

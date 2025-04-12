@@ -1,8 +1,7 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom"; // Thêm useLocation để lấy state
 import { map } from "lodash";
-
 import { coupon, angle_right } from "@/assets/icons/checkout_page_icons";
-
 import DeliveryItem from "./components/DeliveryItem";
 import DeliveryMethodSelection from "./components/DeliveryMethodSelection";
 import PaymentMethodSelection from "./components/PaymentMethodSelection";
@@ -13,21 +12,58 @@ import ItemTotalPrice from "./components/ItemTotalPrice";
 import ItemInformation from "./components/ItemInformation";
 import { useCartStore } from "@/store/useCartStore";
 
+interface CartItemType {
+  id: string;
+  seller: {
+    name: string;
+    link: string;
+  };
+  image: string;
+  name: string;
+  originalPrice: number;
+  discountedPrice: number;
+  discount: number;
+  quantity: number;
+  shippingDate: string;
+  isSelected: boolean;
+}
+
 const CheckoutPage = () => {
-  const {
-    cart,
-    groupCart,
-    totalShippingPrice,
-    shippingType,
-    coupons,
-    handleGetCartItems,
-    handleGetMyCoupons,
-  } = useCartStore();
+  const location = useLocation(); // Lấy state từ điều hướng
+  const { selectedItems }: { selectedItems: CartItemType[] } = location.state || { selectedItems: [] }; // Lấy danh sách sản phẩm được chọn
+  const { shippingType, coupons, handleGetMyCoupons } = useCartStore();
 
   useEffect(() => {
-    handleGetCartItems();
     handleGetMyCoupons();
-  }, [handleGetCartItems, handleGetMyCoupons]);
+  }, [handleGetMyCoupons]);
+
+  // Nhóm các sản phẩm theo seller (tương tự groupCart trong useCartStore)
+  const groupCart = map(
+    selectedItems.reduce((acc: { [key: string]: CartItemType[] }, item) => {
+      const storeId = item.seller.name; // Sử dụng seller.name làm key
+      if (!acc[storeId]) {
+        acc[storeId] = [];
+      }
+      acc[storeId].push(item);
+      return acc;
+    }, {}),
+    (items) => ({
+      items,
+      totalShippingPrice: 25000, // Giả sử phí vận chuyển cố định 25k
+      shippingDate: new Date(
+        Math.max(
+          ...items.map((item) =>
+            new Date(item.shippingDate.split(", ")[1].split("/").reverse().join("-")).getTime()
+          )
+        )
+      ),
+    })
+  );
+
+  // Tính tổng phí vận chuyển
+  const totalShippingPrice = shippingType === "fast"
+    ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
+    : Math.max(...selectedItems.map(() => 25000), 0);
 
   return (
     <div className="bg-background">
@@ -45,14 +81,25 @@ const CheckoutPage = () => {
               {/* Product list */}
               {shippingType === "fast" ? (
                 <div className="mt-[52px] mb-4 flex flex-col gap-10">
-                  {map(groupCart, (group, storeId) => (
+                  {groupCart.map((group, index) => (
                     <DeliveryItem
-                      key={storeId}
+                      key={index}
                       shippingPrice={group.totalShippingPrice}
                       shippingDate={group.shippingDate}
                     >
-                      {map(group.items, (item) => (
-                        <ItemInformation key={item._id} item={item} />
+                      {group.items.map((item) => (
+                        <ItemInformation
+                          key={item.id}
+                          item={{
+                            _id: item.id,
+                            name: item.name,
+                            images: [{ base_url: item.image }],
+                            original_price: item.originalPrice,
+                            current_seller: { price: item.discountedPrice },
+                            quantity: item.quantity,
+                            shippingDate: item.shippingDate,
+                          }}
+                        />
                       ))}
                     </DeliveryItem>
                   ))}
@@ -64,15 +111,26 @@ const CheckoutPage = () => {
                     shippingDate={
                       new Date(
                         Math.max(
-                          ...cart.map((item) =>
-                            new Date(item.shippingDate).getTime(),
-                          ),
-                        ),
+                          ...selectedItems.map((item) =>
+                            new Date(item.shippingDate.split(", ")[1].split("/").reverse().join("-")).getTime()
+                          )
+                        )
                       )
                     }
                   >
-                    {map(cart, (item) => (
-                      <ItemInformation key={item._id} item={item} />
+                    {selectedItems.map((item) => (
+                      <ItemInformation
+                        key={item.id}
+                        item={{
+                          _id: item.id,
+                          name: item.name,
+                          images: [{ base_url: item.image }],
+                          original_price: item.originalPrice,
+                          current_seller: { price: item.discountedPrice },
+                          quantity: item.quantity,
+                          shippingDate: item.shippingDate,
+                        }}
+                      />
                     ))}
                   </DeliveryItem>
                 </div>
@@ -101,7 +159,7 @@ const CheckoutPage = () => {
             <UserInformation />
 
             {coupons.length > 0 && <CouponSection />}
-            <ItemTotalPrice />
+            <ItemTotalPrice selectedItems={selectedItems} /> {/* Truyền selectedItems */}
           </div>
         </div>
       </div>
