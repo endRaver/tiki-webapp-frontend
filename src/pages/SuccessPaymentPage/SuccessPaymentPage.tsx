@@ -10,10 +10,9 @@ import { map } from "lodash";
 import { format } from "date-fns";
 
 const Confirm = () => {
-  const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState("");
-
-  const { handleCheckoutSuccess } = useOrderStore();
+  const [isProcessing, setIsProcessing] = useState(true);
+  const { currentOrder, handleCheckoutSuccess } = useOrderStore();
 
   useEffect(() => {
     const sessionId = new URLSearchParams(window.location.search).get(
@@ -29,10 +28,6 @@ const Confirm = () => {
 
     setIsProcessing(false);
   }, [handleCheckoutSuccess]);
-
-  const { currentOrder } = useOrderStore();
-
-  console.log("currentOrder", currentOrder);
 
   if (isProcessing)
     return (

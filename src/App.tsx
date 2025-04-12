@@ -12,7 +12,7 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import SuccessPaymentPage from "./pages/SuccessPaymentPage/SuccessPaymentPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 import CartPage from "./pages/CartPage/CartPage";
-import UserOrderPage from "./pages/UserOrderPage/UserOrderPage";
+import UserOrderDetailPage from "./pages/UserOrderPage/UserOrderDetailPage";
 
 import AdminLayout from "./pages/AdminPage/AdminLayout";
 import AddProductForm from "./pages/AdminPage/components/product/ProductAdd";
@@ -28,6 +28,7 @@ import CategoryPage from "./pages/AdminPage/CategoryPage";
 import AddCategoryForm from "./pages/AdminPage/components/category/CategoryAdd";
 import ProductPage from "./pages/AdminPage/ProductPage";
 import ProfileLayout from "./layout/ProfileLayout/ProfileLayout";
+import UserOrderListPage from "./pages/UserOrderPage/UserOrderListPage";
 
 function App() {
   const { user } = useUserStore();
@@ -47,10 +48,6 @@ function App() {
             path="/checkout"
             element={user ? <CheckoutPage /> : <NotFound />}
           />
-          {/* <Route
-            path="/profile"
-            element={user ? <ProfilePage /> : <NotFound />}
-          /> */}
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/purchase-success" element={<SuccessPaymentPage />} />
@@ -59,7 +56,11 @@ function App() {
           <Route element={<ProfileLayout />}>
             <Route
               path="/profile/order"
-              element={user ? <UserOrderPage /> : <NotFound />}
+              element={user ? <UserOrderListPage /> : <NotFound />}
+            />
+            <Route
+              path="/profile/order/:id"
+              element={user ? <UserOrderDetailPage /> : <NotFound />}
             />
           </Route>
         </Route>
