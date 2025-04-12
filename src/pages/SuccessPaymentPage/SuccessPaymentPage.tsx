@@ -1,44 +1,38 @@
 import { confirm_icon, header_img } from "@/assets/icons/confirm_page_icons";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useCartStore } from "@/store/useCartStore";
-import axiosInstance from "@/lib/axios";
 import { Loader2 } from "lucide-react";
 import Confetti from "react-confetti";
+import { useOrderStore } from "@/store/useOrderStore";
+import { formatCurrency } from "@/utils/utils";
+import { map } from "lodash";
+
+import { format } from "date-fns";
 
 const Confirm = () => {
   const [isProcessing, setIsProcessing] = useState(true);
-  const { cart, totalShippingPrice, shippingDiscount, handleClearCart } =
-    useCartStore();
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const handleCheckoutSuccess = async (sessionId: string) => {
-      try {
-        await axiosInstance.post("/payments/checkout-success", {
-          sessionId,
-          shippingPrice: totalShippingPrice,
-          shippingDate: cart[0].shippingDate,
-          shippingDiscount: shippingDiscount,
-        });
-        handleClearCart();
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsProcessing(false);
-      }
-    };
+  const { handleCheckoutSuccess } = useOrderStore();
 
+  useEffect(() => {
     const sessionId = new URLSearchParams(window.location.search).get(
       "session_id",
     );
+    setIsProcessing(true);
+
     if (sessionId) {
       handleCheckoutSuccess(sessionId);
     } else {
-      setIsProcessing(false);
       setError("No session ID found in the URL");
     }
-  }, [handleClearCart, cart, totalShippingPrice]);
+
+    setIsProcessing(false);
+  }, [handleCheckoutSuccess]);
+
+  const { currentOrder } = useOrderStore();
+
+  console.log("currentOrder", currentOrder);
 
   if (isProcessing)
     return (
@@ -73,7 +67,8 @@ const Confirm = () => {
             Yay, đặt hàng thành công!
           </p>
           <p className="text-lg font-medium text-white">
-            Chuẩn bị tiền mặt 100.000 đ
+            Chuẩn bị tiền mặt {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
+            <span className="underline underline-offset-1">đ</span>
           </p>
         </div>
         <div className="absolute top-[132px] left-[220px] w-120">
@@ -84,7 +79,10 @@ const Confirm = () => {
           <div className="flex justify-between py-2">
             <p className="text-[#808089]">Tổng cộng</p>
             <div className="flex flex-col items-end">
-              <p className="text-lg">100.000 đ</p>
+              <p className="text-lg font-medium">
+                {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
+                <span className="underline underline-offset-1">đ</span>
+              </p>
               <span className="text-xs text-[#808089]">
                 (Đã bao gồm VAT nếu có)
               </span>
@@ -99,20 +97,39 @@ const Confirm = () => {
       </div>
       <div className="h-fit w-80 rounded-sm bg-white">
         <div className="border-border-line flex justify-between border-b p-4">
-          <p className="text-sm font-bold">Mã đơn hàng: 861977987</p>
-          <p className="cursor-pointer text-sm font-medium text-[#0B74E5]">
-            Xem đơn hàng
+          <p className="text-sm font-bold">
+            Mã đơn hàng: {currentOrder?.orderNumber}
           </p>
+
+          {/* TODO: Add order detail page */}
+          <Link to={`/orders/${currentOrder?._id}`}>
+            <p className="cursor-pointer text-sm font-medium text-[#0B74E5]">
+              Xem đơn hàng
+            </p>
+          </Link>
         </div>
         <div className="flex flex-col p-4">
-          <p>Giao thứ 6, trước 13h, 28/3</p>
+          <p className="text-sm text-neutral-400">
+            {currentOrder?.shippingDate
+              ? `Giao thứ 6, trước 13h, ${format(
+                  new Date(currentOrder?.shippingDate),
+                  "dd/MM",
+                )}`
+              : ""}
+          </p>
           <div className="flex items-center px-1 py-2">
-            <img
-              className="h-12 w-12"
-              src="https://salt.tikicdn.com/cache/100x100/ts/product/17/4a/65/b4765d60127ee4cccf8fd551633fafd4.png.webp"
-              alt="book image"
-            />
-            <p className="text-sm text-[#808089]">Chat GPT thực chiến</p>
+            {map(currentOrder?.products, (product) => (
+              <div key={product.product._id} className="flex items-center">
+                <img
+                  className="h-12 w-12"
+                  src={product.product.images[0].base_url}
+                  alt={product.product.name}
+                />
+                <p className="line-clamp-3 text-sm text-[#808089]">
+                  {product.product.name}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
