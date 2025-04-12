@@ -1,6 +1,6 @@
 import { useState } from "react";
-import UserList from "../adminPage111/components/user/UserList";
-import UserFilter from "../adminPage111/components/user/UserFilter";
+import UserList from "../AdminPage/components/user/UserList";
+import UserFilter from "../AdminPage/components/user/UserFilter";
 
 const UserPage: React.FC = () => {
   const [users, setUsers] = useState([

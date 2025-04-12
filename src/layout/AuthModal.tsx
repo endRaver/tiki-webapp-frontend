@@ -4,10 +4,10 @@ import { useUserStore } from "@/store/useUserStore";
 import { useForm } from "react-hook-form";
 
 import { auth_logo, back, close, google } from "@/assets/icons/auth_modal_icon";
-import LoginModal from "./Mainlayout111/components/LoginModal";
-import SignUpModal from "./Mainlayout111/components/SignUpModal";
-import ForgetPasswordModal from "./Mainlayout111/components/ForgetPasswordModal";
-import VerifyEmailModal from "./Mainlayout111/components/VerifyEmailModal";
+import LoginModal from "./MainLayout/components/LoginModal";
+import SignUpModal from "./MainLayout/components/SignUpModal";
+import ForgetPasswordModal from "./MainLayout/components/ForgetPasswordModal";
+import VerifyEmailModal from "./MainLayout/components/VerifyEmailModal";
 
 export type AuthForm = {
   email: string;

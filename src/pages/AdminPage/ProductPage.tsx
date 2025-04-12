@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ProductList from "../adminPage111/components/product/ProductList";
-import ProductFilter from "../adminPage111/components/product/ProductFilter";
+import ProductList from "../AdminPage/components/product/ProductList";
+import ProductFilter from "../AdminPage/components/product/ProductFilter";
 
 const ProductPage: React.FC = () => {
   const [products, setProducts] = useState([

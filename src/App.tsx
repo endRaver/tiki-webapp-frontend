@@ -8,25 +8,25 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import Homepage from "./pages/Homepage/HomePage";
 import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 
-import AddProductForm from "./pages/adminPage111/components/product/ProductAdd";
-import UserPage from "./pages/adminPage111/UserPage";
-import AddUserForm from "./pages/adminPage111/components/user/UserAdd";
-import OrderPage from "./pages/adminPage111/OrderPage";
-import ReturnOrderPage from "./pages/adminPage111/ReturnOrderPage";
+import AddProductForm from "./pages/AdminPage/components/product/ProductAdd";
+import UserPage from "./pages/AdminPage/UserPage";
+import AddUserForm from "./pages/AdminPage/components/user/UserAdd";
+import OrderPage from "./pages/AdminPage/OrderPage";
+import ReturnOrderPage from "./pages/AdminPage/ReturnOrderPage";
 import NotFound from "./pages/NotFoundPage/NotFound";
-import ProductCreate from "./pages/adminPage111/components/product/ProductCreate";
-import ProductSpecificationUpdate from "./pages/adminPage111/components/product/ProductSpecificationUpdate";
+import ProductCreate from "./pages/AdminPage/components/product/ProductCreate";
+import ProductSpecificationUpdate from "./pages/AdminPage/components/product/ProductSpecificationUpdate";
 import Confirm from "./pages/ConfirmPage/Confirm";
 
 import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
-import MainLayout from "./layout/Mainlayout111/Mainlayout111";
-import CartPage from "./pages/cartPage111/cartPage111";
-import ProfilePage from "./pages/Profilepage111/ProfilePage";
-import AdminLayout from "./pages/adminPage111/AdminLayout";
-import DashboardPage from "./pages/adminPage111/DashboardPage";
-import CategoryPage from "./pages/adminPage111/CategoryPage";
-import AddCategoryForm from "./pages/adminPage111/components/category/CategoryAdd";
-import ProductPage from "./pages/adminPage111/ProductPage";
+import CartPage from "./pages/CartPage/CartPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import AdminLayout from "./pages/AdminPage/AdminLayout";
+import DashboardPage from "./pages/AdminPage/DashboardPage";
+import CategoryPage from "./pages/AdminPage/CategoryPage";
+import AddCategoryForm from "./pages/AdminPage/components/category/CategoryAdd";
+import ProductPage from "./pages/AdminPage/ProductPage";
+import MainLayout from "./layout/MainLayout/MainLayout";
 
 function App() {
   const { user } = useUserStore();

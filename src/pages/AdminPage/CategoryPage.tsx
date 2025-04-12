@@ -1,6 +1,6 @@
 import { useState } from "react";
-import CategoryList from "../adminPage111/components/category/CategoryList.tsx";
-import CategoryFilter from "../adminPage111/components/category/CategoryFilter";
+import CategoryList from "../AdminPage/components/category/CategoryList.tsx";
+import CategoryFilter from "../AdminPage/components/category/CategoryFilter";
 
 const CategoryPage: React.FC = () => {
   const [categories, setCategories] = useState([

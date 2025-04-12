@@ -1,6 +1,6 @@
 import { useState } from "react";
-import OrderList from "../adminPage111/components/order/OrderList.tsx";
-import OrderFilter from "../adminPage111/components/order/OrderFilter";
+import OrderList from "../AdminPage/components/order/OrderList.tsx";
+import OrderFilter from "../AdminPage/components/order/OrderFilter";
 
 const OrderPage: React.FC = () => {
   const [orders, setOrders] = useState([
