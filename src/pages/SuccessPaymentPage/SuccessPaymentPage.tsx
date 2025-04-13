@@ -112,13 +112,14 @@ const Confirm = () => {
                 )}`
               : ""}
           </p>
-          <div className="flex items-center px-1 py-2">
+          <div className="flex flex-col items-start gap-y-2 px-1 py-2">
             {map(currentOrder?.products, (product) => (
               <div key={product.product._id} className="flex items-center">
-                <img
-                  className="h-12 w-12"
-                  src={product.product.images[0].base_url}
-                  alt={product.product.name}
+                <div
+                  className="h-12 w-12 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${product.product.images[0].medium_url})`,
+                  }}
                 />
                 <p className="line-clamp-3 text-sm text-[#808089]">
                   {product.product.name}

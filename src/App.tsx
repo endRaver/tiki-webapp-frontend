@@ -55,11 +55,11 @@ function App() {
 
           <Route element={<ProfileLayout />}>
             <Route
-              path="/profile/order"
+              path="/profile/orders"
               element={user ? <UserOrderListPage /> : <NotFound />}
             />
             <Route
-              path="/profile/order/:id"
+              path="/profile/orders/:id"
               element={user ? <UserOrderDetailPage /> : <NotFound />}
             />
           </Route>

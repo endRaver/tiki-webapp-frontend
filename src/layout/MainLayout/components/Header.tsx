@@ -137,7 +137,7 @@ const Header = () => {
                         <span>Tài khoản của tôi</span>
                       </Link>
                       <Link
-                        to="/profile/order"
+                        to="/profile/orders"
                         className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200"
                       >
                         <span>Đơn hàng của tôi</span>

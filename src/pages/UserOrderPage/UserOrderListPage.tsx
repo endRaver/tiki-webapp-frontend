@@ -65,7 +65,7 @@ const UserOrderListPage = () => {
       ) : (
         <div className="flex flex-col gap-3">
           {orders?.map((order) => (
-            <Link to={`/profile/order/${order._id}`} key={order._id}>
+            <Link to={`/profile/orders/${order._id}`} key={order._id}>
               <div className="cursor-pointer bg-white px-6 py-3 duration-300 hover:shadow-md">
                 <div className="border-border-line flex items-center justify-between border-b pb-2 text-sm">
                   <span className="font-semibold text-neutral-500">
