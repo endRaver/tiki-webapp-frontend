@@ -66,6 +66,7 @@ const BookImage = () => {
                 onClick={() => setIsThumbnailImg(img._id)}
                 onMouseOver={() => setIsMainImg(img._id)}
                 onFocus={() => setIsMainImg(img._id)}
+                className="w-13.5 flex h-auto p-0 m-0 border-none bg-transparent flex-shrink-0"
               >
                 <img
                   src={img.base_url}
