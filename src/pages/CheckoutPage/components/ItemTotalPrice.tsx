@@ -4,6 +4,7 @@ import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
 import { formatCurrency } from "@/utils/utils";
 import { useCartStore } from "@/store/useCartStore";
 import { useOrderStore } from "@/store/useOrderStore";
+import { useNavigate } from "react-router-dom";
 
 const ItemTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,9 +17,11 @@ const ItemTotalPrice = () => {
     total,
     productDiscount,
     shippingDiscount,
+    paymentMethod,
   } = useCartStore();
 
-  const { handlePayment } = useOrderStore();
+  const { handlePaymentCard, handlePaymentCash } = useOrderStore();
+  const navigate = useNavigate();
 
   const discountPrice = useMemo(() => {
     return cart.reduce((acc, item) => {
@@ -157,7 +160,14 @@ const ItemTotalPrice = () => {
 
         <button
           className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300"
-          onClick={handlePayment}
+          onClick={() => {
+            if (paymentMethod === "card") {
+              handlePaymentCard();
+            } else {
+              handlePaymentCash();
+              navigate("/purchase-success");
+            }
+          }}
         >
           Đặt hàng
         </button>

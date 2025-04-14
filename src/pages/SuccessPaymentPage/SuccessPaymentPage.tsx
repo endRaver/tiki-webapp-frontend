@@ -10,9 +10,8 @@ import { map } from "lodash";
 import { format } from "date-fns";
 
 const Confirm = () => {
-  const [error, setError] = useState("");
   const [isProcessing, setIsProcessing] = useState(true);
-  const { currentOrder, handleCheckoutSuccess } = useOrderStore();
+  const { currentOrder, handleCheckoutSuccess, isLoading } = useOrderStore();
 
   useEffect(() => {
     const sessionId = new URLSearchParams(window.location.search).get(
@@ -22,21 +21,17 @@ const Confirm = () => {
 
     if (sessionId) {
       handleCheckoutSuccess(sessionId);
-    } else {
-      setError("No session ID found in the URL");
     }
 
     setIsProcessing(false);
   }, [handleCheckoutSuccess]);
 
-  if (isProcessing)
+  if (isProcessing || isLoading)
     return (
       <div className="flex h-[500px] items-center justify-center">
         <Loader2 className="h-20 w-20 animate-spin" color="#0b74e5" />
       </div>
     );
-
-  if (error) return `Error: ${error}`;
 
   return (
     <div className="bg-background relative mx-auto flex h-[740px] w-full justify-center gap-x-4 p-5">
@@ -114,14 +109,14 @@ const Confirm = () => {
           </p>
           <div className="flex flex-col items-start gap-y-2 px-1 py-2">
             {map(currentOrder?.products, (product) => (
-              <div key={product.product._id} className="flex items-center">
+              <div key={product.product._id} className="flex items-center gap-2">
                 <div
-                  className="h-12 w-12 bg-cover bg-center"
+                  className="h-12 w-12 flex-1 bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${product.product.images[0].medium_url})`,
                   }}
                 />
-                <p className="line-clamp-3 text-sm text-[#808089]">
+                <p className="line-clamp-3 text-sm flex-5 text-[#808089]">
                   {product.product.name}
                 </p>
               </div>
