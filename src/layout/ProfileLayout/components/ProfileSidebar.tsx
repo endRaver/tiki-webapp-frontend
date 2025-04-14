@@ -51,7 +51,7 @@ const UserInfo = () => {
         </NavLink>
 
         <NavLink
-          to="/profile/order"
+          to="/profile/orders"
           className={({ isActive }) =>
             `flex items-center gap-5.5 px-4.5 py-2 hover:bg-gray-200 ${
               isActive ? "bg-gray-200" : ""

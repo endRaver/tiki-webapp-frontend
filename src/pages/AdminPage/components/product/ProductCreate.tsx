@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { FaChevronLeft, FaPlus, FaTrash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import axios from "axios";
 import axiosInstance from "@/lib/axios";
 
 type ProductFormData = {
