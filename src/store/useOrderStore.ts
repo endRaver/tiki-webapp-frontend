@@ -47,7 +47,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
   handlePaymentCard: async () => {
     const {
       paymentMethod,
-      cart,
+      selectedCart,
       discountCoupon,
       shippingCoupon,
       totalShippingPrice,
@@ -68,7 +68,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
       const res = await axiosInstance.post(
         "/payments/create-checkout-session",
         {
-          products: cart,
+          products: selectedCart,
           couponCodes: [discountCoupon?.code, shippingCoupon?.code],
           shippingPrice: totalShippingPrice,
         },
@@ -89,13 +89,13 @@ export const useOrderStore = create<OrderStore>((set) => ({
   },
 
   handlePaymentCash: async () => {
-    const { cart, shippingCoupon, totalShippingPrice, total } =
+    const { selectedCart, shippingCoupon, totalShippingPrice, total } =
       useCartStore.getState();
 
     try {
       const res = await axiosInstance.post("/payments/create-cash-order", {
-        products: cart,
-        shippingDate: cart[0].shippingDate,
+        products: selectedCart,
+        shippingDate: selectedCart[0].shippingDate,
         shippingPrice: totalShippingPrice,
         shippingDiscount: shippingCoupon?.discount ?? 0,
         totalAmount: total,
@@ -110,8 +110,6 @@ export const useOrderStore = create<OrderStore>((set) => ({
   },
 
   handleCheckoutSuccess: async (sessionId: string) => {
-    console.log("first");
-
     try {
       if (!sessionId) {
         toast.error("No session ID found in the URL");

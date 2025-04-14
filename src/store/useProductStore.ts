@@ -68,7 +68,7 @@ export const useProductStore = create<ProductStore>((set) => ({
     set({ loading: true });
     try {
       const response = await axiosInstance.get(
-        `/products/keyword/${keyWord}`,
+        `/products/search/${keyWord}`,
       );
       set({ products: response.data });
     } catch (error) {

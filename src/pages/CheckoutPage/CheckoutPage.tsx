@@ -7,27 +7,28 @@ import DeliveryItem from "./components/DeliveryItem";
 import DeliveryMethodSelection from "./components/DeliveryMethodSelection";
 import PaymentMethodSelection from "./components/PaymentMethodSelection";
 import PaymentOffersSection from "./components/PaymentOffersSection";
-import UserInformation from "./components/UserInformation";
+import UserInformation from "../../components/UserInformation";
 import CouponSection from "./components/CouponSection";
-import ItemTotalPrice from "./components/ItemTotalPrice";
+import ItemTotalPrice from "./components/CheckoutTotalPrice";
 import ItemInformation from "./components/ItemInformation";
 import { useCartStore } from "@/store/useCartStore";
 
 const CheckoutPage = () => {
   const {
-    cart,
-    groupCart,
+    selectedCart,
     totalShippingPrice,
     shippingType,
     coupons,
-    handleGetCartItems,
+    groupCart,
+    setGroupCart,
     handleGetMyCoupons,
   } = useCartStore();
 
   useEffect(() => {
-    handleGetCartItems();
     handleGetMyCoupons();
-  }, [handleGetCartItems, handleGetMyCoupons]);
+
+    setGroupCart(selectedCart);
+  }, [handleGetMyCoupons, selectedCart, setGroupCart]);
 
   return (
     <div className="bg-background">
@@ -64,14 +65,14 @@ const CheckoutPage = () => {
                     shippingDate={
                       new Date(
                         Math.max(
-                          ...cart.map((item) =>
+                          ...selectedCart.map((item) =>
                             new Date(item.shippingDate).getTime(),
                           ),
                         ),
                       )
                     }
                   >
-                    {map(cart, (item) => (
+                    {map(selectedCart, (item) => (
                       <ItemInformation key={item._id} item={item} />
                     ))}
                   </DeliveryItem>

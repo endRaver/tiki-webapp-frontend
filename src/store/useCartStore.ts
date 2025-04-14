@@ -8,9 +8,9 @@ import { CartItem, Coupon } from "@/types/user";
 import { map, groupBy } from "lodash";
 
 interface CartStore {
+  isLoading: boolean;
   cart: CartItem[];
-  shippingType: "fast" | "saving";
-  paymentMethod: "cash" | "card";
+  selectedCart: CartItem[];
   groupCart: {
     items: CartItem[];
     totalShippingPrice: number;
@@ -18,14 +18,21 @@ interface CartStore {
   }[];
 
   coupons: Coupon[];
+  shippingType: "fast" | "saving";
+  paymentMethod: "cash" | "card";
+
   shippingCoupon: Coupon | null;
   discountCoupon: Coupon | null;
   productDiscount: number;
 
+  cartTotal: number;
   total: number;
   subtotal: number;
   totalShippingPrice: number;
   shippingDiscount: number;
+
+  setSelectedCart: (cart: CartItem[]) => void;
+  setGroupCart: (cart: CartItem[]) => void;
 
   calculateTotal: () => void;
   handleGetCartItems: () => Promise<CartItem[]>;
@@ -47,8 +54,11 @@ interface CartStore {
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
+  isLoading: false,
   cart: [],
+  selectedCart: [],
   groupCart: [],
+
   coupons: [],
   shippingType: "fast",
   paymentMethod: "cash",
@@ -58,6 +68,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   productDiscount: 0,
   shippingDiscount: 0,
 
+  cartTotal: 0,
   total: 0,
   subtotal: 0,
   totalShippingPrice: 0,
@@ -102,21 +113,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
       await get().handleGetCartItems();
 
-      // set((prevState) => {
-      //   const existingItem = prevState.cart.find(
-      //     (item) => item._id === product._id,
-      //   );
-
-      //   const newCart = existingItem
-      //     ? prevState.cart.map((item) =>
-      //         item._id === product._id
-      //           ? { ...item, quantity: item.quantity + 1 }
-      //           : item,
-      //       )
-      //     : [...prevState.cart, response.data];
-      //   return { cart: newCart };
-      // });
-
       toast.success("Product added to cart");
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -134,6 +130,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
       set((prevState) => {
         const newCart = prevState.cart.filter((item) => item._id !== productId);
         return { cart: newCart };
+      });
+
+      set((prevState) => {
+        const newGroupCart = prevState.groupCart.map((group) => ({
+          ...group,
+          items: group.items.filter((item) => item._id !== productId),
+        }));
+        return { groupCart: newGroupCart };
       });
 
       toast.success("Product removed from cart");
@@ -157,7 +161,21 @@ export const useCartStore = create<CartStore>((set, get) => ({
         return { cart: newCart };
       });
 
-      toast.success("Quantity updated");
+      set((prevState) => {
+        const newCart = prevState.groupCart.map((item) =>
+          item.items.find((item) => item._id === productId)
+            ? {
+                ...item,
+                items: item.items.map((item) =>
+                  item._id === productId ? { ...item, quantity } : item,
+                ),
+              }
+            : item,
+        );
+        return { groupCart: newCart };
+      });
+
+      get().calculateTotal();
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
@@ -168,15 +186,20 @@ export const useCartStore = create<CartStore>((set, get) => ({
   },
 
   calculateTotal: () => {
-    const { cart, shippingCoupon, shippingType, groupCart, discountCoupon } =
-      get();
+    const {
+      selectedCart,
+      shippingCoupon,
+      shippingType,
+      groupCart,
+      discountCoupon,
+    } = get();
 
-    const subtotal = cart.reduce(
+    const subtotal = selectedCart.reduce(
       (sum, item) => sum + item.original_price * item.quantity,
       0,
     );
 
-    const subtotalDiscount = cart.reduce(
+    const subtotalDiscount = selectedCart.reduce(
       (sum, item) => sum + item.current_seller.price * item.quantity,
       0,
     );
@@ -184,7 +207,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     const totalShippingPrice =
       shippingType === "fast"
         ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
-        : Math.max(...cart.map((item) => item.shippingPrice));
+        : Math.max(...selectedCart.map((item) => item.shippingPrice));
 
     let productDiscount = 0;
     let shippingDiscount = 0;
@@ -206,6 +229,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
       }
     }
 
+    const cartTotal = subtotalDiscount - productDiscount;
+
     const total =
       subtotalDiscount +
       totalShippingPrice -
@@ -213,6 +238,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       shippingDiscount;
 
     set({
+      cartTotal,
       subtotal,
       total,
       productDiscount,
@@ -277,5 +303,29 @@ export const useCartStore = create<CartStore>((set, get) => ({
     } catch (error) {
       console.error(error);
     }
+  },
+
+  setSelectedCart: (cart: CartItem[]) => {
+    set({ selectedCart: cart });
+    get().calculateTotal();
+  },
+
+  setGroupCart: (cart: CartItem[]) => {
+    const groupCart = map(
+      groupBy(cart, (item) => item.current_seller.seller.store_id),
+      (items) => ({
+        items,
+        totalShippingPrice: Math.max(
+          ...items.map((item) => item.shippingPrice),
+        ),
+        shippingDate: new Date(
+          Math.max(
+            ...items.map((item) => new Date(item.shippingDate).getTime()),
+          ),
+        ),
+      }),
+    );
+
+    set({ groupCart });
   },
 }));

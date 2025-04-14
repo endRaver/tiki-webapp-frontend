@@ -6,13 +6,13 @@ import { useCartStore } from "@/store/useCartStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useNavigate } from "react-router-dom";
 
-const ItemTotalPrice = () => {
+const CheckoutTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
+    selectedCart,
     subtotal,
     shippingCoupon,
     discountCoupon,
-    cart,
     totalShippingPrice,
     total,
     productDiscount,
@@ -24,12 +24,12 @@ const ItemTotalPrice = () => {
   const navigate = useNavigate();
 
   const discountPrice = useMemo(() => {
-    return cart.reduce((acc, item) => {
+    return selectedCart.reduce((acc, item) => {
       return (
         acc + (item.original_price - item.current_seller.price) * item.quantity
       );
     }, 0);
-  }, [cart]);
+  }, [selectedCart]);
 
   const savingPrice = useMemo(() => {
     return discountPrice + productDiscount + shippingDiscount;
@@ -40,7 +40,7 @@ const ItemTotalPrice = () => {
       <div className="space-y-1 border-b border-[#EBEBF0] p-4">
         <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
         <div className="flex items-center gap-1">
-          <span className="text-sm text-gray-500">{cart.length} sản phẩm.</span>
+          <span className="text-sm text-gray-500">{selectedCart.length} sản phẩm.</span>
           <button
             className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
             onClick={() => setIsOpen((prev) => !prev)}
@@ -63,7 +63,7 @@ const ItemTotalPrice = () => {
         }`}
       >
         <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
-          {map(cart, (item) => (
+          {map(selectedCart, (item) => (
             <div
               key={item._id}
               className="flex items-start justify-between text-xs font-medium"
@@ -176,4 +176,4 @@ const ItemTotalPrice = () => {
   );
 };
 
-export default ItemTotalPrice;
+export default CheckoutTotalPrice;

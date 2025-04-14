@@ -1,56 +1,58 @@
-import React from 'react';
+import { trash } from "@/assets/icons/cart_page_icons";
+import { useCartStore } from "@/store/useCartStore";
 
-interface CartHeaderProps {
-  onClearCart: () => void;
-  selectAll: boolean;
-  onSelectAll: () => void;
-  itemCount: number;
-}
+const CartHeader = () => {
+  const { handleClearCart, cart, selectedCart, setSelectedCart } =
+    useCartStore();
 
-// CartHeader.tsx
-const CartHeader: React.FC<CartHeaderProps> = ({
-  onClearCart,
-  selectAll,
-  onSelectAll,
-  itemCount,
-}) => {
   return (
-    <div className="flex bg-background top-0 sticky z-10 h-[66px] pt-5 -mt-[7px] ">
-      <div className="flex items-center w-full bg-[#ffffff] pt-2 pb-[10px] px-4 text-[13px] mb-3 rounded-t h-[36px]">
-        {/* Checkbox và "Tất cả" */}
-        <div className="flex items-center w-[500px]">
+    <div className="bg-background">
+      <div className="mb-3 flex w-full items-center rounded-t bg-white px-4 py-2 text-[13px]">
+        <div className="flex min-w-[324px] flex-1 items-center gap-2">
           <input
             type="checkbox"
-            className="relative h-[18px] w-[18px] cursor-pointer appearance-none rounded-sm border border-[#c4c4cf] transition-colors duration-200 checked:bg-[#0b74e5] before:absolute before:left-[2px] before:top-[-3px] before:text-white before:text-[14px] before:content-[''] checked:before:content-['✓']"
-            checked={selectAll}
-            onChange={onSelectAll}
+            className="checkbox checkbox-sm checked:bg-primary-200 rounded bg-[white] text-white"
+            checked={selectedCart.length === cart.length}
+            onChange={() => {
+              if (selectedCart.length === cart.length) {
+                setSelectedCart([]);
+              } else {
+                setSelectedCart(cart);
+              }
+            }}
           />
-          <h3 className="text-[14px] leading-[20px] text-[rgb(56,56,61)] font-inter">
-            Tất cả ({itemCount} sản phẩm)
+
+          <h3 className="font-inter text-[14px] leading-[20px] text-[rgb(56,56,61)]">
+            Tất cả ({cart.length} sản phẩm)
           </h3>
         </div>
+
         {/* Đơn giá */}
-        <div className="w-[180px] text-center">
+        <div className="min-w-[180px]">
           <span className="text-sm text-gray-600">Đơn giá</span>
         </div>
         {/* Số lượng */}
-        <div className="w-[120px] text-center">
+        <div className="min-w-[120px]">
           <span className="text-sm text-gray-600">Số lượng</span>
         </div>
         {/* Thành tiền */}
-        <div className="w-[120px] text-center">
+        <div className="min-w-[120px]">
           <span className="text-sm text-gray-600">Thành tiền</span>
         </div>
         {/* Trash bin button */}
-        <div className="w-[40px] ml-auto text-right">
-          <button onClick={onClearCart} className="text-gray-500 hover:text-red-500">
-            <img
-              src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/trash.svg"
-              alt="Trash Icon"
-              className="h-[18px] w-[18px]"
-            />
-          </button>
-        </div>
+        <button
+          className="ml-auto flex min-w-8 cursor-pointer justify-end"
+          onClick={() => {
+            const confirm = window.confirm(
+              "Bạn có muốn xóa tất cả sản phẩm trong giỏ hàng không?",
+            );
+            if (confirm) {
+              handleClearCart();
+            }
+          }}
+        >
+          <img src={trash} alt="Trash Icon" className="h-[18px] w-[18px]" />
+        </button>
       </div>
     </div>
   );
