@@ -22,7 +22,7 @@ const TopDeals = () => {
         <Carousel products={products} itemsPerPage={2} rows={1} />
       </div>
       <div className="hidden min-[390px]:block sm:hidden md:hidden lg:hidden">
-        <Carousel products={products} itemsPerPage={3} rows={1} />
+        <Carousel products={products} itemsPerPage={2} rows={1} />
       </div>
     </div>
   );

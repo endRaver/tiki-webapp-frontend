@@ -1,29 +1,24 @@
 import { useMemo, useState } from "react";
 import { map } from "lodash";
-
 import { angle_down_blue, info } from "@/assets/icons/checkout_page_icons";
-import { toast } from "react-hot-toast";
-
-import { loadStripe } from "@stripe/stripe-js";
 import { formatCurrency } from "@/utils/utils";
 import { useCartStore } from "@/store/useCartStore";
-import axiosInstance from "@/lib/axios";
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+import { useOrderStore } from "@/store/useOrderStore";
 
 const ItemTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const {
-    total,
     subtotal,
-    totalShippingPrice,
-    cart,
-    paymentMethod,
-    shippingDiscount,
     shippingCoupon,
     discountCoupon,
+    cart,
+    totalShippingPrice,
+    total,
     productDiscount,
+    shippingDiscount,
   } = useCartStore();
+
+  const { handlePayment } = useOrderStore();
 
   const discountPrice = useMemo(() => {
     return cart.reduce((acc, item) => {
@@ -35,48 +30,14 @@ const ItemTotalPrice = () => {
 
   const savingPrice = useMemo(() => {
     return discountPrice + productDiscount + shippingDiscount;
-  }, [discountPrice, shippingDiscount, productDiscount]);
-
-  const handlePayment = async () => {
-    if (paymentMethod === "cash") {
-      toast.error("Thanh toán tiền mặt không hỗ trợ");
-      return;
-    }
-
-    try {
-      const stripe = await stripePromise;
-      if (!stripe) {
-        toast.error("Stripe failed to initialize");
-        return;
-      }
-      const res = await axiosInstance.post(
-        "/payments/create-checkout-session",
-        {
-          products: cart,
-          couponCodes: [discountCoupon?.code, shippingCoupon?.code],
-          shippingCost: totalShippingPrice,
-        },
-      );
-
-      const session = res.data;
-      const result = await stripe.redirectToCheckout({ sessionId: session.id });
-
-      if (result.error) {
-        toast.error(result.error.message ?? "Payment failed");
-      }
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
-    }
-  };
+  }, [discountPrice, productDiscount, shippingDiscount]);
 
   return (
     <div className="rounded bg-white shadow">
       <div className="space-y-1 border-b border-[#EBEBF0] p-4">
         <h4 className="font-medium text-neutral-400">Đơn hàng</h4>
-
         <div className="flex items-center gap-1">
           <span className="text-sm text-gray-500">{cart.length} sản phẩm.</span>
-
           <button
             className="text-primary-300 flex cursor-pointer items-center gap-1 text-sm"
             onClick={() => setIsOpen((prev) => !prev)}
@@ -101,7 +62,7 @@ const ItemTotalPrice = () => {
         <div className="space-y-1 border-b border-[#EBEBF0] px-4 py-3">
           {map(cart, (item) => (
             <div
-              key={item.name}
+              key={item._id}
               className="flex items-start justify-between text-xs font-medium"
             >
               <div className="flex items-start gap-4">
@@ -110,9 +71,8 @@ const ItemTotalPrice = () => {
                   {item.name}
                 </span>
               </div>
-
               <span className="text-neutral-200">
-                {formatCurrency(item.current_seller.price)}{" "}
+                {formatCurrency(item.current_seller.price)}
                 <span className="underline underline-offset-2">đ</span>
               </span>
             </div>
@@ -174,7 +134,6 @@ const ItemTotalPrice = () => {
             <h4 className="text-sm font-medium text-neutral-200">
               Tổng tiền thanh toán
             </h4>
-
             <div className="flex flex-col items-end gap-0.5">
               <span className="text-danger-100 text-xl font-semibold">
                 {formatCurrency(total)}{" "}

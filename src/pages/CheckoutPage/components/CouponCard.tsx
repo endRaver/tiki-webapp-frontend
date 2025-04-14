@@ -12,10 +12,12 @@ interface CouponCardProps {
   onDisplayCoupon: (coupon: Coupon) => void;
 }
 
+const formatDate = (date: string) => {
+  return format(new Date(date), "dd/MM/yy");
+};
+
 const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
-  const formatDate = (date: string) => {
-    return format(new Date(date), "dd/MM/yy");
-  };
+
   const {
     discountType,
     discount,

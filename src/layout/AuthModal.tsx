@@ -1,12 +1,12 @@
-import ForgetPasswordModal from "@/layout/MainLayout/components/ForgetPasswordModal";
-import LoginModal from "@/layout/MainLayout/components/LoginModal";
-import SignUpModal from "@/layout/MainLayout/components/SignUpModal";
 import { useState } from "react";
-
-import { auth_logo, back, close, google } from "@/assets/icons/auth_modal_icon";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUserStore } from "@/store/useUserStore";
 import { useForm } from "react-hook-form";
+
+import { auth_logo, back, close, google } from "@/assets/icons/auth_modal_icon";
+import LoginModal from "./MainLayout/components/LoginModal";
+import SignUpModal from "./MainLayout/components/SignUpModal";
+import ForgetPasswordModal from "./MainLayout/components/ForgetPasswordModal";
 import VerifyEmailModal from "./MainLayout/components/VerifyEmailModal";
 
 export type AuthForm = {

@@ -10,7 +10,7 @@ import { useProductStore } from "@/store/useProductStore";
 const ProductInformation = () => {
   const { currentProduct } = useProductStore();
   return (
-    <div className="flex-1 space-y-3">
+    <div className="container mx-auto flex-1 space-y-3">
       <TitleSection />
       {map(currentProduct?.specifications, (specification, index) => (
         <DetailInformation key={index} specifications={specification} />

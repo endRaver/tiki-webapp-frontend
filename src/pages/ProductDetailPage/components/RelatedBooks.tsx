@@ -18,11 +18,11 @@ const RelatedBooks = () => {
       <div className="hidden xl:block 2xl:hidden">
         <Carousel products={products} itemsPerPage={6} rows={2} />
       </div>
-      <div className="block min-[390px]:hidden sm:blocsak lg:block xl:hidden">
+      <div className="block min-[390px]:hidden sm:block lg:block xl:hidden">
         <Carousel products={products} itemsPerPage={4} rows={2} />
       </div>
       <div className="hidden min-[390px]:block sm:hidden md:hidden lg:hidden">
-        <Carousel products={products} itemsPerPage={6} rows={2} />
+        <Carousel products={products} itemsPerPage={4} rows={2} />
       </div>
     </div>
   );

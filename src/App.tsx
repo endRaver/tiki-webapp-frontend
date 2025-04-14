@@ -1,31 +1,34 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useUserStore } from "./store/useUserStore";
+
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ScrollToTop from "@/components/ScrollToTop";
 
-import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import MainLayout from "./layout/MainLayout/MainLayout";
 import Homepage from "./pages/Homepage/HomePage";
 import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
-import AdminLayout from "./pages/adminPage/AdminLayout";
-import DashboardPage from "./pages/adminPage/DashboardPage";
-import CategoryPage from "./pages/adminPage/CategoryPage";
-import AddCategoryForm from "./pages/adminPage/components/category/CategoryAdd";
-import ProductPage from "./pages/adminPage/ProductPage";
-import AddProductForm from "./pages/adminPage/components/product/ProductAdd";
-import UserPage from "./pages/adminPage/UserPage";
-import AddUserForm from "./pages/adminPage/components/user/UserAdd";
-import OrderPage from "./pages/adminPage/OrderPage";
-import ReturnOrderPage from "./pages/adminPage/ReturnOrderPage";
-import NotFound from "./pages/NotFoundPage/NotFound";
-import ProductCreate from "./pages/adminPage/components/product/ProductCreate";
-import ProductSpecificationUpdate from "./pages/adminPage/components/product/ProductSpecificationUpdate";
-import Confirm from "./pages/ConfirmPage/Confirm";
-
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
+import SuccessPaymentPage from "./pages/SuccessPaymentPage/SuccessPaymentPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
-import MainLayout from "./layout/MainLayout/MainLayout";
 import CartPage from "./pages/CartPage/CartPage";
+import UserOrderDetailPage from "./pages/UserOrderPage/UserOrderDetailPage";
+
+import AdminLayout from "./pages/AdminPage/AdminLayout";
+import AddProductForm from "./pages/AdminPage/components/product/ProductAdd";
+import UserPage from "./pages/AdminPage/UserPage";
+import AddUserForm from "./pages/AdminPage/components/user/UserAdd";
+import OrderPage from "./pages/AdminPage/OrderPage";
+import ReturnOrderPage from "./pages/AdminPage/ReturnOrderPage";
+import NotFound from "./pages/NotFoundPage/NotFound";
+import ProductCreate from "./pages/AdminPage/components/product/ProductCreate";
+import ProductSpecificationUpdate from "./pages/AdminPage/components/product/ProductSpecificationUpdate";
+import DashboardPage from "./pages/AdminPage/DashboardPage";
+import CategoryPage from "./pages/AdminPage/CategoryPage";
+import AddCategoryForm from "./pages/AdminPage/components/category/CategoryAdd";
+import ProductPage from "./pages/AdminPage/ProductPage";
+import ProfileLayout from "./layout/ProfileLayout/ProfileLayout";
+import UserOrderListPage from "./pages/UserOrderPage/UserOrderListPage";
 
 function App() {
   const { user } = useUserStore();
@@ -45,14 +48,21 @@ function App() {
             path="/checkout"
             element={user ? <CheckoutPage /> : <NotFound />}
           />
-          <Route
-            path="/profile"
-            element={user ? <ProfilePage /> : <NotFound />}
-          />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/purchase-success" element={<SuccessPaymentPage />} />
           <Route path="/*" element={<NotFound />} />
-          <Route path="/purchase-success" element={<Confirm />} />
+
+          <Route element={<ProfileLayout />}>
+            <Route
+              path="/profile/orders"
+              element={user ? <UserOrderListPage /> : <NotFound />}
+            />
+            <Route
+              path="/profile/orders/:id"
+              element={user ? <UserOrderDetailPage /> : <NotFound />}
+            />
+          </Route>
         </Route>
 
         {/* Routes cho admin */}
