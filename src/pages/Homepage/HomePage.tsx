@@ -51,8 +51,6 @@ const bestBooksSeller = [
 ];
 
 const Homepage = () => {
-
-
   return (
     <main className="bg-background text-neutral-200">
       <BreadCrumb />
@@ -97,7 +95,7 @@ const Homepage = () => {
             <ItemFilterMobile />
           </div>
 
-          <ListProductItem/>
+          <ListProductItem />
           <div className="flex justify-center">
             <button className="cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]">
               Xem Thêm
