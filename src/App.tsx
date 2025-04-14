@@ -29,6 +29,7 @@ import AddCategoryForm from "./pages/AdminPage/components/category/CategoryAdd";
 import ProductPage from "./pages/AdminPage/ProductPage";
 import ProfileLayout from "./layout/ProfileLayout/ProfileLayout";
 import UserOrderListPage from "./pages/UserOrderPage/UserOrderListPage";
+import UserInfo from "./pages/UserInfoPage/UserInfo";
 
 function App() {
   const { user } = useUserStore();
@@ -57,6 +58,10 @@ function App() {
             <Route
               path="/profile/orders"
               element={user ? <UserOrderListPage /> : <NotFound />}
+            />
+            <Route
+              path="/profile/user-info"
+              element={user ? <UserInfo /> : <NotFound />}
             />
             <Route
               path="/profile/orders/:id"
