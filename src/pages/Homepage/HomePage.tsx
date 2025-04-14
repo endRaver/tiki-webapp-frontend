@@ -7,13 +7,11 @@ import {
 } from "@/assets/icons/home_page_icons";
 import CategoryItem from "./Components/CategoryItem";
 import Carousel from "./Components/Carousel";
-import ProductItem from "@/components/ui/ProductItem";
-import { useEffect } from "react";
 import BreadCrumb from "@/components/ui/BreadCrumb";
-import { useProductStore } from "@/store/useProductStore";
 import ItemFilterDesktop from "./Components/ItemFilterDesktop";
 import ItemFilterMobile from "./Components/ItemFilterMobile";
 import SideBar from "@/layout/MainLayout/components/Sidebar";
+import ListProductItem from "@/components/ui/ListProductItem";
 
 const categories = [
   {
@@ -22,7 +20,7 @@ const categories = [
   },
   {
     image: vietnames_book,
-    name: "Sách tiếng việt",
+    name: "Sách tiếng Việt",
   },
   {
     image: calculator,
@@ -53,10 +51,7 @@ const bestBooksSeller = [
 ];
 
 const Homepage = () => {
-  const { products, handleFetchAllProduct } = useProductStore();
-  useEffect(() => {
-    handleFetchAllProduct();
-  }, []);
+
 
   return (
     <main className="bg-background text-neutral-200">
@@ -102,11 +97,7 @@ const Homepage = () => {
             <ItemFilterMobile />
           </div>
 
-          <div className="container mx-auto grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-2 md:gap-4 lg:grid-cols-4">
-            {products.map((item) => (
-              <ProductItem key={item._id} product={item} />
-            ))}
-          </div>
+          <ListProductItem/>
           <div className="flex justify-center">
             <button className="cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]">
               Xem Thêm
