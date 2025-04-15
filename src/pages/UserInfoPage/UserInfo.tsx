@@ -1,42 +1,229 @@
-import { useUserStore } from "@/store/useUserStore"
-import {
-    ava
-} from "@/assets/icons/profile_page_icons";
+import { useUserStore } from "@/store/useUserStore";
+import { User, Bell, Shield, Link2, ChevronRight } from "lucide-react";
+import { useState } from "react";
 const UserInfo = () => {
-    const { user } = useUserStore()
-    return (
-        <div className="mb-4 w-full">
-            <h5 className="text-[19px] font-light">Thông tin tài khoản</h5>
-            <div className="bg-white py-4 rounded-lg flex">
-                <div className="w-full px-4">
-                    <p className="mb-2">Thông tin cá nhân</p>
-                    <div className="flex gap-2 items-center">
-                        <img className="w-1/4" src={ava} alt="" />
-                        <div className="flex flex-col w-3/4 gap-2">
-                            <div className="flex items-center">
-                                <label htmlFor="name" className="w-1/3 text-left">Họ & Tên</label>
-                                <input id="name" disabled className=" px-2 py-1 rounded-sm outline-none w-2/3 border border-border-line" type="text" value={user?.name} />
-                            </div>
-                            <div className="flex items-center">
-                                <label htmlFor="email" className="w-1/3 text-left">Email</label>
-                                <input disabled id="email" className=" px-2 py-1 rounded-sm outline-none w-2/3 border border-border-line" type="text" value={user?.email} />
-                            </div>
-                            <div className="flex items-center">
-                                <label htmlFor="phone" className="w-1/3 text-left">SĐT</label>
-                                <input id="phone" className=" px-2 py-1 rounded-sm outline-none w-2/3 border border-border-line" type="text" />
-                            </div>
-                            <div className="flex items-center">
-                                <label htmlFor="address" className="w-1/3 text-left">Địa chỉ</label>
-                                <input id="address" className=" px-2 py-1 rounded-sm outline-none w-2/3 border border-border-line" type="text" />
-                            </div>
-                            <div className="flex justify-center">
-                                <button className="w-1/3 rounded-sm p-2 cursor-pointer text-white bg-[#1273e4]">Lưu thay đổi</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  const { user, handleUpdateUserInfo } = useUserStore();
+  const [phone, setPhone] = useState(user?.phoneNumber || "");
+  const [address, setAddress] = useState(user?.address || "");
+
+  const updateUserInfo = async () => {
+    if (!user) return;
+
+    await handleUpdateUserInfo({
+      _id: user._id,
+      name: user.name,
+      phoneNumber: phone,
+      address,
+    });
+  };
+
+  return (
+    <div className="space-y-6 pb-8">
+      <h5 className="text-2xl font-medium text-gray-800">
+        Thông tin tài khoản
+      </h5>
+
+      {/* Personal Information Section */}
+      <div className="rounded-xl bg-white p-8 shadow-md">
+        <h6 className="mb-6 text-lg font-medium text-gray-700">
+          Thông tin cá nhân
+        </h6>
+        <div className="flex flex-col gap-8 md:flex-row">
+          <div className="flex justify-center md:w-1/3">
+            <div className="relative">
+              <div className="flex h-fit w-fit items-center justify-center rounded-full bg-gray-100 p-5">
+                <User className="h-20 w-20" />
+              </div>
+              <button className="mt-4 w-full rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Thay đổi ảnh
+              </button>
             </div>
+          </div>
+
+          <div className="space-y-4 md:w-2/3">
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-gray-600"
+              >
+                Họ & Tên
+              </label>
+              <input
+                id="name"
+                disabled
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-75"
+                type="text"
+                value={user?.name}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-gray-600"
+              >
+                Email
+              </label>
+              <input
+                disabled
+                id="email"
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-75"
+                type="email"
+                value={user?.email}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor="phone"
+                className="text-sm font-medium text-gray-600"
+              >
+                Số điện thoại
+              </label>
+              <input
+                id="phone"
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                type="tel"
+                placeholder="Nhập số điện thoại"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor="address"
+                className="text-sm font-medium text-gray-600"
+              >
+                Địa chỉ
+              </label>
+              <input
+                id="address"
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                type="text"
+                placeholder="Nhập địa chỉ"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
+            <div className="pt-4">
+              <button
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 font-medium text-white transition-colors duration-200 hover:bg-blue-700 md:w-auto"
+                onClick={updateUserInfo}
+              >
+                <span>Lưu thay đổi</span>
+              </button>
+            </div>
+          </div>
         </div>
-    )
-}
-export default UserInfo
+      </div>
+
+      {/* Security Section */}
+      <div className="rounded-xl bg-white p-8 shadow-md">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="h-5 w-5 text-blue-600" />
+            <h6 className="text-lg font-medium text-gray-700">Bảo mật</h6>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
+            <div className="flex flex-col items-start">
+              <span className="font-medium text-gray-700">Đổi mật khẩu</span>
+              <span className="text-sm text-gray-500">
+                Cập nhật mật khẩu của bạn để bảo vệ tài khoản
+              </span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400" />
+          </button>
+          <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
+            <div className="flex flex-col items-start">
+              <span className="font-medium text-gray-700">Xác thực 2 lớp</span>
+              <span className="text-sm text-gray-500">
+                Thêm lớp bảo mật cho tài khoản của bạn
+              </span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400" />
+          </button>
+        </div>
+      </div>
+
+      {/* Notifications Section */}
+      <div className="rounded-xl bg-white p-8 shadow-md">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Bell className="h-5 w-5 text-blue-600" />
+            <h6 className="text-lg font-medium text-gray-700">Thông báo</h6>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-700">Email</span>
+              <span className="text-sm text-gray-500">
+                Nhận thông báo qua email
+              </span>
+            </div>
+            <label className="relative inline-flex cursor-pointer items-center">
+              <input type="checkbox" className="peer sr-only" />
+              <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+            </label>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-700">SMS</span>
+              <span className="text-sm text-gray-500">
+                Nhận thông báo qua tin nhắn
+              </span>
+            </div>
+            <label className="relative inline-flex cursor-pointer items-center">
+              <input type="checkbox" className="peer sr-only" />
+              <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Connected Accounts Section */}
+      <div className="rounded-xl bg-white p-8 shadow-md">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link2 className="h-5 w-5 text-blue-600" />
+            <h6 className="text-lg font-medium text-gray-700">
+              Tài khoản liên kết
+            </h6>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EA4335]">
+                <span className="text-lg font-bold text-white">G</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-medium text-gray-700">Google</span>
+                <span className="text-sm text-gray-500">Chưa liên kết</span>
+              </div>
+            </div>
+            <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              Liên kết
+            </button>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1877F2]">
+                <span className="text-lg font-bold text-white">F</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-medium text-gray-700">Facebook</span>
+                <span className="text-sm text-gray-500">Chưa liên kết</span>
+              </div>
+            </div>
+            <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              Liên kết
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserInfo;
