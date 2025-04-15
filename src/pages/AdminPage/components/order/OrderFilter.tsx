@@ -1,47 +1,65 @@
 import React, { useState } from "react";
 import SearchBar from "../common/SearchBar";
 
+interface Order {
+  orderNumber: string;
+  status: string;
+  paymentMethod: string;
+}
+
 interface OrderFilterProps {
-  orders: { orderNumber: string }[];
-  onFilterChange: (filters: { orderNumber: string }) => void;
+  orders: Order[];
+  onFilterChange: (filters: { orderNumber: string; status: string; paymentMethod: string }) => void;
 }
 
 const OrderFilter: React.FC<OrderFilterProps> = ({ orders, onFilterChange }) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState("");
+  const [filters, setFilters] = useState({
+    orderNumber: "",
+    status: "",
+    paymentMethod: "",
+  });
 
-  const handleFilterChange = () => {
-    onFilterChange({ orderNumber: searchValue });
+  const handleFilterChange = (name: string, value: string) => {
+    const newFilters = { ...filters, [name]: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
   };
+
+  // Lấy danh sách status và paymentMethod duy nhất từ orders
+  const uniqueStatuses = Array.from(new Set(orders.map((order) => order.status)));
+  const uniquePaymentMethods = Array.from(new Set(orders.map((order) => order.paymentMethod)));
 
   return (
     <div className="flex space-x-2 mb-4">
+      <SearchBar
+        placeholder="Search by order number"
+        value={filters.orderNumber}
+        onChange={(e) => handleFilterChange("orderNumber", e.target.value)}
+      />
       <select
-        value={selectedOrder}
-        onChange={(e) => {
-          setSelectedOrder(e.target.value);
-          handleFilterChange();
-        }}
+        value={filters.status}
+        onChange={(e) => handleFilterChange("status", e.target.value)}
         className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <option>Order number</option>
-        {orders.map((order) => (
-          <option key={order.orderNumber} value={order.orderNumber}>
-            {order.orderNumber}
+        <option value="">All Statuses</option>
+        {uniqueStatuses.map((status) => (
+          <option key={status} value={status}>
+            {status}
           </option>
         ))}
       </select>
-      <SearchBar
-        placeholder="Search by order number"
-        value={searchValue}
-        onChange={(e) => {
-          setSearchValue(e.target.value);
-          handleFilterChange();
-        }}
-      />
-      <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
-        Other filters +
-      </button>
+      <select
+        value={filters.paymentMethod}
+        onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
+        className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All Payment Methods</option>
+        {uniquePaymentMethods.map((method) => (
+          <option key={method} value={method}>
+            {method}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };

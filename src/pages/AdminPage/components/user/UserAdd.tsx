@@ -1,17 +1,20 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import Button from "../common/Button";
+import { useUserAdminStore } from "@/store/useUserAdminStore";
 
 const AddUserForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
+    email: "",
+    password: "",
   });
   const [errors, setErrors] = useState({
-    name: "",
-    slug: "",
+    email: "",
+    password: "",
   });
+  const { createUser, loading } = useUserAdminStore();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -21,14 +24,21 @@ const AddUserForm: React.FC = () => {
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { name: "", slug: "" };
+    const newErrors = { email: "", password: "" };
 
-    if (!formData.name.trim()) {
-      newErrors.name = "User name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
       isValid = false;
     }
-    if (!formData.slug.trim()) {
-      newErrors.slug = "Slug is required";
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
       isValid = false;
     }
 
@@ -36,9 +46,14 @@ const AddUserForm: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = (turnOn: boolean) => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      console.log("User submitted:", { ...formData, turnOn });
+      try {
+        await createUser({ email: formData.email, password: formData.password });
+        navigate("/admin/users");
+      } catch (error) {
+        console.error("Failed to create user:", error);
+      }
     }
   };
 
@@ -56,39 +71,41 @@ const AddUserForm: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-800 mb-4">1. Basic Information</h2>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
-              <span className="text-red-500">*</span> User name
+              <span className="text-red-500">*</span> Email
             </label>
             <input
-              type="text"
-              name="name"
-              value={formData.name}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="Enter user name"
+              placeholder="Enter email (e.g., user@example.com)"
               className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
               }`}
+              disabled={loading}
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
-              <span className="text-red-500">*</span> Slug
+              <span className="text-red-500">*</span> Password
             </label>
             <input
-              type="text"
-              name="slug"
-              value={formData.slug}
+              type="password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
-              placeholder="Enter slug (e.g., user-name)"
+              placeholder="Enter password"
               className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                errors.slug ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
               }`}
+              disabled={loading}
             />
-            {errors.slug && <p className="text-red-500 text-sm mt-1">{errors.slug}</p>}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
         </div>
 
-        {(errors.name || errors.slug) && (
+        {(errors.email || errors.password) && (
           <div className="mb-4 p-4 bg-yellow-100 text-yellow-700 rounded">
             Please fill in all required fields to proceed.
           </div>
@@ -102,24 +119,11 @@ const AddUserForm: React.FC = () => {
             Cancel
           </Link>
           <Button
-            onClick={() => handleSubmit(false)}
-            className="border border-gray-300 text-gray-700 hover:bg-gray-100"
-          >
-            Save as draft
-          </Button>
-          <Button
-            onClick={() => handleSubmit(false)}
+            onClick={handleSubmit}
             className="bg-blue-500 text-white hover:bg-blue-600"
+            disabled={loading}
           >
-            Submit and turn off
-            <span className="ml-2 w-2 h-2 bg-gray-300 rounded-full inline-block"></span>
-          </Button>
-          <Button
-            onClick={() => handleSubmit(true)}
-            className="bg-blue-500 text-white hover:bg-blue-600"
-          >
-            Submit and turn on
-            <span className="ml-2 w-2 h-2 bg-green-500 rounded-full inline-block"></span>
+            Submit
           </Button>
         </div>
       </div>

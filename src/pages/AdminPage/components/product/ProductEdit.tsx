@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaPlus, FaTrash } from "react-icons/fa";
 import Button from "../common/Button";
 import { useProductStore } from "@/store/useProductStore";
+import { Product } from "@/types/product";
 import { toast } from 'react-hot-toast';
 
-const AddProductForm: React.FC = () => {
+const ProductEdit: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { handleCreateProduct, loading, sellers,categories, fetchSellers, fetchCategories } = useProductStore();
+  const { currentProduct, handleGetProductById, handleUpdateProduct, loading, sellers,categories, fetchSellers, fetchCategories } = useProductStore();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -35,6 +37,7 @@ const AddProductForm: React.FC = () => {
     ],
   });
 
+  const [existingImages, setExistingImages] = useState<Product["images"]>([]);
   const [errors, setErrors] = useState({
     name: "",
     description: "",
@@ -49,12 +52,52 @@ const AddProductForm: React.FC = () => {
   });
 
   useEffect(() => {
-    fetchSellers();
+    if (id) {
+      handleGetProductById(id);
+    }
     fetchCategories();
-  }, [fetchSellers, fetchCategories]);
+    fetchSellers();
+  }, [id, handleGetProductById, fetchCategories, fetchSellers]);
+
+  useEffect(() => {
+    if (currentProduct) {
+      setFormData({
+        name: currentProduct.name || "",
+        description: currentProduct.description || "",
+        short_description: currentProduct.short_description || "",
+        price: String(currentProduct.original_price || 0),
+        category: currentProduct.categories?.name || "",
+        authors: currentProduct.authors?.length > 0
+          ? currentProduct.authors.map((author) => ({ name: author.name }))
+          : [{ name: "" }],
+        images: [],
+        seller_price: String(currentProduct.current_seller?.price || 0),
+        seller_id: currentProduct.current_seller?.seller?.id || "", // Đúng với cấu trúc mới
+        specifications: currentProduct.specifications?.length > 0
+          ? currentProduct.specifications
+          : [
+            {
+              name: "General Information",
+              attributes: [
+                { code: "publisher_vn", name: "Publisher", value: "" },
+                { code: "publication_date", name: "Publication Date", value: "" },
+                { code: "dimensions", name: "Dimensions", value: "" },
+                { code: "dich_gia", name: "Translator", value: "" },
+                { code: "code", name: "Cover Type", value: "" },
+                { code: "number_of_page", name: "Number of Pages", value: "" },
+                { code: "manufacturer", name: "Manufacturer", value: "" },
+              ],
+            },
+          ],
+      });
+      setExistingImages(currentProduct.images || []);
+      console.log("Initialized seller_id:", currentProduct.current_seller?.seller?.id); // Debug seller_id
+    }
+  }, [currentProduct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    console.log(`handleChange - ${name}:`, value);
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
@@ -94,6 +137,10 @@ const AddProductForm: React.FC = () => {
       ...formData,
       images: formData.images.filter((_, i) => i !== index),
     });
+  };
+
+  const removeExistingImage = (index: number) => {
+    setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
   const handleSpecChange = (specIndex: number, attrIndex: number, field: string, value: string) => {
@@ -161,7 +208,7 @@ const AddProductForm: React.FC = () => {
       newErrors.authors = "At least one author with a valid name is required";
       isValid = false;
     }
-    if (formData.images.length === 0) {
+    if (existingImages.length === 0 && formData.images.length === 0) {
       newErrors.images = "At least one image is required";
       isValid = false;
     }
@@ -208,7 +255,6 @@ const AddProductForm: React.FC = () => {
     formData.images.forEach((image) => formDataToSend.append("images", image));
     formDataToSend.append("seller_price", formData.seller_price);
 
-    // Kiểm tra và log giá trị seller_id
     console.log("Submitting seller_id:", formData.seller_id);
     const selectedSeller = sellers.find(seller => seller.id === formData.seller_id);
     if (!selectedSeller) {
@@ -217,14 +263,32 @@ const AddProductForm: React.FC = () => {
     }
     formDataToSend.append("seller_id", formData.seller_id);
 
-    formDataToSend.append("specifications", JSON.stringify(formData.specifications));
+    formData.specifications.forEach((spec, specIndex) => {
+      formDataToSend.append(`specifications[${specIndex}][name]`, spec.name);
+      spec.attributes.forEach((attr, attrIndex) => {
+        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][code]`, attr.code || "");
+        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][name]`, attr.name);
+        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][value]`, attr.value);
+        if (attr._id) {
+          formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][_id]`, attr._id);
+        }
+      });
+      if (spec._id) {
+        formDataToSend.append(`specifications[${specIndex}][_id]`, spec._id);
+      }
+    });
+
+    // Gửi existingImages
+    existingImages.forEach((image, index) => formDataToSend.append(`existingImages[${index}]`, JSON.stringify(image)));
 
     try {
-      await handleCreateProduct(formDataToSend);
-      navigate("/admin/products");
+      if (id) {
+        await handleUpdateProduct(id, formDataToSend);
+        navigate("/admin/products");
+      }
     } catch (error) {
-      console.error("Failed to create product:", error);
-      toast.error("Failed to create product. Please try again.");
+      console.error("Failed to update product:", error);
+      toast.error("Failed to update product. Please try again.");
     }
   };
 
@@ -234,7 +298,7 @@ const AddProductForm: React.FC = () => {
         <Link to="/admin/products" className="text-gray-500 hover:text-gray-700 mr-2">
           <FaChevronLeft />
         </Link>
-        <h1 className="text-2xl font-semibold text-gray-800">Create New Product</h1>
+        <h1 className="text-2xl font-semibold text-gray-800">Edit Product</h1>
       </div>
       <div className="bg-white border border-gray-200 rounded p-6">
         {/* 1. Basic Information */}
@@ -390,6 +454,22 @@ const AddProductForm: React.FC = () => {
               disabled={loading}
             />
             <div className="mt-2 flex gap-2 flex-wrap">
+              {existingImages.map((image, index) => (
+                <div key={index} className="relative p-2">
+                  <img
+                    src={image.thumbnail_url}
+                    alt={`Existing ${index}`}
+                    className="w-24 h-24 object-cover border border-gray-500 rounded p-2"
+                  />
+                  <button
+                    onClick={() => removeExistingImage(index)}
+                    className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                    disabled={loading}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              ))}
               {formData.images.map((image, index) => (
                 <div key={index} className="relative p-2">
                   <img
@@ -541,7 +621,7 @@ const AddProductForm: React.FC = () => {
             className="bg-blue-500 text-white hover:bg-blue-600"
             disabled={loading}
           >
-            {loading ? "Creating..." : "Create Product"}
+            {loading ? "Updating..." : "Update Product"}
           </Button>
         </div>
       </div>
@@ -549,4 +629,4 @@ const AddProductForm: React.FC = () => {
   );
 };
 
-export default AddProductForm;
+export default ProductEdit;

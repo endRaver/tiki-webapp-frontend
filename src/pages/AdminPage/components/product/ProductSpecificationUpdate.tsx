@@ -1,273 +1,202 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaPlus, FaTrash } from "react-icons/fa";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import axios from "axios";
-
-type SpecificationAttribute = {
-  code?: string;
-  name: string;
-  value: string;
-};
-
-type Specification = {
-  name: string;
-  attributes: SpecificationAttribute[];
-};
-
-type ProductFormData = {
-  specifications: string;
-};
+import Button from "../common/Button";
+import { useProductStore } from "@/store/useProductStore";
+import { Product } from "@/types/product"; // Chỉ import Product
 
 const ProductSpecificationUpdate: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState(false);
-  const [specifications, setSpecifications] = useState<Specification[]>([]);
+  const navigate = useNavigate();
+  const { currentProduct, handleGetProductById, handleUpdateProduct, loading } = useProductStore();
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-  } = useForm<ProductFormData>();
+  const [specifications, setSpecifications] = useState<Product["specifications"]>([
+    {
+      name: "Thông tin chung",
+      attributes: [
+        { code: "publisher_vn", name: "Công ty phát hành", value: "" },
+        { code: "publication_date", name: "Ngày xuất bản", value: "" },
+        { code: "dimensions", name: "Kích thước", value: "" },
+        { code: "dich_gia", name: "Dịch Giả", value: "" },
+        { code: "code", name: "Loại bìa", value: "" },
+        { code: "number_of_page", name: "Số trang", value: "" },
+        { code: "manufacturer", name: "Nhà xuất bản", value: "" },
+      ],
+    },
+  ]);
+
+  const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchProductSpecifications = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/products/${id}`,
-        );
-        const productSpecs = response.data.specifications || [];
-        setSpecifications(productSpecs);
-        setValue("specifications", JSON.stringify(productSpecs));
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          toast.error(error.message || "Failed to fetch product specifications");
-        } else {
-          toast.error("Failed to fetch product specifications");
-        }
-      }
-    };
-
     if (id) {
-      fetchProductSpecifications();
+      handleGetProductById(id);
     }
-  }, [id, setValue]);
+  }, [id, handleGetProductById]);
+
+  useEffect(() => {
+    if (currentProduct && currentProduct.specifications) {
+      setSpecifications(currentProduct.specifications);
+    }
+  }, [currentProduct]);
+
+  const handleSpecChange = (specIndex: number, attrIndex: number, field: string, value: string) => {
+    const newSpecs = [...specifications];
+    newSpecs[specIndex].attributes[attrIndex][field] = value;
+    setSpecifications(newSpecs);
+    setErrors([]);
+  };
 
   const addSpecification = () => {
-    const newSpec: Specification = {
-      name: "Thông tin mới",
-      attributes: [
-        { name: "Thuộc tính 1", value: "" },
-        { name: "Thuộc tính 2", value: "" },
-      ],
-    };
-    const updatedSpecs = [...specifications, newSpec];
-    setSpecifications(updatedSpecs);
-    setValue("specifications", JSON.stringify(updatedSpecs));
-  };
-
-  const removeSpecification = (index: number) => {
-    const updatedSpecs = specifications.filter((_, i) => i !== index);
-    setSpecifications(updatedSpecs);
-    setValue("specifications", JSON.stringify(updatedSpecs));
-  };
-
-  const updateSpecificationName = (index: number, name: string) => {
-    const updatedSpecs = [...specifications];
-    updatedSpecs[index].name = name;
-    setSpecifications(updatedSpecs);
-    setValue("specifications", JSON.stringify(updatedSpecs));
-  };
-
-  const updateAttribute = (
-    specIndex: number,
-    attrIndex: number,
-    field: keyof SpecificationAttribute,
-    value: string,
-  ) => {
-    const updatedSpecs = [...specifications];
-    updatedSpecs[specIndex].attributes[attrIndex][field] = value;
-    setSpecifications(updatedSpecs);
-    setValue("specifications", JSON.stringify(updatedSpecs));
+    setSpecifications([...specifications, { name: "", attributes: [{ code: "", name: "", value: "" }] }]);
   };
 
   const addAttribute = (specIndex: number) => {
-    const updatedSpecs = [...specifications];
-    updatedSpecs[specIndex].attributes.push({ name: "", value: "" });
-    setSpecifications(updatedSpecs);
-    setValue("specifications", JSON.stringify(updatedSpecs));
+    const newSpecs = [...specifications];
+    newSpecs[specIndex].attributes.push({ code: "", name: "", value: "" });
+    setSpecifications(newSpecs);
   };
 
   const removeAttribute = (specIndex: number, attrIndex: number) => {
-    const updatedSpecs = [...specifications];
-    updatedSpecs[specIndex].attributes = updatedSpecs[
-      specIndex
-    ].attributes.filter((_, i) => i !== attrIndex);
-    setSpecifications(updatedSpecs);
-    setValue("specifications", JSON.stringify(updatedSpecs));
+    const newSpecs = [...specifications];
+    newSpecs[specIndex].attributes = newSpecs[specIndex].attributes.filter((_, i) => i !== attrIndex);
+    setSpecifications(newSpecs);
   };
 
-  const onSubmit = async (data: ProductFormData) => {
+  const validateForm = () => {
+    const newErrors: string[] = [];
+    if (
+      specifications.length === 0 ||
+      specifications.some(spec => !spec.name.trim() || spec.attributes.some(attr => !attr.name.trim() || !attr.value.trim()))
+    ) {
+      newErrors.push("Thông số kỹ thuật phải có ít nhất một thuộc tính hợp lệ");
+    }
+    setErrors(newErrors);
+    return newErrors.length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm() || !id) return;
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("specifications", JSON.stringify(specifications));
+
     try {
-      setLoading(true);
-      await axios.put(`http://localhost:5000/api/products/${id}`, {
-        specifications: JSON.parse(data.specifications),
-      });
-      toast.success("Product specifications updated successfully");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message || "Failed to update specifications");
-      } else {
-        toast.error("Failed to update specifications");
-      }
-    } finally {
-      setLoading(false);
+      await handleUpdateProduct(id, formDataToSend);
+      navigate("/admin/products");
+    } catch (error) {
+      console.error("Không thể cập nhật thông số kỹ thuật:", error);
     }
   };
 
   return (
     <div className="flex-1 p-6">
-      <div className="mb-4 flex items-center">
-        <Link
-          to="/admin/products"
-          className="mr-2 text-gray-500 hover:text-gray-700"
-        >
+      <div className="flex items-center mb-4">
+        <Link to="/admin/products" className="text-gray-500 hover:text-gray-700 mr-2">
           <FaChevronLeft />
         </Link>
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Update Product Specifications
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-800">Cập nhật thông số kỹ thuật</h1>
       </div>
-      <div className="rounded border border-gray-200 bg-white p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Specifications */}
-          <div>
-            <h2 className="mb-4 text-lg font-semibold text-gray-800">
-              Product Specifications
-            </h2>
-
-            {specifications.map((spec, specIndex) => (
-              <div
-                key={specIndex}
-                className="mb-6 rounded border border-gray-200 p-4"
-              >
-                <div className="mb-4 flex items-center justify-between">
+      <div className="bg-white border border-gray-200 rounded p-6">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Thông số kỹ thuật</h2>
+          {specifications.map((spec, specIndex) => (
+            <div key={specIndex} className="mb-4">
+              <input
+                type="text"
+                placeholder="Tên thông số (ví dụ: Thông tin chung)"
+                value={spec.name}
+                onChange={(e) => {
+                  const newSpecs = [...specifications];
+                  newSpecs[specIndex].name = e.target.value;
+                  setSpecifications(newSpecs);
+                }}
+                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500 mb-2"
+                disabled={loading}
+              />
+              {spec.attributes.map((attr, attrIndex) => (
+                <div key={attrIndex} className="flex gap-2 mb-2">
                   <input
                     type="text"
-                    value={spec.name}
-                    onChange={(e) =>
-                      updateSpecificationName(specIndex, e.target.value)
-                    }
-                    placeholder="Specification group name"
-                    className="w-full rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="Mã"
+                    value={attr.code || ""}
+                    onChange={(e) => handleSpecChange(specIndex, attrIndex, "code", e.target.value)}
+                    className="w-1/4 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                    disabled={loading}
                   />
-                  {specifications.length > 1 && (
+                  <input
+                    type="text"
+                    placeholder="Tên thuộc tính"
+                    value={attr.name}
+                    onChange={(e) => handleSpecChange(specIndex, attrIndex, "name", e.target.value)}
+                    className="w-1/3 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Giá trị thuộc tính"
+                    value={attr.value}
+                    onChange={(e) => handleSpecChange(specIndex, attrIndex, "value", e.target.value)}
+                    className="w-1/3 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                  {spec.attributes.length > 1 && (
                     <button
-                      type="button"
-                      onClick={() => removeSpecification(specIndex)}
-                      className="ml-2 text-red-500 hover:text-red-700"
+                      onClick={() => removeAttribute(specIndex, attrIndex)}
+                      className="p-2 text-red-500 hover:text-red-700"
+                      disabled={loading}
                     >
                       <FaTrash />
                     </button>
                   )}
                 </div>
+              ))}
+              <button
+                onClick={() => addAttribute(specIndex)}
+                className="flex items-center text-blue-500 hover:text-blue-700"
+                disabled={loading}
+              >
+                <FaPlus className="mr-1" /> Thêm thuộc tính
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={addSpecification}
+            className="flex items-center text-blue-500 hover:text-blue-700"
+            disabled={loading}
+          >
+            <FaPlus className="mr-1" /> Thêm thông số khác
+          </button>
+          {errors.length > 0 && (
+            <div className="mt-2">
+              {errors.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
+            </div>
+          )}
+        </div>
 
-                <div className="space-y-4">
-                  {spec.attributes.map((attr, attrIndex) => (
-                    <div key={attrIndex} className="flex gap-4">
-                      <input
-                        type="text"
-                        value={attr.code || ""}
-                        onChange={(e) =>
-                          updateAttribute(
-                            specIndex,
-                            attrIndex,
-                            "code",
-                            e.target.value,
-                          )
-                        }
-                        placeholder="Code (optional)"
-                        className="w-1/4 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={attr.name}
-                        onChange={(e) =>
-                          updateAttribute(
-                            specIndex,
-                            attrIndex,
-                            "name",
-                            e.target.value,
-                          )
-                        }
-                        placeholder="Attribute name"
-                        className="w-1/3 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={attr.value}
-                        onChange={(e) =>
-                          updateAttribute(
-                            specIndex,
-                            attrIndex,
-                            "value",
-                            e.target.value,
-                          )
-                        }
-                        placeholder="Attribute value"
-                        className="w-1/3 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeAttribute(specIndex, attrIndex)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => addAttribute(specIndex)}
-                  className="mt-4 flex items-center text-blue-500 hover:text-blue-700"
-                >
-                  <FaPlus className="mr-1" /> Add Attribute
-                </button>
-              </div>
-            ))}
-
-            <button
-              type="button"
-              onClick={addSpecification}
-              className="mt-4 flex items-center text-blue-500 hover:text-blue-700"
-            >
-              <FaPlus className="mr-1" /> Add Specification Group
-            </button>
-
-            {/* Hidden JSON preview */}
-            <textarea {...register("specifications")} className="hidden" />
+        {/* Thông báo lỗi */}
+        {errors.length > 0 && (
+          <div className="mb-4 p-4 bg-yellow-100 text-yellow-700 rounded">
+            Vui lòng điền đầy đủ các trường bắt buộc một cách chính xác.
           </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end space-x-2">
-            <Link
-              to="/admin/products"
-              className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
-            >
-              {loading ? "Updating..." : "Update Specifications"}
-            </button>
-          </div>
-        </form>
+        )}
+        {/* Nút hành động */}
+        <div className="flex justify-end space-x-2">
+          <Link
+            to="/admin/products"
+            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+          >
+            Hủy
+          </Link>
+          <Button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? "Đang cập nhật..." : "Cập nhật"}
+          </Button>
+        </div>
       </div>
     </div>
   );

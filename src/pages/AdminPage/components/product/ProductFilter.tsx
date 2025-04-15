@@ -1,83 +1,81 @@
-import React, { useState } from "react";
-import SearchBar from "../common/SearchBar";
+import React, { useEffect } from "react";
+import { useProductStore } from "@/store/useProductStore";
+import { FaChevronLeft } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 interface ProductFilterProps {
-  products: { name: string; categories: { name: string }; current_seller: { name: string } }[];
-  onFilterChange: (filters: { name: string; category: string; brand: string }) => void;
+  onFilterChange?: (filters: { name: string; category: string; seller: string }) => void;
 }
 
-const ProductFilter: React.FC<ProductFilterProps> = ({ products, onFilterChange }) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
+const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
+  const { categories, sellers, fetchCategories, fetchSellers, filterProducts } = useProductStore();
+  const [filters, setFilters] = React.useState({
+    name: "",
+    category: "",
+    seller: "",
+  });
 
-  const handleFilterChange = () => {
-    onFilterChange({
-      name: searchValue,
-      category: selectedCategory,
-      brand: selectedBrand,
-    });
+  useEffect(() => {
+    fetchCategories();
+    fetchSellers();
+  }, [fetchCategories, fetchSellers]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const newFilters = { ...filters, [name]: value };
+    setFilters(newFilters);
+    filterProducts(newFilters);
+    if (onFilterChange) onFilterChange(newFilters);
   };
 
   return (
-    <div className="space-x-2 items-center">
-      <div className="flex gap-4 mb-5">
+    <div className="mb-4 space-x-4">
+      <div className="flex items-center mb-4">
+        <Link to="/admin" className="text-gray-500 hover:text-gray-700 mr-2">
+          <FaChevronLeft />
+        </Link>
+        <h1 className="text-2xl font-semibold text-gray-800">Product List</h1>
+      </div>
       <select
-        value={selectedCategory}
-        onChange={(e) => {
-          setSelectedCategory(e.target.value);
-          handleFilterChange();
-        }}
-        className="px-4 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        name="category"
+        value={filters.category}
+        onChange={handleChange}
+        className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <option>Category</option>
-        {products.map((product) => (
-          <option key={product.categories.name} value={product.categories.name}>
-            {product.categories.name}
+        <option value="">Category</option>
+        {categories.map((category, index) => (
+          <option key={index} value={category}>
+            {category}
           </option>
         ))}
       </select>
-      <SearchBar
+      <input
+        type="text"
+        name="name"
+        value={filters.name}
+        onChange={handleChange}
         placeholder="Search by product name"
-        value={searchValue}
-        onChange={(e) => {
-          setSearchValue(e.target.value);
-          handleFilterChange();
-        }}
+        className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <select
-        value={selectedBrand}
-        onChange={(e) => {
-          setSelectedBrand(e.target.value);
-          handleFilterChange();
-        }}
-        className="px-4 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        name="seller"
+        value={filters.seller}
+        onChange={handleChange}
+        className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <option>Brand</option>
-        {products.map((product) => (
-          <option key={product.current_seller.name} value={product.current_seller.name}>
-            {product.current_seller.name}
+        <option value="">Seller</option>
+        {Array.isArray(sellers) && sellers.length > 0 ? (
+          sellers.map((seller) => (
+            <option key={seller.id} value={seller.id}>
+              {seller.name}
+            </option>
+          ))
+        ) : (
+          <option value="" disabled>
+            No sellers available
           </option>
-        ))}
+        )}
       </select>
-        <button className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100">
-          Other filters +
-        </button>
-      </div>
-      <div className="flex gap-4 mb-5">
-        <button className="py-1 px-4 border border-blue-300 rounded-full text-[14px] text-gray-700 hover:bg-gray-100">
-          Under audit
-        </button>
-        <button className="py-1 px-4 border border-blue-300 rounded-full text-[14px] text-gray-700 hover:bg-gray-100">
-          Visible limit
-        </button>
-        <button className="py-1 px-4 border border-blue-300 rounded-full text-[14px] text-gray-700 hover:bg-gray-100">
-          Gift product
-        </button>
-        <button className="py-1 px-4 border border-blue-300 rounded-full text-[14px] text-gray-700 hover:bg-gray-100">
-          Vi phạm chính sách giá
-        </button>
-      </div>
     </div>
   );
 };

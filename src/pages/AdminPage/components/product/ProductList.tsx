@@ -1,236 +1,223 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import axiosInstance from "@/lib/axios"; // Import axiosInstance
-import { toast } from "react-hot-toast"; // Import toast
-
-// Định nghĩa interface cho dữ liệu từ API
-interface Seller {
-  _id: string;
-  name: string;
-  link: string;
-  logo: string;
-  store_id: number;
-  is_best_store: boolean;
-  is_offline_installment_supported: null | boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface CurrentSeller {
-  seller: Seller;
-  price: number;
-  product_id: string;
-  sku: string;
-}
-
-interface Category {
-  name: string;
-  is_leaf: boolean;
-}
-
-interface Image {
-  base_url: string;
-  is_gallery: boolean;
-  label: string | null;
-  position: number | null;
-  large_url: string;
-  medium_url: string;
-  small_url: string;
-  thumbnail_url: string;
-  _id: string;
-}
-
-interface QuantitySold {
-  text: string;
-  value: number;
-}
-
-interface SpecificationAttribute {
-  code: string;
-  name: string;
-  value: string;
-  _id: string;
-}
-
-interface Specification {
-  name: string;
-  attributes: SpecificationAttribute[];
-  _id: string;
-}
-
-interface Author {
-  name: string;
-  slug: string;
-  _id: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  images: Image[];
-  authors: Author[];
-  quantity_sold: QuantitySold;
-  current_seller: CurrentSeller;
-  original_price: number;
-  categories: Category;
-  short_description: string; // Thêm short_description
-}
+import { useProductStore } from "@/store/useProductStore";
+import { Product } from "@/types/product";
+import { FaEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 const ProductList: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    filteredProducts,
+    loading,
+    deleting,
+    handleFetchAllProduct,
+    showDeleteModal,
+    deleteProduct,
+    setShowDeleteModal,
+    setDeleteProduct,
+    confirmDeleteProduct,
+    sortProducts,
+  } = useProductStore();
 
-  // Lấy dữ liệu từ API khi component mount
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axiosInstance.get("/products");
-        console.log("API Response:", response.data); // Debug dữ liệu trả về
-        // Lấy mảng products từ response.data.products
-        const fetchedProducts = Array.isArray(response.data.products)
-          ? response.data.products
-          : [];
-        setProducts(fetchedProducts); // Đảm bảo products luôn là mảng
-        setLoading(false);
-      } catch (error: any) {
-        setLoading(false);
-        if (error.response) {
-          console.error("❌ Server responded with error:");
-          console.error("Status:", error.response.status);
-          console.error("Message:", error.response.data?.message || "No message");
-          console.error("Details:", error.response.data);
-          toast.error(error.response.data?.message || "Failed to fetch products");
-        } else if (error.request) {
-          console.error("❌ No response received from server:");
-          console.error(error.request);
-          toast.error("No response from server");
-        } else {
-          console.error("❌ Error setting up request:");
-          console.error("Message:", error.message);
-          toast.error("Error: " + error.message);
-        }
-      }
-    };
-  
-    fetchProducts();
-  }, []);
+    handleFetchAllProduct();
+  }, [handleFetchAllProduct]);
+
+  const handleDelete = (product: Product) => {
+    setDeleteProduct(product);
+    setShowDeleteModal(true);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setDeleteProduct(null);
+  };
 
   return (
-    <div className="bg-white border border-gray-200 rounded p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Products: {products.length}
-        </h2>
-        <div className="flex space-x-2">
-          <select className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option>Export products</option>
-          </select>
-          <select className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option>Mass update</option>
-          </select>
-          <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">
-            Expand all products
-          </button>
+    <div className="flex-1 p-6">
+      <div className="bg-white border border-gray-200 rounded p-6">
+        {showDeleteModal && deleteProduct && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="w-[400px] rounded-lg bg-white p-6 shadow-lg">
+              <div className="mb-4 flex items-center">
+                <span className="mr-2 text-orange-500">⚠️</span>
+                <h2 className="text-lg font-semibold">Delete Product</h2>
+              </div>
+              <p className="mb-2 text-sm text-gray-600">Are you sure you want to delete this product?</p>
+              <p className="text-sm font-medium text-gray-800">{deleteProduct.name}</p>
+              <p className="mt-2 font-semibold text-red-600">{deleteProduct.current_seller?.price || 0}đ</p>
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={confirmDeleteProduct}
+                  className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 flex items-center"
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Deleting...
+                    </>
+                  ) : (
+                    "Confirm"
+                  )}
+                </button>
+                <button
+                  onClick={cancelDelete}
+                  className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">
+            Products: {filteredProducts.length}
+          </h2>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => sortProducts("price")}
+              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+            >
+              Sort by price
+            </button>
+            <button
+              onClick={() => sortProducts("profit")}
+              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+            >
+              Sort by profit
+            </button>
+            <button
+              onClick={() => sortProducts("quantitySold")}
+              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+            >
+              Sort by quantity sold
+            </button>
+          </div>
         </div>
-      </div>
 
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-200 p-2 text-left">Product</th>
-            <th className="border border-gray-200 p-2 text-left">Category</th>
-            <th className="border border-gray-200 p-2 text-left">Seller</th>
-            <th className="border border-gray-200 p-2 text-left">Short Description</th>
-            <th className="border border-gray-200 p-2 text-left">Sellable stock</th>
-            <th className="border border-gray-200 p-2 text-left">Selling price</th>
-            <th className="border border-gray-200 p-2 text-left">Tiki’s fee</th>
-            <th className="border border-gray-200 p-2 text-left">Profit</th>
-            <th className="border border-gray-200 p-2 text-left">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={9} className="text-center py-10">
-                <div className="text-gray-500">
-                  <svg
-                    className="mx-auto h-12 w-12 text-gray-400 animate-spin"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 12a8 8 0 0116 0A8 8 0 014 12z"
-                    />
-                  </svg>
-                  <p>Loading...</p>
-                </div>
-              </td>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-200 p-2 text-left">Product</th>
+              <th className="border border-gray-200 p-2 text-left">Category</th>
+              <th className="border border-gray-200 p-2 text-left">Seller</th>
+              <th className="border border-gray-200 p-2 text-left">Short Description</th>
+              <th className="border border-gray-200 p-2 text-left">Quantity Sold</th>
+              <th className="border border-gray-200 p-2 text-left">Price</th>
+              <th className="border border-gray-200 p-2 text-left">Tiki Fee</th>
+              <th className="border border-gray-200 p-2 text-left">Profit</th>
+              <th className="border border-gray-200 p-2 text-left">Actions</th>
             </tr>
-          ) : products.length === 0 ? (
-            <tr>
-              <td colSpan={9} className="text-center py-10">
-                <div className="text-gray-500">
-                  <svg
-                    className="mx-auto h-12 w-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 7h18M3 11h18M3 15h18M3 19h18"
-                    />
-                  </svg>
-                  <p>No Data</p>
-                </div>
-              </td>
-            </tr>
-          ) : (
-            products.map((product) => (
-              <tr key={product._id} className="border-b border-gray-200">
-                <td className="p-2 flex items-center">
-                  <img
-                    src={product.images[0]?.thumbnail_url || "https://via.placeholder.com/40"}
-                    alt={product.name}
-                    className="w-10 h-10 mr-2"
-                  />
-                  <div>
-                    <p className="font-semibold">{product.name}</p>
-                    <p className="text-sm text-gray-500">
-                      Author: {product.authors.length > 0 ? product.authors[0].name : "N/A"}
-                    </p>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={9} className="text-center py-10">
+                  <div className="text-gray-500">
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400 animate-spin"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 12a8 8 0 0116 0A8 8 0 014 12z"
+                      />
+                    </svg>
+                    <p>Loading...</p>
                   </div>
                 </td>
-                <td className="p-2">{product.categories.name}</td>
-                <td className="p-2">{product.current_seller.seller.name}</td>
-                <td className="p-2">{product.short_description}</td>
-                <td className="p-2">{product.quantity_sold.value}</td>
-                <td className="p-2">{product.current_seller.price} VNĐ</td>
-                <td className="p-2">-</td>
-                <td className="p-2">
-                  {product.original_price - product.current_seller.price} VNĐ
-                </td>
-                <td className="p-2">
-                  <Link
-                    to={`/admin/products/edit/${product._id}`}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Edit
-                  </Link>
+              </tr>
+            ) : filteredProducts.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="text-center py-10">
+                  <div className="text-gray-500">
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 7h18M3 11h18M3 15h18M3 19h18"
+                      />
+                    </svg>
+                    <p>No data available</p>
+                  </div>
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              filteredProducts.map((product) => (
+                <tr key={product._id} className="border-b border-gray-200">
+                  <td className="p-2 flex items-center">
+                    <img
+                      src={product.images[0]?.thumbnail_url || "https://via.placeholder.com/40"}
+                      alt={product.name}
+                      className="w-10 h-10 mr-2"
+                    />
+                    <div>
+                      <p className="font-semibold">{product.name}</p>
+                      <p className="text-sm text-gray-500">
+                        Author: {product.authors?.length > 0 ? product.authors[0].name : "N/A"}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="p-2">{product.categories?.name || "N/A"}</td>
+                  <td className="p-2">{product.current_seller?.seller?.name || "N/A"}</td>
+                  <td className="p-2">{product.short_description || "N/A"}</td>
+                  <td className="p-2">{product.quantity_sold?.value || 0}</td>
+                  <td className="p-2">{product.current_seller?.price || 0} VNĐ</td>
+                  <td className="p-2">-</td>
+                  <td className="p-2">
+                    {(product.original_price || 0) - (product.current_seller?.price || 0)} VNĐ
+                  </td>
+                  <td className="p-2 flex space-x-2">
+                    <Link to={`/admin/products/edit/${product._id}`} className="text-blue-500 hover:text-blue-700">
+                      <FaEdit />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(product)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <MdDeleteOutline />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

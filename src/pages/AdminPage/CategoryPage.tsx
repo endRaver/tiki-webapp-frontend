@@ -3,7 +3,7 @@ import CategoryList from "../AdminPage/components/category/CategoryList.tsx";
 import CategoryFilter from "../AdminPage/components/category/CategoryFilter";
 
 const CategoryPage: React.FC = () => {
-  const [categories, setCategories] = useState([
+  const [categories] = useState([
     {
       _id: "cat1",
       name: "Sách tiếng Việt",
