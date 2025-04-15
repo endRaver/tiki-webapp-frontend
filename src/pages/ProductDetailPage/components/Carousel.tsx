@@ -34,7 +34,7 @@ const Carousel = ({ products, itemsPerPage, rows }: CarouselProps) => {
   const curSlide = (idx: number) => {
     setCurrentIndex(idx);
   };
-
+  
   return (
     <div className="w-full overflow-hidden">
       <div className="relative">

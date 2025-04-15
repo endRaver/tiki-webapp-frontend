@@ -17,11 +17,18 @@ interface ProductStore {
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
   handleSearchProductByKeyWord: (categoryName: string) => Promise<void>;
   handleFilterProduct: (categoryName: string) => Promise<void>;
+  handleSetNullCurrentProduct: () => Promise<void>;
+  
 }
 export const useProductStore = create<ProductStore>((set) => ({
   products: [],
   loading: false,
   currentProduct: null,
+
+  handleSetNullCurrentProduct: async () => {
+    set({currentProduct: null});
+    
+  },
 
   handleFetchAllProduct: async () => {
     set({ loading: true });

@@ -9,10 +9,11 @@ import { useProductStore } from "@/store/useProductStore";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { handleGetProductById, handleFetchAllProduct } = useProductStore();
+  const { handleGetProductById, handleFetchAllProduct,handleSetNullCurrentProduct } = useProductStore();
 
   useEffect(() => {
     if (id) {
+      handleSetNullCurrentProduct();
       handleFetchAllProduct();
       handleGetProductById(id);
     }
