@@ -4,13 +4,22 @@ import { FaChevronLeft, FaPlus, FaTrash } from "react-icons/fa";
 import Button from "../common/Button";
 import { useProductStore } from "@/store/useProductStore";
 import { Product } from "@/types/product";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import { Specification, SpecificationAttribute } from "@/types/product";
 
 const ProductEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { currentProduct, handleGetProductById, handleUpdateProduct, loading, sellers, categoryNames, fetchSellers, fetchCategories } = useProductStore();
+  const {
+    currentProduct,
+    handleGetProductById,
+    handleUpdateProduct,
+    loading,
+    sellers,
+    categoryNames,
+    fetchSellers,
+    fetchCategories,
+  } = useProductStore();
 
   const [formData, setFormData] = useState<{
     name: string;
@@ -90,42 +99,55 @@ const ProductEdit: React.FC = () => {
             currentProduct.current_seller.seller?._id) ||
           "",
         specifications:
-          currentProduct.specifications && currentProduct.specifications.length > 0
+          currentProduct.specifications &&
+          currentProduct.specifications.length > 0
             ? currentProduct.specifications.map((spec) => ({
-              ...spec,
-              attributes: spec.attributes.map((attr) => ({
-                code: attr.code || "",
-                name: attr.name || "",
-                value: attr.value || "",
-                ...(attr._id && { _id: attr._id }),
-              })),
-            }))
+                ...spec,
+                attributes: spec.attributes.map((attr) => ({
+                  code: attr.code || "",
+                  name: attr.name || "",
+                  value: attr.value || "",
+                  ...(attr._id && { _id: attr._id }),
+                })),
+              }))
             : [
-              {
-                name: "General Information",
-                attributes: [
-                  { code: "publisher_vn", name: "Publisher", value: "" },
-                  { code: "publication_date", name: "Publication Date", value: "" },
-                  { code: "dimensions", name: "Dimensions", value: "" },
-                  { code: "dich_gia", name: "Translator", value: "" },
-                  { code: "", name: "Cover Type", value: "" },
-                  { code: "number_of_page", name: "Number of Pages", value: "" },
-                  { code: "manufacturer", name: "Manufacturer", value: "" },
-                ],
-              },
-            ],
+                {
+                  name: "General Information",
+                  attributes: [
+                    { code: "publisher_vn", name: "Publisher", value: "" },
+                    {
+                      code: "publication_date",
+                      name: "Publication Date",
+                      value: "",
+                    },
+                    { code: "dimensions", name: "Dimensions", value: "" },
+                    { code: "dich_gia", name: "Translator", value: "" },
+                    { code: "", name: "Cover Type", value: "" },
+                    {
+                      code: "number_of_page",
+                      name: "Number of Pages",
+                      value: "",
+                    },
+                    { code: "manufacturer", name: "Manufacturer", value: "" },
+                  ],
+                },
+              ],
       });
       setExistingImages(currentProduct.images || []);
       console.log(
         "Initialized seller_id:",
         (typeof currentProduct.current_seller?.seller === "object" &&
           currentProduct.current_seller.seller?._id) ||
-        "N/A"
+          "N/A",
       );
     }
   }, [currentProduct]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
     console.log(`handleChange - ${name}:`, value);
     setFormData({ ...formData, [name]: value });
@@ -177,7 +199,7 @@ const ProductEdit: React.FC = () => {
     specIndex: number,
     attrIndex: number,
     field: keyof SpecificationAttribute,
-    value: string
+    value: string,
   ) => {
     const newSpecs = [...formData.specifications];
     newSpecs[specIndex].attributes[attrIndex] = {
@@ -191,7 +213,10 @@ const ProductEdit: React.FC = () => {
   const addSpecification = () => {
     setFormData({
       ...formData,
-      specifications: [...formData.specifications, { name: "", attributes: [{ code: "", name: "", value: "" }] }],
+      specifications: [
+        ...formData.specifications,
+        { name: "", attributes: [{ code: "", name: "", value: "" }] },
+      ],
     });
   };
 
@@ -203,7 +228,9 @@ const ProductEdit: React.FC = () => {
 
   const removeAttribute = (specIndex: number, attrIndex: number) => {
     const newSpecs = [...formData.specifications];
-    newSpecs[specIndex].attributes = newSpecs[specIndex].attributes.filter((_, i) => i !== attrIndex);
+    newSpecs[specIndex].attributes = newSpecs[specIndex].attributes.filter(
+      (_, i) => i !== attrIndex,
+    );
     setFormData({ ...formData, specifications: newSpecs });
   };
 
@@ -242,7 +269,10 @@ const ProductEdit: React.FC = () => {
       newErrors.category = "Category is required";
       isValid = false;
     }
-    if (formData.authors.length === 0 || formData.authors.some(author => !author.name.trim())) {
+    if (
+      formData.authors.length === 0 ||
+      formData.authors.some((author) => !author.name.trim())
+    ) {
       newErrors.authors = "At least one author with a valid name is required";
       isValid = false;
     }
@@ -270,11 +300,12 @@ const ProductEdit: React.FC = () => {
         (spec) =>
           !spec.name.trim() ||
           spec.attributes.some(
-            (attr) => !attr.name?.trim() || !attr.value?.trim()
-          )
+            (attr) => !attr.name?.trim() || !attr.value?.trim(),
+          ),
       )
     ) {
-      newErrors.specifications = "Specifications must have at least one valid attribute";
+      newErrors.specifications =
+        "Specifications must have at least one valid attribute";
       isValid = false;
     }
 
@@ -294,12 +325,17 @@ const ProductEdit: React.FC = () => {
     formDataToSend.append("short_description", formData.short_description);
     formDataToSend.append("price", formData.price);
     formDataToSend.append("category", formData.category);
-    formDataToSend.append("authors", formData.authors.map(a => a.name).join(","));
+    formDataToSend.append(
+      "authors",
+      formData.authors.map((a) => a.name).join(","),
+    );
     formData.images.forEach((image) => formDataToSend.append("images", image));
     formDataToSend.append("seller_price", formData.seller_price);
 
     console.log("Submitting seller_id:", formData.seller_id);
-    const selectedSeller = sellers.find(seller => seller._id === formData.seller_id);
+    const selectedSeller = sellers.find(
+      (seller) => seller._id === formData.seller_id,
+    );
     if (!selectedSeller) {
       toast.error("Invalid seller selected. Please select a valid seller.");
       return;
@@ -309,11 +345,23 @@ const ProductEdit: React.FC = () => {
     formData.specifications.forEach((spec, specIndex) => {
       formDataToSend.append(`specifications[${specIndex}][name]`, spec.name);
       spec.attributes.forEach((attr, attrIndex) => {
-        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][code]`, attr.code || "");
-        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][name]`, attr.name || "");
-        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][value]`, attr.value || "");
+        formDataToSend.append(
+          `specifications[${specIndex}][attributes][${attrIndex}][code]`,
+          attr.code ?? "",
+        );
+        formDataToSend.append(
+          `specifications[${specIndex}][attributes][${attrIndex}][name]`,
+          attr.name ?? "",
+        );
+        formDataToSend.append(
+          `specifications[${specIndex}][attributes][${attrIndex}][value]`,
+          attr.value ?? "",
+        );
         if (attr._id) {
-          formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][_id]`, attr._id);
+          formDataToSend.append(
+            `specifications[${specIndex}][attributes][${attrIndex}][_id]`,
+            attr._id,
+          );
         }
       });
       if (spec._id) {
@@ -321,7 +369,9 @@ const ProductEdit: React.FC = () => {
       }
     });
 
-    existingImages.forEach((image, index) => formDataToSend.append(`existingImages[${index}]`, JSON.stringify(image)));
+    existingImages.forEach((image, index) =>
+      formDataToSend.append(`existingImages[${index}]`, JSON.stringify(image)),
+    );
 
     try {
       if (id) {
@@ -336,17 +386,22 @@ const ProductEdit: React.FC = () => {
 
   return (
     <div className="flex-1 p-6">
-      <div className="flex items-center mb-4">
-        <Link to="/admin/products" className="text-gray-500 hover:text-gray-700 mr-2">
+      <div className="mb-4 flex items-center">
+        <Link
+          to="/admin/products"
+          className="mr-2 text-gray-500 hover:text-gray-700"
+        >
           <FaChevronLeft />
         </Link>
         <h1 className="text-2xl font-semibold text-gray-800">Edit Product</h1>
       </div>
-      <div className="bg-white border border-gray-200 rounded p-6">
+      <div className="rounded border border-gray-200 bg-white p-6">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">1. Basic Information</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            1. Basic Information
+          </h2>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Product Name
             </label>
             <input
@@ -355,20 +410,22 @@ const ProductEdit: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter product name"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Category
             </label>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.category ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.category ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             >
               <option value="">Select Category</option>
@@ -378,20 +435,22 @@ const ProductEdit: React.FC = () => {
                 </option>
               ))}
             </select>
-            {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+            {errors.category && (
+              <p className="mt-1 text-sm text-red-500">{errors.category}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Authors
             </label>
             {formData.authors.map((author, index) => (
-              <div key={index} className="flex gap-2 mb-2">
+              <div key={index} className="mb-2 flex gap-2">
                 <input
                   type="text"
                   placeholder="Author name"
                   value={author.name}
                   onChange={(e) => handleAuthorChange(index, e.target.value)}
-                  className="w-1/2 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                  className="w-1/2 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   disabled={loading}
                 />
                 {formData.authors.length > 1 && (
@@ -412,17 +471,19 @@ const ProductEdit: React.FC = () => {
             >
               <FaPlus className="mr-1" /> Add Another Author
             </button>
-            {errors.authors && <p className="text-red-500 text-sm mt-1">{errors.authors}</p>}
+            {errors.authors && (
+              <p className="mt-1 text-sm text-red-500">{errors.authors}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Seller
             </label>
             <select
               name="seller_id"
               value={formData.seller_id}
               onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.seller_id ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.seller_id ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             >
               <option value="">Select Seller</option>
@@ -438,10 +499,12 @@ const ProductEdit: React.FC = () => {
                 </option>
               )}
             </select>
-            {errors.seller_id && <p className="text-red-500 text-sm mt-1">{errors.seller_id}</p>}
+            {errors.seller_id && (
+              <p className="mt-1 text-sm text-red-500">{errors.seller_id}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Original Price (VNĐ)
             </label>
             <input
@@ -450,13 +513,15 @@ const ProductEdit: React.FC = () => {
               value={formData.price}
               onChange={handleChange}
               placeholder="Enter original price"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             />
-            {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+            {errors.price && (
+              <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Selling Price (VNĐ)
             </label>
             <input
@@ -465,34 +530,37 @@ const ProductEdit: React.FC = () => {
               value={formData.seller_price}
               onChange={handleChange}
               placeholder="Enter selling price"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.seller_price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.seller_price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             />
-            {errors.seller_price && <p className="text-red-500 text-sm mt-1">{errors.seller_price}</p>}
+            {errors.seller_price && (
+              <p className="mt-1 text-sm text-red-500">{errors.seller_price}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block mb-2">
-              <span className="text-red-500">*</span> Product Images (Minimum size: 500px x 500px, Maximum: 10MB, .jpg, .png)
+            <label className="mb-2 block">
+              <span className="text-red-500">*</span> Product Images (Minimum
+              size: 500px x 500px, Maximum: 10MB, .jpg, .png)
             </label>
             <input
               type="file"
               accept=".jpg,.png"
               multiple
               onChange={handleImageChange}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               disabled={loading}
             />
-            <div className="mt-2 flex gap-2 flex-wrap">
+            <div className="mt-2 flex flex-wrap gap-2">
               {existingImages.map((image, index) => (
                 <div key={index} className="relative p-2">
                   <img
                     src={image.thumbnail_url}
                     alt={`Existing ${index}`}
-                    className="w-24 h-24 object-cover border border-gray-500 rounded p-2"
+                    className="h-24 w-24 rounded border border-gray-500 object-cover p-2"
                   />
                   <button
                     onClick={() => removeExistingImage(index)}
-                    className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                    className="absolute top-0 right-0 rounded-full bg-red-500 p-1 text-white"
                     disabled={loading}
                   >
                     <FaTrash />
@@ -504,11 +572,11 @@ const ProductEdit: React.FC = () => {
                   <img
                     src={URL.createObjectURL(image)}
                     alt={`New ${index}`}
-                    className="w-24 h-24 object-cover border border-gray-500 rounded p-2"
+                    className="h-24 w-24 rounded border border-gray-500 object-cover p-2"
                   />
                   <button
                     onClick={() => removeImage(index)}
-                    className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                    className="absolute top-0 right-0 rounded-full bg-red-500 p-1 text-white"
                     disabled={loading}
                   >
                     <FaTrash />
@@ -516,13 +584,17 @@ const ProductEdit: React.FC = () => {
                 </div>
               ))}
             </div>
-            {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
+            {errors.images && (
+              <p className="mt-1 text-sm text-red-500">{errors.images}</p>
+            )}
           </div>
         </div>
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">2. Description</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            2. Description
+          </h2>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Short Description
             </label>
             <textarea
@@ -530,13 +602,17 @@ const ProductEdit: React.FC = () => {
               value={formData.short_description}
               onChange={handleChange}
               placeholder="Enter short description"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.short_description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"} h-20`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.short_description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"} h-20`}
               disabled={loading}
             />
-            {errors.short_description && <p className="text-red-500 text-sm mt-1">{errors.short_description}</p>}
+            {errors.short_description && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.short_description}
+              </p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
+            <label className="mb-2 block text-gray-700">
               <span className="text-red-500">*</span> Detailed Description
             </label>
             <textarea
@@ -544,14 +620,18 @@ const ProductEdit: React.FC = () => {
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter product description"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"} h-32`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"} h-32`}
               disabled={loading}
             />
-            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-500">{errors.description}</p>
+            )}
           </div>
         </div>
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">3. Specifications</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            3. Specifications
+          </h2>
           {formData.specifications.map((spec, specIndex) => (
             <div key={specIndex} className="mb-4">
               <input
@@ -563,33 +643,54 @@ const ProductEdit: React.FC = () => {
                   newSpecs[specIndex].name = e.target.value;
                   setFormData({ ...formData, specifications: newSpecs });
                 }}
-                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500 mb-2"
+                className="mb-2 w-full rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 disabled={loading}
               />
               {spec.attributes.map((attr, attrIndex) => (
-                <div key={attrIndex} className="flex gap-2 mb-2">
+                <div key={attrIndex} className="mb-2 flex gap-2">
                   <input
                     type="text"
                     placeholder="Code"
                     value={attr.code}
-                    onChange={(e) => handleSpecChange(specIndex, attrIndex, "code", e.target.value)}
-                    className="w-1/4 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleSpecChange(
+                        specIndex,
+                        attrIndex,
+                        "code",
+                        e.target.value,
+                      )
+                    }
+                    className="w-1/4 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     disabled={loading}
                   />
                   <input
                     type="text"
                     placeholder="Attribute Name"
                     value={attr.name}
-                    onChange={(e) => handleSpecChange(specIndex, attrIndex, "name", e.target.value)}
-                    className="w-1/3 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleSpecChange(
+                        specIndex,
+                        attrIndex,
+                        "name",
+                        e.target.value,
+                      )
+                    }
+                    className="w-1/3 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     disabled={loading}
                   />
                   <input
                     type="text"
                     placeholder="Attribute Value"
                     value={attr.value}
-                    onChange={(e) => handleSpecChange(specIndex, attrIndex, "value", e.target.value)}
-                    className="w-1/3 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleSpecChange(
+                        specIndex,
+                        attrIndex,
+                        "value",
+                        e.target.value,
+                      )
+                    }
+                    className="w-1/3 rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     disabled={loading}
                   />
                   {spec.attributes.length > 1 && (
@@ -619,17 +720,19 @@ const ProductEdit: React.FC = () => {
           >
             <FaPlus className="mr-1" /> Add Another Specification
           </button>
-          {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
+          {errors.specifications && (
+            <p className="mt-1 text-sm text-red-500">{errors.specifications}</p>
+          )}
         </div>
         {Object.values(errors).some((error) => error) && (
-          <div className="mb-4 p-4 bg-yellow-100 text-yellow-700 rounded">
+          <div className="mb-4 rounded bg-yellow-100 p-4 text-yellow-700">
             Please fill in all required fields correctly.
           </div>
         )}
         <div className="flex justify-end space-x-2">
           <button
             onClick={() => navigate("/admin/products")}
-            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+            className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
             disabled={loading}
           >
             Cancel

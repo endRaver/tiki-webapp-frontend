@@ -1,11 +1,12 @@
 import UserInformation from "@/components/UserInformation";
 import CouponSection from "@/pages/CheckoutPage/components/CouponSection";
 import { useCartStore } from "@/store/useCartStore";
+import { isEmpty } from "lodash";
 import { useEffect } from "react";
 import CartTotalPrice from "./CartTotalPrice";
 
 const CartSummary = () => {
-  const { coupons, handleGetMyCoupons } = useCartStore();
+  const { selectedCart, coupons, handleGetMyCoupons } = useCartStore();
 
   useEffect(() => {
     handleGetMyCoupons();
@@ -17,7 +18,7 @@ const CartSummary = () => {
       <UserInformation />
 
       {/* Coupon Section */}
-      {coupons.length > 0 && <CouponSection />}
+      {coupons.length > 0 && !isEmpty(selectedCart) && <CouponSection />}
 
       {/* Price Summary */}
       <CartTotalPrice />

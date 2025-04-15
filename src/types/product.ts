@@ -1,4 +1,65 @@
-export interface Product {
+export type Author = {
+  name: string;
+  slug: string;
+  _id: string;
+};
+
+export type Category = {
+  name: string;
+  is_leaf: boolean;
+};
+
+export type Seller = {
+  _id: string;
+  name: string;
+  link: string;
+  logo: string;
+  store_id: number;
+  is_best_store: boolean;
+  is_offline_installment_supported: boolean | null;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CurrentSeller = {
+  seller: Seller;
+  price: number;
+  product_id: string;
+  sku: string;
+};
+
+export type ProductImage = {
+  base_url: string;
+  is_gallery: boolean;
+  label: string | null;
+  position: number | null;
+  large_url: string;
+  medium_url: string;
+  small_url: string;
+  thumbnail_url: string;
+  _id: string;
+};
+
+export type QuantitySold = {
+  text: string;
+  value: number;
+};
+
+export type SpecificationAttribute = {
+  _id?: string;
+  code?: string;
+  name?: string;
+  value?: string;
+};
+
+export type Specification = {
+  _id?: string;
+  name: string;
+  attributes: SpecificationAttribute[];
+};
+
+export type Product = {
   _id: string;
   authors?: Author[];
   categories: Category;
@@ -13,65 +74,4 @@ export interface Product {
   specifications?: Specification[];
   createdAt: string;
   updatedAt: string;
-}
-
-interface Author {
-  name: string;
-  slug: string;
-  _id: string;
-}
-
-interface Category {
-  name: string;
-  is_leaf: boolean;
-}
-
-interface Seller {
-  _id: string;
-  name: string;
-  link: string;
-  logo: string;
-  store_id: number;
-  is_best_store: boolean;
-  is_offline_installment_supported: boolean | null;
-  __v: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface CurrentSeller {
-  seller: Seller | string;
-  price: number;
-  product_id: string;
-  sku: string;
-}
-
-interface ProductImage {
-  base_url: string;
-  is_gallery: boolean;
-  label: string | null;
-  position: number | null;
-  large_url: string;
-  medium_url: string;
-  small_url: string;
-  thumbnail_url: string;
-  _id: string;
-}
-
-interface QuantitySold {
-  text: string;
-  value: number;
-}
-
-export interface SpecificationAttribute {
-  _id?: string; // Add optional _id
-  code?: string;
-  name?: string;
-  value?: string;
-}
-
-export interface Specification {
-  _id?: string; // Add optional _id
-  name: string;
-  attributes: SpecificationAttribute[];
-}
+};

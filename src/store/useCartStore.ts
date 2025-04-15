@@ -2,6 +2,7 @@ import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { AxiosError } from "axios";
+
 import { Product } from "@/types/product";
 import { CartItem, Coupon } from "@/types/user";
 import { map, groupBy } from "lodash";
@@ -14,7 +15,6 @@ interface CartStore {
     items: CartItem[];
     totalShippingPrice: number;
     shippingDate: Date;
-    isSelected: boolean;
   }[];
 
   coupons: Coupon[];
@@ -76,31 +76,9 @@ export const useCartStore = create<CartStore>((set, get) => ({
   handleGetCartItems: async () => {
     try {
       const response = await axiosInstance.get("/carts");
-      let cartWithSelection = response.data;
-
-      // Gọi API /products/{id} để lấy thông tin chi tiết (bao gồm categories)
-      cartWithSelection = await Promise.all(
-        cartWithSelection.map(async (item: any) => {
-          try {
-            const productResponse = await axiosInstance.get(`/products/${item._id}`);
-            return {
-              ...item,
-              isSelected: false,
-              categories: productResponse.data.categories || [], // Lấy categories từ API
-            };
-          } catch (error) {
-            console.error(`Failed to fetch product details for ${item._id}:`, error);
-            return {
-              ...item,
-              isSelected: false,
-              categories: [], // Fallback nếu không lấy được categories
-            };
-          }
-        }),
-      );
 
       const groupCart = map(
-        groupBy(cartWithSelection, (item) => item.current_seller.seller.store_id),
+        groupBy(response.data, (item) => item.current_seller.seller.store_id),
         (items) => ({
           items,
           totalShippingPrice: Math.max(
@@ -111,14 +89,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
               ...items.map((item) => new Date(item.shippingDate).getTime()),
             ),
           ),
-          isSelected: false,
         }),
       );
-      set({ cart: cartWithSelection, groupCart });
+
+      set({ cart: response.data, groupCart });
       get().calculateTotal();
-      return cartWithSelection;
+      return response.data;
     } catch (error) {
-      set({ cart: [], groupCart: [] });
+      set({ cart: [] });
       if (error instanceof AxiosError) {
         console.log(error.response?.data?.message);
       }
@@ -132,6 +110,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         productId: product._id,
         quantity,
       });
+
       await get().handleGetCartItems();
 
       toast.success("Product added to cart");
@@ -301,11 +280,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
       get().calculateTotal();
     } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message ?? "Không thể áp dụng mã giảm giá",
-        );
-      }
+      console.error(error);
     }
   },
 
@@ -333,7 +308,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
       await axiosInstance.delete("/carts/delete-all");
       set({ cart: [], groupCart: [] });
       get().calculateTotal();
-      toast.success("Cart cleared successfully");
     } catch (error) {
       console.error(error);
     }

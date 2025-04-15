@@ -46,7 +46,11 @@ interface ProductStore {
   handleUpdateProduct: (id: string, productData: FormData) => Promise<void>;
   handleDeleteProduct: (id: string) => Promise<void>;
 
-  filterProducts: (filters: { name: string; category: string; seller: string }) => Promise<void>;
+  handleFilterProducts: (filters: {
+    name: string;
+    category: string;
+    seller: string;
+  }) => Promise<void>;
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => void;
 }
 
@@ -63,7 +67,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   setShowDeleteModal: (show: boolean) => set({ showDeleteModal: show }),
 
-  setDeleteProduct: (product: Product | null) => set({ deleteProduct: product }),
+  setDeleteProduct: (product: Product | null) =>
+    set({ deleteProduct: product }),
 
   confirmDeleteProduct: async () => {
     const { deleteProduct, handleDeleteProduct } = get();
@@ -84,16 +89,23 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     set({ loading: true });
     try {
       const response = await axiosInstance.get("/products");
-      const fetchedProducts = Array.isArray(response.data.products) ? response.data.products : [];
+      const fetchedProducts = Array.isArray(response.data.products)
+        ? response.data.products
+        : [];
       set({ products: fetchedProducts, filteredProducts: fetchedProducts });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       if (axiosError.response) {
         console.error("❌ Server responded with error:");
         console.error("Status:", axiosError.response.status);
-        console.error("Message:", axiosError.response.data?.message || "No message");
+        console.error(
+          "Message:",
+          axiosError.response.data?.message || "No message",
+        );
         console.error("Details:", axiosError.response.data);
-        toast.error(axiosError.response.data?.message || "Failed to fetch products");
+        toast.error(
+          axiosError.response.data?.message || "Failed to fetch products",
+        );
       } else if (axiosError.request) {
         console.error("❌ No response received from server:");
         console.error(axiosError.request);
@@ -117,25 +129,30 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     try {
       const response = await axiosInstance.get(`/products/${id}`);
       const product: Product = response.data;
-      if (product.current_seller && typeof product.current_seller.seller === "string") {
+      if (
+        product.current_seller &&
+        typeof product.current_seller.seller === "string"
+      ) {
         product.current_seller.seller = {
           _id: product.current_seller.seller,
-          name: '',
-          link: '',
-          logo: '',
+          name: "",
+          link: "",
+          logo: "",
           store_id: 0,
           is_best_store: false,
           is_offline_installment_supported: null,
           __v: 0,
-          createdAt: '',
-          updatedAt: '',
+          createdAt: "",
+          updatedAt: "",
         };
       }
       console.log("Fetched product:", product);
       set({ currentProduct: product });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to fetch product");
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch product",
+      );
     } finally {
       set({ loading: false });
     }
@@ -143,18 +160,28 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   handleGetProductByCategory: async (categoryName: string) => {
     set({ loading: true });
-    set({ loading: true });
     try {
       const normalizedCategoryName = categoryName.trim().toLowerCase();
-      console.log("Fetching products for category (normalized):", normalizedCategoryName);
-      const response = await axiosInstance.get(`/products/category/${encodeURIComponent(categoryName)}`);
+      console.log(
+        "Fetching products for category (normalized):",
+        normalizedCategoryName,
+      );
+      const response = await axiosInstance.get(
+        `/products/category/${encodeURIComponent(categoryName)}`,
+      );
       console.log("Products by category response:", response.data);
       const fetchedProducts = Array.isArray(response.data) ? response.data : [];
       set({ filteredProducts: fetchedProducts });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      console.error("Error fetching products by category:", axiosError.response?.data);
-      toast.error(axiosError.response?.data?.message ?? "Failed to fetch products by category");
+      console.error(
+        "Error fetching products by category:",
+        axiosError.response?.data,
+      );
+      toast.error(
+        axiosError.response?.data?.message ??
+          "Failed to fetch products by category",
+      );
       set({ filteredProducts: [] });
     } finally {
       set({ loading: false });
@@ -166,12 +193,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     try {
       const response = await axiosInstance.get("/products/categories");
       console.log("Fetched category names (raw):", response.data);
-      const normalizedCategoryNames = (response.data || []).map((name: string) => name.trim());
-      console.log("Fetched category names (normalized):", normalizedCategoryNames);
+      const normalizedCategoryNames = (response.data || []).map(
+        (name: string) => name.trim(),
+      );
+      console.log(
+        "Fetched category names (normalized):",
+        normalizedCategoryNames,
+      );
       set({ categoryNames: normalizedCategoryNames }); // Đổi tên
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to fetch category names");
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch category names",
+      );
     } finally {
       set({ loading: false });
     }
@@ -191,7 +225,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ sellers: fetchedSellers });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to fetch sellers");
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch sellers",
+      );
     } finally {
       set({ loading: false });
     }
@@ -212,7 +248,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       toast.success("Product created successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to create product");
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to create product",
+      );
       throw error;
     } finally {
       set({ loading: false });
@@ -229,13 +267,20 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       });
       set((state) => ({
         products: state.products.map((p) => (p._id === id ? response.data : p)),
-        filteredProducts: state.filteredProducts.map((p) => (p._id === id ? response.data : p)),
-        currentProduct: state.currentProduct?._id === id ? response.data : state.currentProduct,
+        filteredProducts: state.filteredProducts.map((p) =>
+          p._id === id ? response.data : p,
+        ),
+        currentProduct:
+          state.currentProduct?._id === id
+            ? response.data
+            : state.currentProduct,
       }));
       toast.success("Product updated successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to update product");
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to update product",
+      );
       throw error;
     } finally {
       set({ loading: false });
@@ -249,20 +294,28 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set((state) => ({
         products: state.products.filter((p) => p._id !== id),
         filteredProducts: state.filteredProducts.filter((p) => p._id !== id),
-        currentProduct: state.currentProduct?._id === id ? null : state.currentProduct,
+        currentProduct:
+          state.currentProduct?._id === id ? null : state.currentProduct,
       }));
       toast.success("Product deleted successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to delete product");
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to delete product",
+      );
       throw error;
     } finally {
       set({ deleting: false });
     }
   },
 
-  filterProducts: async (filters: { name: string; category: string; seller: string }) => {
-    const { products, handleFetchAllProduct, handleGetProductByCategory } = get();
+  handleFilterProducts: async (filters: {
+    name: string;
+    category: string;
+    seller: string;
+  }) => {
+    const { products, handleFetchAllProduct, handleGetProductByCategory } =
+      get();
 
     if (!filters.name && !filters.category && !filters.seller) {
       await handleFetchAllProduct();
@@ -283,7 +336,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
     if (filters.name) {
       tempProducts = tempProducts.filter((product) =>
-        product.name.toLowerCase().includes(filters.name.toLowerCase())
+        product.name.toLowerCase().includes(filters.name.toLowerCase()),
       );
     }
 
@@ -292,7 +345,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         (product) =>
           product.current_seller?.seller &&
           typeof product.current_seller.seller !== "string" &&
-          product.current_seller.seller._id === filters.seller
+          product.current_seller.seller._id === filters.seller,
       );
     }
 
@@ -305,15 +358,21 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     let tempProducts = [...filteredProducts];
 
     if (sortBy === "price") {
-      tempProducts.sort((a, b) => (b.current_seller?.price || 0) - (a.current_seller?.price || 0));
+      tempProducts.sort(
+        (a, b) =>
+          (b.current_seller?.price || 0) - (a.current_seller?.price || 0),
+      );
     } else if (sortBy === "profit") {
       tempProducts.sort(
         (a, b) =>
-          ((b.original_price || 0) - (b.current_seller?.price || 0)) -
-          ((a.original_price || 0) - (a.current_seller?.price || 0))
+          (b.original_price || 0) -
+          (b.current_seller?.price || 0) -
+          ((a.original_price || 0) - (a.current_seller?.price || 0)),
       );
     } else if (sortBy === "quantitySold") {
-      tempProducts.sort((a, b) => (b.quantity_sold?.value || 0) - (a.quantity_sold?.value || 0));
+      tempProducts.sort(
+        (a, b) => (b.quantity_sold?.value || 0) - (a.quantity_sold?.value || 0),
+      );
     }
 
     set({ filteredProducts: tempProducts });

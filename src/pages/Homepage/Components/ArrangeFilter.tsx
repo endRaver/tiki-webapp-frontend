@@ -31,10 +31,8 @@ const sortOptions:softType[] = [
 const ArrangeFilter = () => {
   const [selected, setSelected] = useState(sortOptions[0].title); // Mặc định "Phổ biến"
   const [isOpen, setIsOpen] = useState(false);
-  const { handleFilterProduct } = useProductStore();
-  // useEffect(() => {
-  //   handleFilterProduct("best_seller");
-  // }, [selected]);
+  const { handleFilterProducts } = useProductStore();
+
   return (
     <div className="relative inline-flex gap-[7px] align-middle">
       <span className="px-[8px] py-[5px] text-gray-500">Sắp xếp</span>
@@ -55,7 +53,7 @@ const ArrangeFilter = () => {
               className={`flex w-full cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-100 ${selected === option.title ? "bg-blue-100" : ""
                 }`}
               onClick={() => {
-                handleFilterProduct(option.keySoft);
+                handleFilterProducts({ sort: option.keySoft });
                 setSelected(option.title);
                 setIsOpen(false);
               }}
