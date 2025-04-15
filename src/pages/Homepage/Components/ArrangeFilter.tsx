@@ -1,18 +1,40 @@
-import { useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
-
-const sortOptions = [
-  "Phổ biến",
-  "Bán chạy",
-  "Hàng mới",
-  "Giá thấp đến cao",
-  "Giá cao đến thấp",
+import { useProductStore } from "@/store/useProductStore";
+import { useState } from "react";
+interface softType{
+  title:string,
+  keySoft:string,
+}
+const sortOptions:softType[] = [
+  {
+    title:"Phổ biến",
+    keySoft:""
+  },
+  {
+    title:"Bán chạy",
+    keySoft:"best_seller"
+  },
+  {
+    title:"Hàng mới",
+    keySoft:"date_desc"
+  },
+  {
+    title:"Giá thấp đến cao",
+    keySoft:"price_asc"
+  },
+  {
+    title:"Giá cao đến thấp",
+    keySoft:"price_desc"
+  }
 ];
 
 const ArrangeFilter = () => {
-  const [selected, setSelected] = useState(sortOptions[0]); // Mặc định "Phổ biến"
+  const [selected, setSelected] = useState(sortOptions[0].title); // Mặc định "Phổ biến"
   const [isOpen, setIsOpen] = useState(false);
-
+  const { handleFilterProduct } = useProductStore();
+  // useEffect(() => {
+  //   handleFilterProduct("best_seller");
+  // }, [selected]);
   return (
     <div className="relative inline-flex gap-[7px] align-middle">
       <span className="px-[8px] py-[5px] text-gray-500">Sắp xếp</span>
@@ -30,16 +52,16 @@ const ArrangeFilter = () => {
           {sortOptions.map((option, index) => (
             <button
               key={index}
-              className={`flex w-full cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-100 ${
-                selected === option ? "bg-blue-100" : ""
-              }`}
+              className={`flex w-full cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-100 ${selected === option.title ? "bg-blue-100" : ""
+                }`}
               onClick={() => {
-                setSelected(option);
+                handleFilterProduct(option.keySoft);
+                setSelected(option.title);
                 setIsOpen(false);
               }}
             >
-              <span>{option}</span>
-              {selected === option && (
+              <span>{option.title}</span>
+              {selected === option.title && (
                 <Check className="h-4 w-4 text-green-600" />
               )}
             </button>

@@ -20,6 +20,8 @@ const ProductItem = ({ product }: { product: Product }) => {
           <span className="absolute top-2 right-2 rounded-lg bg-[#F5F5FA] p-1 text-xs font-semibold">
             AD
           </span>
+          <img src="https://salt.tikicdn.com/ts/upload/21/c9/ce/ecf520f4346274799396496b3cbbf7d8.png" alt="overlay"
+            className="absolute bottom-0 left-0 w-100 h-auto" />
         </div>
 
         <div className="p-3">

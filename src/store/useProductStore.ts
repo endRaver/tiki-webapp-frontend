@@ -143,6 +143,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   handleGetProductByCategory: async (categoryName: string) => {
     set({ loading: true });
+    set({ loading: true });
     try {
       const normalizedCategoryName = categoryName.trim().toLowerCase();
       console.log("Fetching products for category (normalized):", normalizedCategoryName);

@@ -9,18 +9,21 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface OrderStore {
   orders: Order[] | null;
+  isLoading: boolean;
   currentOrder: Order | null;
   useCartStore: typeof useCartStore;
 
   handleGetOrdersByUserId: (userId: string) => Promise<void>;
   handleGetOrderById: (orderId: string) => Promise<void>;
-  handlePayment: () => Promise<void>;
+  handlePaymentCard: () => Promise<void>;
+  handlePaymentCash: () => Promise<void>;
   handleCheckoutSuccess: (sessionId: string) => Promise<void>;
 }
 
 export const useOrderStore = create<OrderStore>((set) => ({
   orders: null,
   currentOrder: null,
+  isLoading: false,
   useCartStore: useCartStore,
 
   handleGetOrdersByUserId: async (userId) => {
@@ -41,10 +44,10 @@ export const useOrderStore = create<OrderStore>((set) => ({
     }
   },
 
-  handlePayment: async () => {
+  handlePaymentCard: async () => {
     const {
       paymentMethod,
-      cart,
+      selectedCart,
       discountCoupon,
       shippingCoupon,
       totalShippingPrice,
@@ -65,13 +68,11 @@ export const useOrderStore = create<OrderStore>((set) => ({
       const res = await axiosInstance.post(
         "/payments/create-checkout-session",
         {
-          products: cart,
+          products: selectedCart,
           couponCodes: [discountCoupon?.code, shippingCoupon?.code],
           shippingPrice: totalShippingPrice,
         },
       );
-
-      console.log("res.data", res.data);
 
       set({ currentOrder: res.data });
 
@@ -87,8 +88,34 @@ export const useOrderStore = create<OrderStore>((set) => ({
     }
   },
 
+  handlePaymentCash: async () => {
+    const { selectedCart, shippingCoupon, totalShippingPrice, total } =
+      useCartStore.getState();
+
+    try {
+      const res = await axiosInstance.post("/payments/create-cash-order", {
+        products: selectedCart,
+        shippingDate: selectedCart[0].shippingDate,
+        shippingPrice: totalShippingPrice,
+        shippingDiscount: shippingCoupon?.discount ?? 0,
+        totalAmount: total,
+      });
+
+      set({ currentOrder: res.data.order });
+      useCartStore.getState().handleClearCart();
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      toast.error("Payment failed");
+    }
+  },
+
   handleCheckoutSuccess: async (sessionId: string) => {
     try {
+      if (!sessionId) {
+        toast.error("No session ID found in the URL");
+        return;
+      }
+
       const res = await axiosInstance.post("/payments/checkout-success", {
         sessionId,
       });

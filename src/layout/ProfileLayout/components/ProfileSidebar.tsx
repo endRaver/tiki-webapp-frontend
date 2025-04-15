@@ -4,9 +4,11 @@ import {
   order_icon,
   user_icon,
 } from "@/assets/icons/profile_page_icons";
+import { useUserStore } from "@/store/useUserStore";
 import { NavLink } from "react-router-dom";
 
 const UserInfo = () => {
+  const {user} = useUserStore();
   return (
     <div className="w-[250px]">
       <div className="flex items-center gap-3 px-2">
@@ -16,7 +18,7 @@ const UserInfo = () => {
 
         <div>
           <p className="text-[13px] font-light">Tài khoản của</p>
-          <p className="">Vũ Anh Tú</p>
+          <p className="">{user?.name}</p>
         </div>
       </div>
 
@@ -51,7 +53,7 @@ const UserInfo = () => {
         </NavLink>
 
         <NavLink
-          to="/profile/order"
+          to="/profile/orders"
           className={({ isActive }) =>
             `flex items-center gap-5.5 px-4.5 py-2 hover:bg-gray-200 ${
               isActive ? "bg-gray-200" : ""

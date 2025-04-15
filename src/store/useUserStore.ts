@@ -37,6 +37,12 @@ interface UserStore {
     token: string,
     newPassword: string,
   ) => Promise<{ success: boolean; message: string | undefined }>;
+  handleUpdateUserInfo: (data: {
+    _id: string;
+    name: string;
+    phoneNumber: string;
+    address: string;
+  }) => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -200,6 +206,26 @@ export const useUserStore = create<UserStore>((set, get) => ({
         axiosError.response?.data?.message ?? "Đã có lỗi xảy ra";
       toast.error(errorMessage);
       return { success: false, message: errorMessage };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleUpdateUserInfo: async (data: {
+    _id: string;
+    name: string;
+    phoneNumber: string;
+    address: string;
+  }) => {
+    set({ loading: true });
+
+    try {
+      const response = await axiosInstance.put(`/auth/users/${data._id}`, data);
+      set({ user: response.data });
+      toast.success("Cập nhật thông tin thành công");
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
     } finally {
       set({ loading: false });
     }
