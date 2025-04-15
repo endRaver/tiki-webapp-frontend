@@ -46,7 +46,9 @@ const CartItemComponent = ({ item }: CartItemProps) => {
               backgroundPosition: "center",
             }}
           />
-          <p className="hover:text-primary-300 line-clamp-2">{item.name}</p>
+          <p className="hover:text-primary-300 mx-2 line-clamp-2 flex-1">
+            {item.name}
+          </p>
         </Link>
       </div>
 

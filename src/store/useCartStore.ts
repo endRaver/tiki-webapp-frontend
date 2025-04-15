@@ -74,6 +74,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
   totalShippingPrice: 0,
 
   handleGetCartItems: async () => {
+    set({ isLoading: true });
+    
     try {
       const response = await axiosInstance.get("/carts");
 
@@ -101,6 +103,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
         console.log(error.response?.data?.message);
       }
       return [];
+    } finally {
+      set({ isLoading: false });
     }
   },
 

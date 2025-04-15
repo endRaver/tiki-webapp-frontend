@@ -1,19 +1,31 @@
 import { useUserStore } from "@/store/useUserStore";
 import { User, Bell, Shield, Link2, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
+
 const UserInfo = () => {
   const { user, handleUpdateUserInfo } = useUserStore();
   const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [address, setAddress] = useState(user?.address || "");
+  const [name, setName] = useState(user?.name || "");
+  const [locationType, setLocationType] = useState(
+    user?.locationType || "home",
+  );
 
   const updateUserInfo = async () => {
     if (!user) return;
 
+    if (!name || !phone || !address) {
+      toast.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+
     await handleUpdateUserInfo({
       _id: user._id,
-      name: user.name,
+      name: name,
       phoneNumber: phone,
       address,
+      locationType,
     });
   };
 
@@ -43,21 +55,6 @@ const UserInfo = () => {
           <div className="space-y-4 md:w-2/3">
             <div className="flex flex-col space-y-2">
               <label
-                htmlFor="name"
-                className="text-sm font-medium text-gray-600"
-              >
-                Họ & Tên
-              </label>
-              <input
-                id="name"
-                disabled
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-75"
-                type="text"
-                value={user?.name}
-              />
-            </div>
-            <div className="flex flex-col space-y-2">
-              <label
                 htmlFor="email"
                 className="text-sm font-medium text-gray-600"
               >
@@ -69,6 +66,21 @@ const UserInfo = () => {
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-75"
                 type="email"
                 value={user?.email}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-gray-600"
+              >
+                Họ & Tên
+              </label>
+              <input
+                id="name"
+                className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-75"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="flex flex-col space-y-2">
@@ -94,14 +106,28 @@ const UserInfo = () => {
               >
                 Địa chỉ
               </label>
-              <input
-                id="address"
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                type="text"
-                placeholder="Nhập địa chỉ"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  id="address"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  type="text"
+                  placeholder="Nhập địa chỉ"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
+
+                <select
+                  defaultValue="Pick a color"
+                  className="select"
+                  onChange={(e) =>
+                    setLocationType(e.target.value as "home" | "office")
+                  }
+                >
+                  <option disabled={true}>Chọn kiểu địa điểm</option>
+                  <option value="home">Nhà</option>
+                  <option value="office">Văn phòng</option>
+                </select>
+              </div>
             </div>
             <div className="pt-4">
               <button

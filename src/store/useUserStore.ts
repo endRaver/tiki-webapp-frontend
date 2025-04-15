@@ -42,6 +42,7 @@ interface UserStore {
     name: string;
     phoneNumber: string;
     address: string;
+    locationType: string;
   }) => Promise<void>;
 }
 
@@ -216,6 +217,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     name: string;
     phoneNumber: string;
     address: string;
+    locationType: string;
   }) => {
     set({ loading: true });
 

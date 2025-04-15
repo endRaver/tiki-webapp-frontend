@@ -28,9 +28,12 @@ import ProductPage from "./pages/AdminPage/ProductPage";
 import ProfileLayout from "./layout/ProfileLayout/ProfileLayout";
 import UserOrderListPage from "./pages/UserOrderPage/UserOrderListPage";
 import UserInfo from "./pages/UserInfoPage/UserInfo";
+import { useCartStore } from "@/store/useCartStore";
+import { isEmpty } from "lodash";
 
 function App() {
   const { user } = useUserStore();
+  const { selectedCart } = useCartStore();
 
   return (
     <>
@@ -45,7 +48,9 @@ function App() {
           />
           <Route
             path="/checkout"
-            element={user ? <CheckoutPage /> : <NotFound />}
+            element={
+              user && !isEmpty(selectedCart) ? <CheckoutPage /> : <NotFound />
+            }
           />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
@@ -53,8 +58,6 @@ function App() {
           <Route path="/*" element={<NotFound />} />
 
           <Route element={<ProfileLayout />}>
-
-          
             <Route
               path="/profile/orders"
               element={user ? <UserOrderListPage /> : <NotFound />}
@@ -80,7 +83,10 @@ function App() {
             <Route path="/admin/dashboard" element={<DashboardPage />} />
             <Route path="/admin/products" element={<ProductPage />} />
             <Route path="/admin/products/add" element={<AddProductForm />} />
-            <Route path="/admin/products/edit/:id" element={<EditProductForm />} />
+            <Route
+              path="/admin/products/edit/:id"
+              element={<EditProductForm />}
+            />
             <Route path="/admin/users" element={<UserPage />} />
             <Route path="/admin/users/edit/:id" element={<EditUserForm />} />
             <Route path="/admin/orders" element={<OrderPage />} />

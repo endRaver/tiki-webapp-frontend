@@ -15,6 +15,7 @@ export type User = {
   address: string;
   name: string;
   email: string;
+  locationType: string;
   password?: string;
   cartItems: CartItem[];
   googleId?: string;

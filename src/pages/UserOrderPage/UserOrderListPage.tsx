@@ -109,14 +109,16 @@ const UserOrderListPage = () => {
                     <div className="flex gap-2 text-sm">
                       <span className="text-neutral-500 line-through">
                         {formatCurrency(
-                          order.products[0].product.original_price,
+                          order.products[0].product.original_price *
+                            order.products[0].quantity,
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>
 
                       <span className="text-primary-500">
                         {formatCurrency(
-                          order.products[0].product.current_seller.price,
+                          order.products[0].product.current_seller.price *
+                            order.products[0].quantity,
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>
