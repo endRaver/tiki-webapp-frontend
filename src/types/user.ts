@@ -11,6 +11,7 @@ export type UserRole = "customer" | "admin";
 
 export type User = {
   _id: string;
+  phone:string;
   name: string;
   email: string;
   password?: string;
