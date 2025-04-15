@@ -44,8 +44,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
       >
         <option value="">Category</option>
         {categories.map((category, index) => (
-          <option key={index} value={category}>
-            {category}
+          <option key={index} value={category.name}>
+            {category.name}
           </option>
         ))}
       </select>
@@ -66,7 +66,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
         <option value="">Seller</option>
         {Array.isArray(sellers) && sellers.length > 0 ? (
           sellers.map((seller) => (
-            <option key={seller.id} value={seller.id}>
+            <option key={seller._id} value={seller._id}>
               {seller.name}
             </option>
           ))

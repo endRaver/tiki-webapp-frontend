@@ -40,7 +40,7 @@ interface Seller {
 }
 
 interface CurrentSeller {
-  seller: Seller;
+  seller: Seller | string;
   price: number;
   product_id: string;
   sku: string;
@@ -63,13 +63,15 @@ interface QuantitySold {
   value: number;
 }
 
-interface SpecificationAttribute {
+export interface SpecificationAttribute {
+  _id?: string; // Add optional _id
   code?: string;
   name?: string;
   value?: string;
 }
 
-interface Specification {
+export interface Specification {
+  _id?: string; // Add optional _id
   name: string;
   attributes: SpecificationAttribute[];
 }

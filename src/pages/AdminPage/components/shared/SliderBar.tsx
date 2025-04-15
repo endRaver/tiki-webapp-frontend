@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaSearch, FaBox, FaList, FaUsers, FaShoppingCart, FaHeadset, FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaSearch, FaBox, FaUsers, FaShoppingCart, FaHeadset, FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const SliderBar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);

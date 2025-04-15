@@ -1,6 +1,5 @@
 import axiosInstance from "@/lib/axios";
 import { Product } from "@/types/product";
-import { faL } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -122,7 +121,16 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       // Nếu current_seller.seller là chuỗi, chuyển thành object với thuộc tính id
       if (product.current_seller && typeof product.current_seller.seller === "string") {
         product.current_seller.seller = {
-          id: product.current_seller.seller, // Gán chuỗi ObjectId vào id
+          _id: product.current_seller.seller, // map string vào _id
+          name: '',
+          link: '',
+          logo: '',
+          store_id: 0,
+          is_best_store: false,
+          is_offline_installment_supported: null,
+          __v: 0,
+          createdAt: '',
+          updatedAt: '',
         };
       }
       console.log("Fetched product:", product); // Debug dữ liệu product
@@ -270,7 +278,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   
     if (filters.seller) {
       tempProducts = tempProducts.filter(
-        (product) => product.current_seller?.seller?._id === filters.seller
+        (product) =>
+          product.current_seller?.seller &&
+          typeof product.current_seller.seller === "object" &&
+          product.current_seller.seller._id === filters.seller
       );
     }
   

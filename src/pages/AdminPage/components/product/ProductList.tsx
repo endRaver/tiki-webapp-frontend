@@ -188,12 +188,12 @@ const ProductList: React.FC = () => {
                     <div>
                       <p className="font-semibold">{product.name}</p>
                       <p className="text-sm text-gray-500">
-                        Author: {product.authors?.length > 0 ? product.authors[0].name : "N/A"}
+                        Author: {product.authors && product.authors.length > 0 ? product.authors[0].name : "N/A"}
                       </p>
                     </div>
                   </td>
                   <td className="p-2">{product.categories?.name || "N/A"}</td>
-                  <td className="p-2">{product.current_seller?.seller?.name || "N/A"}</td>
+                  <td className="p-2">{(typeof product.current_seller?.seller === "object" && product.current_seller.seller?.name) || "N/A"}</td>
                   <td className="p-2">{product.short_description || "N/A"}</td>
                   <td className="p-2">{product.quantity_sold?.value || 0}</td>
                   <td className="p-2">{product.current_seller?.price || 0} VNĐ</td>

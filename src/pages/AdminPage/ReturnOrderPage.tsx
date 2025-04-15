@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReturnOrders from "../AdminPage/components/order/ReturnOrders";
 
 const ReturnOrderPage: React.FC = () => {
-  const [returnOrders, setReturnOrders] = useState([
+  const [returnOrders] = useState([
     {
       _id: "return1",
       orderNumber: "ORD001",

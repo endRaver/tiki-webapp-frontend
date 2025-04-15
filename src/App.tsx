@@ -24,7 +24,6 @@ import OrderPage from "./pages/AdminPage/OrderPage";
 import EditOrderForm from "./pages/AdminPage/components/order/EditOrderForm";
 import ReturnOrderPage from "./pages/AdminPage/ReturnOrderPage";
 import NotFound from "./pages/NotFoundPage/NotFound";
-import ProductSpecificationUpdate from "./pages/AdminPage/components/product/ProductSpecificationUpdate";
 import DashboardPage from "./pages/AdminPage/DashboardPage";
 import CategoryPage from "./pages/AdminPage/CategoryPage";
 import AddCategoryForm from "./pages/AdminPage/components/category/CategoryAdd";
@@ -86,10 +85,6 @@ function App() {
             <Route path="/admin/orders" element={<OrderPage />} />
             <Route path="/admin/orders/edit/:id" element={<EditOrderForm />} />
             <Route path="/admin/orders/return" element={<ReturnOrderPage />} />
-            <Route
-              path="/admin/products/update/:id"
-              element={<ProductSpecificationUpdate />}
-            />
           </Route>
         </Route>
       </Routes>

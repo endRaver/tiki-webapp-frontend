@@ -2,7 +2,6 @@ import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { AxiosError } from "axios";
-
 import { Product } from "@/types/product";
 import { CartItem, Coupon } from "@/types/user";
 import { map, groupBy } from "lodash";
@@ -15,6 +14,7 @@ interface CartStore {
     items: CartItem[];
     totalShippingPrice: number;
     shippingDate: Date;
+    isSelected: boolean;
   }[];
 
   coupons: Coupon[];
@@ -65,9 +65,31 @@ export const useCartStore = create<CartStore>((set, get) => ({
   handleGetCartItems: async () => {
     try {
       const response = await axiosInstance.get("/carts");
+      let cartWithSelection = response.data;
+
+      // Gọi API /products/{id} để lấy thông tin chi tiết (bao gồm categories)
+      cartWithSelection = await Promise.all(
+        cartWithSelection.map(async (item: any) => {
+          try {
+            const productResponse = await axiosInstance.get(`/products/${item._id}`);
+            return {
+              ...item,
+              isSelected: false,
+              categories: productResponse.data.categories || [], // Lấy categories từ API
+            };
+          } catch (error) {
+            console.error(`Failed to fetch product details for ${item._id}:`, error);
+            return {
+              ...item,
+              isSelected: false,
+              categories: [], // Fallback nếu không lấy được categories
+            };
+          }
+        }),
+      );
 
       const groupCart = map(
-        groupBy(response.data, (item) => item.current_seller.seller.store_id),
+        groupBy(cartWithSelection, (item) => item.current_seller.seller.store_id),
         (items) => ({
           items,
           totalShippingPrice: Math.max(
@@ -78,14 +100,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
               ...items.map((item) => new Date(item.shippingDate).getTime()),
             ),
           ),
+          isSelected: false,
         }),
       );
-
-      set({ cart: response.data, groupCart });
+      set({ cart: cartWithSelection, groupCart });
       get().calculateTotal();
-      return response.data;
+      return cartWithSelection;
     } catch (error) {
-      set({ cart: [] });
+      set({ cart: [], groupCart: [] });
       if (error instanceof AxiosError) {
         console.log(error.response?.data?.message);
       }
@@ -99,24 +121,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         productId: product._id,
         quantity,
       });
-
       await get().handleGetCartItems();
-
-      // set((prevState) => {
-      //   const existingItem = prevState.cart.find(
-      //     (item) => item._id === product._id,
-      //   );
-
-      //   const newCart = existingItem
-      //     ? prevState.cart.map((item) =>
-      //         item._id === product._id
-      //           ? { ...item, quantity: item.quantity + 1 }
-      //           : item,
-      //       )
-      //     : [...prevState.cart, response.data];
-      //   return { cart: newCart };
-      // });
-
       toast.success("Product added to cart");
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -130,12 +135,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   handleRemoveFromCart: async (productId) => {
     try {
       await axiosInstance.delete(`/carts`, { data: { productId } });
-
-      set((prevState) => {
-        const newCart = prevState.cart.filter((item) => item._id !== productId);
-        return { cart: newCart };
-      });
-
+      await get().handleGetCartItems();
       toast.success("Product removed from cart");
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -149,14 +149,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   handleUpdateQuantity: async (productId, quantity) => {
     try {
       await axiosInstance.put(`/carts/${productId}`, { quantity });
-
-      set((prevState) => {
-        const newCart = prevState.cart.map((item) =>
-          item._id === productId ? { ...item, quantity } : item,
-        );
-        return { cart: newCart };
-      });
-
+      await get().handleGetCartItems();
       toast.success("Quantity updated");
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -172,19 +165,32 @@ export const useCartStore = create<CartStore>((set, get) => ({
       get();
 
     const subtotal = cart.reduce(
-      (sum, item) => sum + item.original_price * item.quantity,
+      (sum, item) =>
+        item.isSelected ? sum + item.original_price * item.quantity : sum,
       0,
     );
 
     const subtotalDiscount = cart.reduce(
-      (sum, item) => sum + item.current_seller.price * item.quantity,
+      (sum, item) =>
+        item.isSelected ? sum + item.current_seller.price * item.quantity : sum,
       0,
     );
 
     const totalShippingPrice =
       shippingType === "fast"
-        ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
-        : Math.max(...cart.map((item) => item.shippingPrice));
+        ? groupCart.reduce(
+            (acc, group) =>
+              group.items.some((item) => item.isSelected)
+                ? acc + group.totalShippingPrice
+                : acc,
+            0,
+          )
+        : Math.max(
+            ...cart
+              .filter((item) => item.isSelected)
+              .map((item) => item.shippingPrice),
+            0,
+          );
 
     let productDiscount = 0;
     let shippingDiscount = 0;
@@ -246,7 +252,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
       get().calculateTotal();
     } catch (error) {
-      console.error(error);
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.message ?? "Không thể áp dụng mã giảm giá",
+        );
+      }
     }
   },
 
@@ -274,8 +284,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
       await axiosInstance.delete("/carts/delete-all");
       set({ cart: [], groupCart: [] });
       get().calculateTotal();
+      toast.success("Cart cleared successfully");
     } catch (error) {
-      console.error(error);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message ?? "Failed to clear cart");
+      }
     }
   },
 }));

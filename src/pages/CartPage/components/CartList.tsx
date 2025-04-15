@@ -35,9 +35,6 @@ interface CartListProps {
 const CartList: React.FC<CartListProps> = ({
   cartItems,
   onClearCart,
-  selectAll,
-  onSelectAll,
-  itemCount,
   onUpdateQuantity,
   onRemoveFromCart,
   onUpdateSelection, // Thêm prop
@@ -103,10 +100,6 @@ const CartList: React.FC<CartListProps> = ({
     setIsModalOpen(true);
   };
 
-  const handleClearCartWithModal = () => {
-    setModalAction("clear");
-    setIsModalOpen(true);
-  };
 
   const confirmAction = () => {
     if (modalAction === "clear") {

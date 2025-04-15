@@ -1,226 +1,183 @@
-import React, { useRef, useState, useEffect } from 'react';
-import AddOnItem from './AddOnItem';
+import { useEffect, useState } from "react";
+import { useCartStore } from "@/store/useCartStore";
+import { useProductStore } from "@/store/useProductStore";
+import { Product } from "@/types/product";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios"; // Import AxiosError
 
-// Dữ liệu giả lập (bao gồm rating và deliveryDate)
-const addOnItems = [
-  {
-    id: 1,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Vớng Da Quang Nuan Nuan',
-    originalPrice: 214000,
-    discountedPrice: 214000,
-    discount: 0,
-    rating: 5,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 2,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Giày cho bé gái phong cách dễ thương',
-    originalPrice: 203633,
-    discountedPrice: 183270, // Áp dụng giảm giá 10%
-    discount: 10,
-    rating: 4,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 3,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Bột ăn dặm dinh dưỡng Sữa An',
-    originalPrice: 155000,
-    discountedPrice: 155000,
-    discount: 0,
-    rating: 5,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 4,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Dầu Gội Bé Bầu Em Bé Babymac Shampoo',
-    originalPrice: 232800,
-    discountedPrice: 209520, // Áp dụng giảm giá 10%
-    discount: 10,
-    rating: 4,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 5,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Bộ Phù Kiện Tóc Twinkle Star Clever Hippo',
-    originalPrice: 111000,
-    discountedPrice: 111000,
-    discount: 0,
-    rating: 5,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 6,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Bột ăn dặm dinh dưỡng Sữa Hoa Bắp Hip',
-    originalPrice: 155000,
-    discountedPrice: 139500, // Áp dụng giảm giá 10%
-    discount: 10,
-    rating: 4,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 7,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Bột ăn dặm dinh dưỡng Sữa Hoa Bắp Hip',
-    originalPrice: 155000,
-    discountedPrice: 139500, // Áp dụng giảm giá 10%
-    discount: 10,
-    rating: 4,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-  {
-    id: 8,
-    image: 'https://www.issp.edu.vn/wp-content/uploads/sites/13/2024/07/sach-hay-cho-tre-8-tuoi-5.png',
-    name: 'Bột ăn dặm dinh dưỡng Sữa Hoa Bắp Hip',
-    originalPrice: 155000,
-    discountedPrice: 139500, // Áp dụng giảm giá 10%
-    discount: 10,
-    rating: 4,
-    deliveryDate: 'Giao thứ 7, 12/04',
-  },
-];
+interface CartItemType {
+  id: string;
+  seller: { name: string; link: string };
+  image: string;
+  name: string;
+  originalPrice: number;
+  discountedPrice: number;
+  discount: number;
+  quantity: number;
+  shippingDate: string;
+  isSelected: boolean;
+  categories?: { name: string }[];
+}
 
-const AddOnList: React.FC = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+interface AddOnListProps {
+  cartItems: CartItemType[];
+}
 
-  // Số lượng sản phẩm hiển thị cùng lúc (5 sản phẩm)
-  const itemsPerPage = 5;
-  // Chiều rộng của mỗi sản phẩm (cố định 195.33px)
-  const productWidth = 195.33;
+const AddOnList: React.FC<AddOnListProps> = ({ cartItems }) => {
+  const { handleAddToCart } = useCartStore();
+  const { handleGetProductByCategory, products, loading, categories, fetchCategories } = useProductStore();
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const updateButtonVisibility = () => {
-    setCanScrollLeft(currentIndex > 0);
-    // Adjust the condition to account for scrolling one item at a time
-    setCanScrollRight(currentIndex < addOnItems.length - itemsPerPage);
-  };
+  useEffect(() => {
+    // Lấy danh sách tất cả danh mục trước
+    fetchCategories();
+  }, [fetchCategories]);
 
-  const scrollToIndex = (index: number) => {
-    if (scrollRef.current) {
-      // Scroll by the width of one product at a time
-      scrollRef.current.scrollTo({
-        left: index * productWidth,
-        behavior: 'smooth',
-      });
-      setCurrentIndex(index);
-    }
-  };
+  const fetchRelatedProducts = async () => {
+    try {
+      setError(null);
+      const cartCategories = Array.from(
+        new Set(
+          cartItems
+            .flatMap((item) => item.categories?.map((cat) => cat.name) || [])
+            .filter(Boolean),
+        ),
+      );
 
-  const scrollLeft = () => {
-    if (currentIndex > 0) {
-      const newIndex = currentIndex - 1; // Move one product to the left
-      scrollToIndex(newIndex);
-    }
-  };
+      if (cartCategories.length === 0) {
+        setRelatedProducts([]);
+        setError("Không có danh mục hợp lệ để tải sản phẩm liên quan.");
+        return;
+      }
 
-  const scrollRight = () => {
-    if (currentIndex < addOnItems.length - itemsPerPage) {
-      const newIndex = currentIndex + 1; // Move one product to the right
-      scrollToIndex(newIndex);
+      // Kiểm tra danh mục hợp lệ
+      const validCategory = cartCategories.find((cat) =>
+        categories.some((validCat) => validCat.name === cat),
+      );
+
+      if (!validCategory) {
+        setRelatedProducts([]);
+        setError("Không tìm thấy danh mục hợp lệ trong giỏ hàng.");
+        return;
+      }
+
+      await handleGetProductByCategory(validCategory);
+
+      const cartItemIds = new Set(cartItems.map((item) => item.id));
+      const filteredProducts = products
+        .filter((product) => !cartItemIds.has(product._id))
+        .slice(0, 4);
+
+      if (filteredProducts.length === 0) {
+        setError(`Không tìm thấy sản phẩm liên quan cho danh mục "${validCategory}".`);
+      }
+
+      setRelatedProducts(filteredProducts);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        setError(
+          err.response?.data?.message ||
+            "Không thể tải sản phẩm liên quan. Vui lòng thử lại.",
+        );
+      } else {
+        setError("Không thể tải sản phẩm liên quan. Vui lòng thử lại.");
+      }
     }
   };
 
   useEffect(() => {
-    updateButtonVisibility();
-  }, [currentIndex]);
+    if (categories.length > 0) {
+      fetchRelatedProducts();
+    }
+  }, [cartItems, handleGetProductByCategory, categories]);
+
+  const handleAddProductToCart = async (product: Product) => {
+    try {
+      await handleAddToCart(product);
+    } catch (err) {
+      toast.error("Không thể thêm sản phẩm vào giỏ hàng.");
+    }
+  };
+
+  const handleRetry = () => {
+    if (retryCount >= 3) {
+      setError("Đã đạt giới hạn thử lại. Vui lòng kiểm tra kết nối và thử lại sau.");
+      return;
+    }
+    setRetryCount((prev) => prev + 1);
+    fetchRelatedProducts();
+  };
+
+  if (loading) {
+    return (
+      <p className="p-4 text-center text-gray-500">Đang tải sản phẩm liên quan...</p>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500">{error}</p>
+        <button
+          onClick={handleRetry}
+          className="mt-2 rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
+
+  if (relatedProducts.length === 0) {
+    return (
+      <p className="p-4 text-center text-gray-500">
+        Không có sản phẩm liên quan.
+      </p>
+    );
+  }
 
   return (
-    <div className="">
-      {/* White background wrapper for the entire section */}
-      <div className="bg-white p-1 rounded-lg relative">
-        <h2 className="text-x font-bold font-inter mb-2">Sản phẩm mua kèm</h2>
-        <div className="relative">
-          {/* Scrollable product list */}
+    <div className="space-y-4">
+      <h4 className="text-sm font-bold text-gray-800">Sản phẩm liên quan</h4>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {relatedProducts.map((product) => (
           <div
-            ref={scrollRef}
-            className="flex overflow-x-hidden scrollbar-hide snap-x snap-mandatory"
+            key={product._id}
+            className="rounded border border-gray-200 p-3 shadow-sm"
           >
-            {addOnItems.map((item) => (
-              <div
-                className="flex-shrink-0 snap-start"
-                style={{ width: `${productWidth}px` }}
-                key={item.id}
-              >
-                <AddOnItem
-                  image={item.image}
-                  name={item.name}
-                  originalPrice={item.originalPrice}
-                  discountedPrice={item.discountedPrice}
-                  discount={item.discount}
-                  rating={item.rating}
-                  deliveryDate={item.deliveryDate}
-                />
-              </div>
-            ))}
+            <img
+              src={
+                product.images?.[0]?.base_url ||
+                "https://via.placeholder.com/100x100?text=Image+Not+Found"
+              }
+              alt={product.name}
+              className="mb-2 h-24 w-full rounded object-cover"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://via.placeholder.com/100x100?text=Image+Not+Found";
+              }}
+            />
+            <h5 className="line-clamp-2 text-sm font-medium text-gray-800">
+              {product.name}
+            </h5>
+            <p className="mt-1 text-sm font-bold text-red-500">
+              {product.current_seller?.price.toLocaleString()}đ
+            </p>
+            {product.original_price !== product.current_seller?.price && (
+              <p className="text-xs text-gray-500 line-through">
+                {product.original_price.toLocaleString()}đ
+              </p>
+            )}
+            <button
+              onClick={() => handleAddProductToCart(product)}
+              className="mt-2 w-full rounded bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-600"
+            >
+              Thêm vào giỏ
+            </button>
           </div>
-
-          {/* Left arrow (Previous) - Show only if can scroll left */}
-          {canScrollLeft && (
-            <button
-              onClick={scrollLeft}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full"
-              style={{ backgroundColor: 'rgb(10, 104, 255)' }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = 'rgb(8, 82, 204)')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = 'rgb(10, 104, 255)')
-              }
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-          )}
-
-          {/* Right arrow (Next) - Show only if can scroll right */}
-          {canScrollRight && (
-            <button
-              onClick={scrollRight}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full"
-              style={{ backgroundColor: 'rgb(10, 104, 255)' }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = 'rgb(8, 82, 204)')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = 'rgb(10, 104, 255)')
-              }
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          )}
-        </div>
+        ))}
       </div>
     </div>
   );

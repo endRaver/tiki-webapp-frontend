@@ -17,7 +17,15 @@ interface OrderListProps {
   orders: Order[];
 }
 
-const DeleteModal = ({ show, order, onConfirm, onCancel, deleting }) => {
+interface DeleteModalProps {
+  show: boolean;
+  order: Order | undefined;
+  onConfirm: () => void;
+  onCancel: () => void;
+  deleting: boolean;
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onConfirm, onCancel, deleting }) => {
   if (!show || !order) return null;
 
   return createPortal(
@@ -167,10 +175,8 @@ const OrderList: React.FC<OrderListProps> = ({ orders }) => {
                 <td className="p-2">{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td className="p-2 flex space-x-2">
                   <Link
-                    to={{
-                      pathname: `/admin/orders/edit/${order._id}`,
-                      state: { order }, // Truyền dữ liệu order qua state
-                    }}
+                    to={`/admin/orders/edit/${order._id}`}
+                    state={{ order }}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     <FaEdit />

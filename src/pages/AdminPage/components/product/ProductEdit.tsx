@@ -5,20 +5,32 @@ import Button from "../common/Button";
 import { useProductStore } from "@/store/useProductStore";
 import { Product } from "@/types/product";
 import { toast } from 'react-hot-toast';
+import { Specification, SpecificationAttribute } from "@/types/product";
 
 const ProductEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { currentProduct, handleGetProductById, handleUpdateProduct, loading, sellers,categories, fetchSellers, fetchCategories } = useProductStore();
+  const { currentProduct, handleGetProductById, handleUpdateProduct, loading, sellers, categories, fetchSellers, fetchCategories } = useProductStore();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    short_description: string;
+    price: string;
+    category: string;
+    authors: { name: string }[];
+    images: File[];
+    seller_price: string;
+    seller_id: string;
+    specifications: Specification[];
+  }>({
     name: "",
     description: "",
     short_description: "",
     price: "",
     category: "",
     authors: [{ name: "" }],
-    images: [] as File[],
+    images: [],
     seller_price: "",
     seller_id: "",
     specifications: [
@@ -67,31 +79,49 @@ const ProductEdit: React.FC = () => {
         short_description: currentProduct.short_description || "",
         price: String(currentProduct.original_price || 0),
         category: currentProduct.categories?.name || "",
-        authors: currentProduct.authors?.length > 0
-          ? currentProduct.authors.map((author) => ({ name: author.name }))
-          : [{ name: "" }],
+        authors:
+          currentProduct.authors && currentProduct.authors.length > 0
+            ? currentProduct.authors.map((author) => ({ name: author.name }))
+            : [{ name: "" }],
         images: [],
         seller_price: String(currentProduct.current_seller?.price || 0),
-        seller_id: currentProduct.current_seller?.seller?.id || "", // Đúng với cấu trúc mới
-        specifications: currentProduct.specifications?.length > 0
-          ? currentProduct.specifications
-          : [
-            {
-              name: "General Information",
-              attributes: [
-                { code: "publisher_vn", name: "Publisher", value: "" },
-                { code: "publication_date", name: "Publication Date", value: "" },
-                { code: "dimensions", name: "Dimensions", value: "" },
-                { code: "dich_gia", name: "Translator", value: "" },
-                { code: "code", name: "Cover Type", value: "" },
-                { code: "number_of_page", name: "Number of Pages", value: "" },
-                { code: "manufacturer", name: "Manufacturer", value: "" },
-              ],
-            },
-          ],
+        seller_id:
+          (typeof currentProduct.current_seller?.seller === "object" &&
+            currentProduct.current_seller.seller?._id) ||
+          "",
+        specifications:
+          currentProduct.specifications && currentProduct.specifications.length > 0
+            ? currentProduct.specifications.map((spec) => ({
+              ...spec,
+              attributes: spec.attributes.map((attr) => ({
+                code: attr.code || "",
+                name: attr.name || "",
+                value: attr.value || "",
+                ...(attr._id && { _id: attr._id }),
+              })),
+            }))
+            : [
+              {
+                name: "General Information",
+                attributes: [
+                  { code: "publisher_vn", name: "Publisher", value: "" },
+                  { code: "publication_date", name: "Publication Date", value: "" },
+                  { code: "dimensions", name: "Dimensions", value: "" },
+                  { code: "dich_gia", name: "Translator", value: "" },
+                  { code: "code", name: "Cover Type", value: "" },
+                  { code: "number_of_page", name: "Number of Pages", value: "" },
+                  { code: "manufacturer", name: "Manufacturer", value: "" },
+                ],
+              },
+            ],
       });
       setExistingImages(currentProduct.images || []);
-      console.log("Initialized seller_id:", currentProduct.current_seller?.seller?.id); // Debug seller_id
+      console.log(
+        "Initialized seller_id:",
+        (typeof currentProduct.current_seller?.seller === "object" &&
+          currentProduct.current_seller.seller?._id) ||
+        "N/A"
+      );
     }
   }, [currentProduct]);
 
@@ -143,9 +173,17 @@ const ProductEdit: React.FC = () => {
     setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
-  const handleSpecChange = (specIndex: number, attrIndex: number, field: string, value: string) => {
+  const handleSpecChange = (
+    specIndex: number,
+    attrIndex: number,
+    field: keyof SpecificationAttribute,
+    value: string
+  ) => {
     const newSpecs = [...formData.specifications];
-    newSpecs[specIndex].attributes[attrIndex][field] = value;
+    newSpecs[specIndex].attributes[attrIndex] = {
+      ...newSpecs[specIndex].attributes[attrIndex],
+      [field]: value,
+    };
     setFormData({ ...formData, specifications: newSpecs });
     setErrors({ ...errors, specifications: "" });
   };
@@ -220,7 +258,6 @@ const ProductEdit: React.FC = () => {
       newErrors.seller_id = "Please select a seller";
       isValid = false;
     } else {
-      // Kiểm tra định dạng ObjectId (24 ký tự hex)
       const objectIdRegex = /^[0-9a-fA-F]{24}$/;
       if (!objectIdRegex.test(formData.seller_id)) {
         newErrors.seller_id = "Invalid seller ID format";
@@ -229,7 +266,13 @@ const ProductEdit: React.FC = () => {
     }
     if (
       formData.specifications.length === 0 ||
-      formData.specifications.some(spec => !spec.name.trim() || spec.attributes.some(attr => !attr.name.trim() || !attr.value.trim()))
+      formData.specifications.some(
+        (spec) =>
+          !spec.name.trim() ||
+          spec.attributes.some(
+            (attr) => !attr.name?.trim() || !attr.value?.trim()
+          )
+      )
     ) {
       newErrors.specifications = "Specifications must have at least one valid attribute";
       isValid = false;
@@ -256,7 +299,7 @@ const ProductEdit: React.FC = () => {
     formDataToSend.append("seller_price", formData.seller_price);
 
     console.log("Submitting seller_id:", formData.seller_id);
-    const selectedSeller = sellers.find(seller => seller.id === formData.seller_id);
+    const selectedSeller = sellers.find(seller => seller._id === formData.seller_id);
     if (!selectedSeller) {
       toast.error("Invalid seller selected. Please select a valid seller.");
       return;
@@ -267,8 +310,8 @@ const ProductEdit: React.FC = () => {
       formDataToSend.append(`specifications[${specIndex}][name]`, spec.name);
       spec.attributes.forEach((attr, attrIndex) => {
         formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][code]`, attr.code || "");
-        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][name]`, attr.name);
-        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][value]`, attr.value);
+        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][name]`, attr.name || "");
+        formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][value]`, attr.value || "");
         if (attr._id) {
           formDataToSend.append(`specifications[${specIndex}][attributes][${attrIndex}][_id]`, attr._id);
         }
@@ -278,7 +321,6 @@ const ProductEdit: React.FC = () => {
       }
     });
 
-    // Gửi existingImages
     existingImages.forEach((image, index) => formDataToSend.append(`existingImages[${index}]`, JSON.stringify(image)));
 
     try {
@@ -301,10 +343,8 @@ const ProductEdit: React.FC = () => {
         <h1 className="text-2xl font-semibold text-gray-800">Edit Product</h1>
       </div>
       <div className="bg-white border border-gray-200 rounded p-6">
-        {/* 1. Basic Information */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">1. Basic Information</h2>
-          {/* Product Name */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Product Name
@@ -315,13 +355,11 @@ const ProductEdit: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter product name"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                }`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
-          {/* Category */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Category
@@ -330,20 +368,18 @@ const ProductEdit: React.FC = () => {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.category ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                }`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.category ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             >
               <option value="">Select Category</option>
               {categories.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
+                <option key={index} value={category.name}>
+                  {category.name}
                 </option>
               ))}
             </select>
             {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
           </div>
-          {/* Authors */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Authors
@@ -378,7 +414,6 @@ const ProductEdit: React.FC = () => {
             </button>
             {errors.authors && <p className="text-red-500 text-sm mt-1">{errors.authors}</p>}
           </div>
-          {/* Seller */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Seller
@@ -387,14 +422,13 @@ const ProductEdit: React.FC = () => {
               name="seller_id"
               value={formData.seller_id}
               onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.seller_id ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                }`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.seller_id ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             >
               <option value="">Select Seller</option>
               {Array.isArray(sellers) && sellers.length > 0 ? (
                 sellers.map((seller) => (
-                  <option key={seller.id} value={seller.id}>
+                  <option key={seller._id} value={seller._id}>
                     {seller.name}
                   </option>
                 ))
@@ -406,7 +440,6 @@ const ProductEdit: React.FC = () => {
             </select>
             {errors.seller_id && <p className="text-red-500 text-sm mt-1">{errors.seller_id}</p>}
           </div>
-          {/* Original Price */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Original Price (VNĐ)
@@ -417,13 +450,11 @@ const ProductEdit: React.FC = () => {
               value={formData.price}
               onChange={handleChange}
               placeholder="Enter original price"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                }`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             />
             {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
           </div>
-          {/* Selling Price */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Selling Price (VNĐ)
@@ -434,13 +465,11 @@ const ProductEdit: React.FC = () => {
               value={formData.seller_price}
               onChange={handleChange}
               placeholder="Enter selling price"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.seller_price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                }`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.seller_price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
               disabled={loading}
             />
             {errors.seller_price && <p className="text-red-500 text-sm mt-1">{errors.seller_price}</p>}
           </div>
-          {/* Images */}
           <div className="mb-4">
             <label className="block mb-2">
               <span className="text-red-500">*</span> Product Images (Minimum size: 500px x 500px, Maximum: 10MB, .jpg, .png)
@@ -490,11 +519,8 @@ const ProductEdit: React.FC = () => {
             {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
           </div>
         </div>
-
-        {/* 2. Description */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">2. Description</h2>
-          {/* Short Description */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Short Description
@@ -504,13 +530,11 @@ const ProductEdit: React.FC = () => {
               value={formData.short_description}
               onChange={handleChange}
               placeholder="Enter short description"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.short_description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                } h-20`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.short_description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"} h-20`}
               disabled={loading}
             />
             {errors.short_description && <p className="text-red-500 text-sm mt-1">{errors.short_description}</p>}
           </div>
-          {/* Detailed Description */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               <span className="text-red-500">*</span> Detailed Description
@@ -520,15 +544,12 @@ const ProductEdit: React.FC = () => {
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter product description"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                } h-32`}
+              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"} h-32`}
               disabled={loading}
             />
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
           </div>
         </div>
-
-        {/* 3. Specifications */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">3. Specifications</h2>
           {formData.specifications.map((spec, specIndex) => (
@@ -550,7 +571,7 @@ const ProductEdit: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Code"
-                    value={attr.code || ""}
+                    value={attr.code}
                     onChange={(e) => handleSpecChange(specIndex, attrIndex, "code", e.target.value)}
                     className="w-1/4 px-4 py-2 border rounded focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-500"
                     disabled={loading}
@@ -600,14 +621,11 @@ const ProductEdit: React.FC = () => {
           </button>
           {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
         </div>
-
-        {/* Error Notification */}
         {Object.values(errors).some((error) => error) && (
           <div className="mb-4 p-4 bg-yellow-100 text-yellow-700 rounded">
             Please fill in all required fields correctly.
           </div>
         )}
-        {/* Action Buttons */}
         <div className="flex justify-end space-x-2">
           <button
             onClick={() => navigate("/admin/products")}

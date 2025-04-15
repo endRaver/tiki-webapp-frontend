@@ -1,22 +1,14 @@
-import DiscountSection from "./DiscountSection";
-import FreeshipSection from "./FreeshipSection";
+import CouponSection from "./CouponSection";
 
 interface CartDiscountProps {
   hasDiscount: boolean;
   discountAmount?: number;
 }
 
-const CartDiscount: React.FC<CartDiscountProps> = ({
-  hasDiscount,
-  discountAmount = 0,
-}) => {
+const CartDiscount: React.FC<CartDiscountProps> = () => {
   return (
     <div>
-      <DiscountSection
-        hasDiscount={hasDiscount}
-        discountAmount={discountAmount}
-      />
-      <FreeshipSection hasDiscount={hasDiscount} />
+      <CouponSection />
     </div>
   );
 };

@@ -6,7 +6,7 @@ const ProductPage: React.FC = () => {
   const handleProductFilterChange = (filters: {
     name: string;
     category: string;
-    brand: string;
+    seller: string;
   }) => {
     console.log("Product filters:", filters);
   };

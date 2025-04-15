@@ -4,6 +4,8 @@ export type CartItem = Product & {
   quantity: number;
   shippingPrice: number;
   shippingDate: string;
+  isSelected?: boolean;
+  categories?: { name: string }[];
 };
 
 export type AuthType = "local" | "google";
@@ -26,6 +28,7 @@ export type User = {
   verificationTokenExpiresAt?: Date | string;
   createdAt: string;
   updatedAt: string;
+  address?:string;
 };
 
 export type Coupon = {

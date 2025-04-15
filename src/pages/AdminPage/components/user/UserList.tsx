@@ -19,7 +19,15 @@ interface UserListProps {
   users: User[];
 }
 
-const DeleteModal = ({ show, user, onConfirm, onCancel, deleting }) => {
+interface DeleteModalProps {
+  show: boolean;
+  user: User | undefined;
+  onConfirm: () => void;
+  onCancel: () => void;
+  deleting: boolean;
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({ show, user, onConfirm, onCancel, deleting }) => {
   if (!show || !user) return null;
 
   return createPortal(
@@ -163,10 +171,8 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
                 <td className="p-2">{new Date(user.updatedAt).toLocaleDateString()}</td>
                 <td className="p-2 flex space-x-2">
                   <Link
-                    to={{
-                      pathname: `/admin/users/edit/${user._id}`,
-                      state: { user }, // Truyền dữ liệu người dùng qua state
-                    }}
+                    to={`/admin/users/edit/${user._id}`}
+                    state={{ user }}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     <FaEdit />
