@@ -24,25 +24,36 @@ const CartList = () => {
                   type="checkbox"
                   className="checkbox checkbox-sm checked:bg-primary-200 rounded bg-[white] text-white"
                   checked={groupItem.items.every((item) =>
-                    selectedCart.includes(item),
+                    selectedCart.some(
+                      (selectedItem) => selectedItem._id === item._id,
+                    ),
                   )}
                   onChange={() => {
                     const allItemsSelected = groupItem.items.every((item) =>
-                      selectedCart.includes(item),
+                      selectedCart.some(
+                        (selectedItem) => selectedItem._id === item._id,
+                      ),
                     );
 
                     if (allItemsSelected) {
                       // If all items are selected, remove all items from this group
                       setSelectedCart(
                         selectedCart.filter(
-                          (item) => !groupItem.items.includes(item),
+                          (selectedItem) =>
+                            !groupItem.items.some(
+                              (item) => item._id === selectedItem._id,
+                            ),
                         ),
                       );
                     } else {
                       // If not all items are selected, add all items from this group
                       const newSelectedItems = [...selectedCart];
                       groupItem.items.forEach((item) => {
-                        if (!newSelectedItems.includes(item)) {
+                        if (
+                          !newSelectedItems.some(
+                            (selectedItem) => selectedItem._id === item._id,
+                          )
+                        ) {
                           newSelectedItems.push(item);
                         }
                       });

@@ -175,6 +175,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
         return { groupCart: newCart };
       });
 
+      // Update selectedCart to maintain the checked state
+      set((prevState) => {
+        const newSelectedCart = prevState.selectedCart.map((item) =>
+          item._id === productId ? { ...item, quantity } : item,
+        );
+        return { selectedCart: newSelectedCart };
+      });
+
       get().calculateTotal();
     } catch (error) {
       if (error instanceof AxiosError) {

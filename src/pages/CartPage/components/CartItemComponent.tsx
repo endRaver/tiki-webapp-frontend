@@ -2,7 +2,6 @@ import { decrease, increase, trash } from "@/assets/icons/cart_page_icons";
 import { useCartStore } from "@/store/useCartStore";
 import { CartItem } from "@/types/user";
 import { formatCurrency } from "@/utils/utils";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 interface CartItemProps {
@@ -17,9 +16,10 @@ const CartItemComponent = ({ item }: CartItemProps) => {
     handleRemoveFromCart,
   } = useCartStore();
 
-  useEffect(() => {
-    setSelectedCart(selectedCart.filter((i) => i._id !== item._id));
-  }, [handleUpdateQuantity, item._id, item.quantity]);
+  // Check if the item is selected by comparing IDs
+  const isSelected = selectedCart.some(
+    (selectedItem) => selectedItem._id === item._id,
+  );
 
   return (
     <div className="flex w-full items-center p-4 text-sm">
@@ -27,13 +27,13 @@ const CartItemComponent = ({ item }: CartItemProps) => {
         <input
           type="checkbox"
           className="checkbox checkbox-sm checked:bg-primary-200 rounded bg-[white] text-white"
-          checked={selectedCart.includes(item)}
+          checked={isSelected}
           onChange={() => {
-            setSelectedCart(
-              selectedCart.includes(item)
-                ? selectedCart.filter((i) => i._id !== item._id)
-                : [...selectedCart, item],
-            );
+            if (isSelected) {
+              setSelectedCart(selectedCart.filter((i) => i._id !== item._id));
+            } else {
+              setSelectedCart([...selectedCart, item]);
+            }
           }}
         />
 
@@ -74,7 +74,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
           )}
         </div>
 
-        {selectedCart.includes(item) && (
+        {isSelected && (
           <p className="text-xs text-neutral-600">
             Giá chưa áp dụng khuyến mãi
           </p>

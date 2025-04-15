@@ -5,6 +5,13 @@ const CartHeader = () => {
   const { handleClearCart, cart, selectedCart, setSelectedCart } =
     useCartStore();
 
+  // Check if all items are selected by comparing IDs
+  const allItemsSelected =
+    cart.length > 0 &&
+    cart.every((item) =>
+      selectedCart.some((selectedItem) => selectedItem._id === item._id),
+    );
+
   return (
     <div className="bg-background">
       <div className="mb-3 flex w-full items-center rounded-t bg-white px-4 py-2 text-[13px]">
@@ -12,12 +19,12 @@ const CartHeader = () => {
           <input
             type="checkbox"
             className="checkbox checkbox-sm checked:bg-primary-200 rounded bg-[white] text-white"
-            checked={selectedCart.length === cart.length}
+            checked={allItemsSelected}
             onChange={() => {
-              if (selectedCart.length === cart.length) {
+              if (allItemsSelected) {
                 setSelectedCart([]);
               } else {
-                setSelectedCart(cart);
+                setSelectedCart([...cart]);
               }
             }}
           />
