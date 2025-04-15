@@ -6,7 +6,6 @@ import { useProductStore } from "@/store/useProductStore";
 import { toast } from 'react-hot-toast';
 import { Specification, SpecificationAttribute } from "@/types/product";
 
-// Define the type for formData
 interface FormData {
   name: string;
   description: string;
@@ -22,7 +21,7 @@ interface FormData {
 
 const AddProductForm: React.FC = () => {
   const navigate = useNavigate();
-  const { handleCreateProduct, loading, sellers, categories, fetchSellers, fetchCategories } = useProductStore();
+  const { handleCreateProduct, loading, sellers, categoryNames, fetchSellers, fetchCategories } = useProductStore();
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -42,7 +41,7 @@ const AddProductForm: React.FC = () => {
           { code: "publication_date", name: "Publication Date", value: "" },
           { code: "dimensions", name: "Dimensions", value: "" },
           { code: "dich_gia", name: "Translator", value: "" },
-          { code: "code", name: "Cover Type", value: "" },
+          { code: "", name: "Cover Type", value: "" },
           { code: "number_of_page", name: "Number of Pages", value: "" },
           { code: "manufacturer", name: "Manufacturer", value: "" },
         ],
@@ -293,9 +292,9 @@ const AddProductForm: React.FC = () => {
               disabled={loading}
             >
               <option value="">Select Category</option>
-              {categories.map((category, index) => (
-                <option key={index} value={category.name}>
-                  {category.name}
+              {categoryNames.map((categoryName: string, index: number) => (
+                <option key={index} value={categoryName}>
+                  {categoryName}
                 </option>
               ))}
             </select>

@@ -10,7 +10,7 @@ import { Specification, SpecificationAttribute } from "@/types/product";
 const ProductEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { currentProduct, handleGetProductById, handleUpdateProduct, loading, sellers, categories, fetchSellers, fetchCategories } = useProductStore();
+  const { currentProduct, handleGetProductById, handleUpdateProduct, loading, sellers, categoryNames, fetchSellers, fetchCategories } = useProductStore();
 
   const [formData, setFormData] = useState<{
     name: string;
@@ -41,7 +41,7 @@ const ProductEdit: React.FC = () => {
           { code: "publication_date", name: "Publication Date", value: "" },
           { code: "dimensions", name: "Dimensions", value: "" },
           { code: "dich_gia", name: "Translator", value: "" },
-          { code: "code", name: "Cover Type", value: "" },
+          { code: "", name: "Cover Type", value: "" },
           { code: "number_of_page", name: "Number of Pages", value: "" },
           { code: "manufacturer", name: "Manufacturer", value: "" },
         ],
@@ -108,7 +108,7 @@ const ProductEdit: React.FC = () => {
                   { code: "publication_date", name: "Publication Date", value: "" },
                   { code: "dimensions", name: "Dimensions", value: "" },
                   { code: "dich_gia", name: "Translator", value: "" },
-                  { code: "code", name: "Cover Type", value: "" },
+                  { code: "", name: "Cover Type", value: "" },
                   { code: "number_of_page", name: "Number of Pages", value: "" },
                   { code: "manufacturer", name: "Manufacturer", value: "" },
                 ],
@@ -372,9 +372,9 @@ const ProductEdit: React.FC = () => {
               disabled={loading}
             >
               <option value="">Select Category</option>
-              {categories.map((category, index) => (
-                <option key={index} value={category.name}>
-                  {category.name}
+              {categoryNames.map((categoryName: string, index: number) => (
+                <option key={index} value={categoryName}>
+                  {categoryName}
                 </option>
               ))}
             </select>

@@ -3,7 +3,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useProductStore } from "@/store/useProductStore";
 import { Product } from "@/types/product";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios"; // Import AxiosError
+import { AxiosError } from "axios";
 
 interface CartItemType {
   id: string;
@@ -25,13 +25,12 @@ interface AddOnListProps {
 
 const AddOnList: React.FC<AddOnListProps> = ({ cartItems }) => {
   const { handleAddToCart } = useCartStore();
-  const { handleGetProductByCategory, products, loading, categories, fetchCategories } = useProductStore();
+  const { handleGetProductByCategory, products, loading, categoryNames, fetchCategories } = useProductStore();
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    // Lấy danh sách tất cả danh mục trước
     fetchCategories();
   }, [fetchCategories]);
 
@@ -54,7 +53,7 @@ const AddOnList: React.FC<AddOnListProps> = ({ cartItems }) => {
 
       // Kiểm tra danh mục hợp lệ
       const validCategory = cartCategories.find((cat) =>
-        categories.some((validCat) => validCat.name === cat),
+        categoryNames.includes(cat)
       );
 
       if (!validCategory) {
@@ -88,10 +87,10 @@ const AddOnList: React.FC<AddOnListProps> = ({ cartItems }) => {
   };
 
   useEffect(() => {
-    if (categories.length > 0) {
+    if (categoryNames.length > 0) {
       fetchRelatedProducts();
     }
-  }, [cartItems, handleGetProductByCategory, categories]);
+  }, [cartItems, categoryNames]);
 
   const handleAddProductToCart = async (product: Product) => {
     try {

@@ -18,15 +18,12 @@ import AdminLayout from "./pages/AdminPage/AdminLayout";
 import AddProductForm from "./pages/AdminPage/components/product/ProductAdd";
 import EditProductForm from "./pages/AdminPage/components/product/ProductEdit";
 import UserPage from "./pages/AdminPage/UserPage";
-import AddUserForm from "./pages/AdminPage/components/user/UserAdd";
 import EditUserForm from "./pages/AdminPage/components/user/UserEditForm";
 import OrderPage from "./pages/AdminPage/OrderPage";
 import EditOrderForm from "./pages/AdminPage/components/order/EditOrderForm";
 import ReturnOrderPage from "./pages/AdminPage/ReturnOrderPage";
 import NotFound from "./pages/NotFoundPage/NotFound";
 import DashboardPage from "./pages/AdminPage/DashboardPage";
-import CategoryPage from "./pages/AdminPage/CategoryPage";
-import AddCategoryForm from "./pages/AdminPage/components/category/CategoryAdd";
 import ProductPage from "./pages/AdminPage/ProductPage";
 import ProfileLayout from "./layout/ProfileLayout/ProfileLayout";
 import UserOrderListPage from "./pages/UserOrderPage/UserOrderListPage";
@@ -74,13 +71,10 @@ function App() {
               element={<Navigate to="/admin/dashboard" replace />}
             />
             <Route path="/admin/dashboard" element={<DashboardPage />} />
-            <Route path="/admin/categories" element={<CategoryPage />} />
-            <Route path="/admin/categories/add" element={<AddCategoryForm />} />
             <Route path="/admin/products" element={<ProductPage />} />
             <Route path="/admin/products/add" element={<AddProductForm />} />
             <Route path="/admin/products/edit/:id" element={<EditProductForm />} />
             <Route path="/admin/users" element={<UserPage />} />
-            <Route path="/admin/users/add" element={<AddUserForm />} />
             <Route path="/admin/users/edit/:id" element={<EditUserForm />} />
             <Route path="/admin/orders" element={<OrderPage />} />
             <Route path="/admin/orders/edit/:id" element={<EditOrderForm />} />

@@ -22,7 +22,6 @@ const SliderBar: React.FC = () => {
       icon: FaUsers,
       hasSubmenu: true,
       subItems: [
-        { name: "Add User", link: "/admin/users/add" },
         { name: "List Users", link: "/admin/users" },
       ],
     },
@@ -32,7 +31,6 @@ const SliderBar: React.FC = () => {
       hasSubmenu: true,
       subItems: [
         { name: "List Orders", link: "/admin/orders" },
-        { name: "Return Orders", link: "/admin/orders/return" },
       ],
     },
   ];

@@ -9,14 +9,17 @@ interface ErrorResponse {
   message: string;
 }
 
-interface Category {
-  _id: string;
-  name: string;
-}
-
 interface Seller {
   _id: string;
   name: string;
+  link: string;
+  logo: string;
+  store_id: number;
+  is_best_store: boolean;
+  is_offline_installment_supported: boolean | null;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ProductStore {
@@ -25,28 +28,25 @@ interface ProductStore {
   products: Product[];
   filteredProducts: Product[];
   currentProduct: Product | null;
-  categories: Category[];
+  categoryNames: string[]; // Đổi từ categories thành categoryNames, kiểu là string[]
   sellers: Seller[];
-  showDeleteModal: boolean; // Thêm state để quản lý modal
-  deleteProduct: Product | null; // Thêm state để lưu sản phẩm cần xóa
-  setShowDeleteModal: (show: boolean) => void; // Hàm để cập nhật trạng thái modal
-  setDeleteProduct: (product: Product | null) => void; // Hàm để cập nhật sản phẩm cần xóa
-  confirmDeleteProduct: () => Promise<void>; // Hàm xác nhận xóa
+  showDeleteModal: boolean;
+  deleteProduct: Product | null;
+  setShowDeleteModal: (show: boolean) => void;
+  setDeleteProduct: (product: Product | null) => void;
+  confirmDeleteProduct: () => Promise<void>;
 
-  // Fetching methods
   handleFetchAllProduct: () => Promise<void>;
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
   fetchCategories: () => Promise<void>;
   fetchSellers: () => Promise<void>;
 
-  // CRUD methods
   handleCreateProduct: (productData: FormData) => Promise<void>;
   handleUpdateProduct: (id: string, productData: FormData) => Promise<void>;
   handleDeleteProduct: (id: string) => Promise<void>;
 
-  // Filter and Sort methods
-  filterProducts: (filters: { name: string; category: string; seller: string }) => void;
+  filterProducts: (filters: { name: string; category: string; seller: string }) => Promise<void>;
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => void;
 }
 
@@ -54,7 +54,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   filteredProducts: [],
   currentProduct: null,
-  categories: [],
+  categoryNames: [], // Đổi tên
   sellers: [],
   loading: false,
   deleting: false,
@@ -68,7 +68,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   confirmDeleteProduct: async () => {
     const { deleteProduct, handleDeleteProduct } = get();
     if (deleteProduct) {
-      set({ deleting: true }); // Bật trạng thái deleting
+      set({ deleting: true });
       try {
         await handleDeleteProduct(deleteProduct._id);
         set({ showDeleteModal: false, deleteProduct: null, deleting: false });
@@ -80,7 +80,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // Fetch all products
   handleFetchAllProduct: async () => {
     set({ loading: true });
     try {
@@ -118,10 +117,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     try {
       const response = await axiosInstance.get(`/products/${id}`);
       const product: Product = response.data;
-      // Nếu current_seller.seller là chuỗi, chuyển thành object với thuộc tính id
       if (product.current_seller && typeof product.current_seller.seller === "string") {
         product.current_seller.seller = {
-          _id: product.current_seller.seller, // map string vào _id
+          _id: product.current_seller.seller,
           name: '',
           link: '',
           logo: '',
@@ -133,7 +131,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
           updatedAt: '',
         };
       }
-      console.log("Fetched product:", product); // Debug dữ liệu product
+      console.log("Fetched product:", product);
       set({ currentProduct: product });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -143,46 +141,52 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // Fetch products by category
   handleGetProductByCategory: async (categoryName: string) => {
     set({ loading: true });
     try {
-      const response = await axiosInstance.get(`/products/category/${categoryName}`);
-      set({ products: response.data.products || [], filteredProducts: response.data.products || [] });
+      const normalizedCategoryName = categoryName.trim().toLowerCase();
+      console.log("Fetching products for category (normalized):", normalizedCategoryName);
+      const response = await axiosInstance.get(`/products/category/${encodeURIComponent(categoryName)}`);
+      console.log("Products by category response:", response.data);
+      const fetchedProducts = Array.isArray(response.data) ? response.data : [];
+      set({ filteredProducts: fetchedProducts });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
+      console.error("Error fetching products by category:", axiosError.response?.data);
       toast.error(axiosError.response?.data?.message ?? "Failed to fetch products by category");
+      set({ filteredProducts: [] });
     } finally {
       set({ loading: false });
     }
   },
 
-  // Fetch categories
   fetchCategories: async () => {
     set({ loading: true });
     try {
       const response = await axiosInstance.get("/products/categories");
-      set({ categories: response.data || [] });
+      console.log("Fetched category names (raw):", response.data);
+      const normalizedCategoryNames = (response.data || []).map((name: string) => name.trim());
+      console.log("Fetched category names (normalized):", normalizedCategoryNames);
+      set({ categoryNames: normalizedCategoryNames }); // Đổi tên
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "Failed to fetch categories");
+      toast.error(axiosError.response?.data?.message ?? "Failed to fetch category names");
     } finally {
       set({ loading: false });
     }
   },
 
-  // Fetch sellers
   fetchSellers: async () => {
     set({ loading: true });
     try {
       const response = await axiosInstance.get("/sellers");
       const fetchedSellers = Array.isArray(response.data.sellers)
         ? response.data.sellers.map((seller: any) => ({
-          ...seller,
-          id: seller._id, // Ánh xạ _id thành id
-        }))
+            ...seller,
+            id: seller._id,
+          }))
         : [];
-      console.log("Fetched sellers:", fetchedSellers); // Debug dữ liệu sellers
+      console.log("Fetched sellers:", fetchedSellers);
       set({ sellers: fetchedSellers });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -192,7 +196,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // Create a new product
   handleCreateProduct: async (productData: FormData) => {
     set({ loading: true });
     try {
@@ -215,7 +218,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // Update an existing product
   handleUpdateProduct: async (id: string, productData: FormData) => {
     set({ loading: true });
     try {
@@ -239,7 +241,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // Delete a product
   handleDeleteProduct: async (id: string) => {
     set({ deleting: true });
     try {
@@ -259,36 +260,45 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // Filter products
-  filterProducts: (filters: { name: string; category: string; seller: string }) => {
-    const { products } = get();
+  filterProducts: async (filters: { name: string; category: string; seller: string }) => {
+    const { products, handleFetchAllProduct, handleGetProductByCategory } = get();
+
+    if (!filters.name && !filters.category && !filters.seller) {
+      await handleFetchAllProduct();
+      set({ filteredProducts: get().products });
+      return;
+    }
+
     let tempProducts = [...products];
-  
+
+    if (filters.category) {
+      console.log("Filtering by category:", filters.category);
+      await handleGetProductByCategory(filters.category);
+      tempProducts = get().filteredProducts;
+    } else {
+      await handleFetchAllProduct();
+      tempProducts = get().products;
+    }
+
     if (filters.name) {
       tempProducts = tempProducts.filter((product) =>
         product.name.toLowerCase().includes(filters.name.toLowerCase())
       );
     }
-  
-    if (filters.category) {
-      tempProducts = tempProducts.filter(
-        (product) => product.categories?.name === filters.category
-      );
-    }
-  
+
     if (filters.seller) {
       tempProducts = tempProducts.filter(
         (product) =>
           product.current_seller?.seller &&
-          typeof product.current_seller.seller === "object" &&
+          typeof product.current_seller.seller !== "string" &&
           product.current_seller.seller._id === filters.seller
       );
     }
-  
+
+    console.log("Filtered products:", tempProducts);
     set({ filteredProducts: tempProducts });
   },
 
-  // Sort products
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => {
     const { filteredProducts } = get();
     let tempProducts = [...filteredProducts];

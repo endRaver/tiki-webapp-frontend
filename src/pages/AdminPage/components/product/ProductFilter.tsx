@@ -8,7 +8,7 @@ interface ProductFilterProps {
 }
 
 const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
-  const { categories, sellers, fetchCategories, fetchSellers, filterProducts } = useProductStore();
+  const { categoryNames, sellers, fetchCategories, fetchSellers, filterProducts } = useProductStore();
   const [filters, setFilters] = React.useState({
     name: "",
     category: "",
@@ -28,6 +28,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
     if (onFilterChange) onFilterChange(newFilters);
   };
 
+  console.log("Category names:", categoryNames);
+
   return (
     <div className="mb-4 space-x-4">
       <div className="flex items-center mb-4">
@@ -43,9 +45,9 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
         className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="">Category</option>
-        {categories.map((category, index) => (
-          <option key={index} value={category.name}>
-            {category.name}
+        {categoryNames.map((categoryName, index) => (
+          <option key={index} value={categoryName}>
+            {categoryName}
           </option>
         ))}
       </select>
