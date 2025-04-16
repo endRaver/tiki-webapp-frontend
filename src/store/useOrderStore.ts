@@ -101,8 +101,12 @@ export const useOrderStore = create<OrderStore>((set) => ({
         totalAmount: total,
       });
 
-      set({ currentOrder: res.data.order });
-      useCartStore.getState().handleClearCart();
+      const order: Order = res.data.order;
+      set({ currentOrder: order });
+
+      order.products.forEach((product) => {
+        useCartStore.getState().handleRemoveFromCart(product.product._id);
+      });
     } catch (error) {
       console.error("Error creating checkout session:", error);
       toast.error("Payment failed");
@@ -120,9 +124,12 @@ export const useOrderStore = create<OrderStore>((set) => ({
         sessionId,
       });
 
-      set({ currentOrder: res.data.order });
+      const order: Order = res.data.order;
+      set({ currentOrder: order });
 
-      useCartStore.getState().handleClearCart();
+      order.products.forEach((product) => {
+        useCartStore.getState().handleRemoveFromCart(product.product._id);
+      });
     } catch (error) {
       console.log(error);
     }
