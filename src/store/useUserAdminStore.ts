@@ -133,8 +133,11 @@ export const useUserAdminStore = create<UserAdminStore>((set, get) => ({
       );
     }
 
+    // Filter by role: empty role ("") means include both "admin" and "customer"
     if (filters.role) {
       tempUsers = tempUsers.filter((user) => user.role === filters.role);
+    } else {
+      tempUsers = tempUsers.filter((user) => user.role === "admin" || user.role === "customer");
     }
 
     if (filters.isVerified !== "") {

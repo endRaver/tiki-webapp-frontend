@@ -162,7 +162,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const response = await axiosInstance.get("/products");
       set({
         products: response.data.products,
-        filteredProducts: response.data.products, // Cập nhật cả filteredProducts
+        filteredProducts: response.data.products,
       });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -321,7 +321,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         (product) =>
           product.current_seller?.seller &&
           typeof product.current_seller.seller !== "string" &&
-          product.current_seller.seller._id === filters.seller,
+          product.current_seller.seller.name === filters.seller,
       );
     }
 

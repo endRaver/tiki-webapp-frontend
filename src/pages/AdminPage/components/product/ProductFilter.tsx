@@ -56,7 +56,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
         onChange={handleChange}
         className="rounded border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
-        <option value="">Category</option>
+        <option value="">All Category</option>
         {categoryNames.map((categoryName, index) => (
           <option key={index} value={categoryName}>
             {categoryName}
@@ -77,10 +77,10 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
         onChange={handleChange}
         className="rounded border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
-        <option value="">Seller</option>
+        <option value="">All Seller</option>
         {Array.isArray(sellers) && sellers.length > 0 ? (
           sellers.map((seller) => (
-            <option key={seller._id} value={seller._id}>
+            <option key={seller._id} value={seller.name}>
               {seller.name}
             </option>
           ))
