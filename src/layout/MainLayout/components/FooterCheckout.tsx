@@ -7,8 +7,8 @@ const FooterCheckout = () => {
           chung:
         </p>
 
-        <div className="mt-1.5 flex gap-3">
-          <p>Quy chế hoạt động</p>
+        <div className="mt-1.5 hidden md:flex  gap-3">
+          <p >Quy chế hoạt động</p>
           <span className="h-4 w-0.5 bg-[#DDDDE3]" />
           <p>Chính sách giải quyết khiếu nại</p>
 
