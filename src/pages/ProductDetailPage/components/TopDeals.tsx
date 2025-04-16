@@ -1,13 +1,19 @@
 import { useProductStore } from "@/store/useProductStore";
 import Carousel from "./Carousel";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
+import { Product } from "@/types/product";
 
 const TopDeals = () => {
-  const { products, loading, handleFetchAllProduct } = useProductStore();
+  const {loading, handleFetchTopDealsProducts } = useProductStore();
+  const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
-    handleFetchAllProduct();
-  }, [handleFetchAllProduct]);
+    const fetchProducts = async () => {
+      const result = await handleFetchTopDealsProducts();
+      setProducts(result);
+    };
+    fetchProducts();
+  }, [handleFetchTopDealsProducts]);
   if (loading) {
     return (
       <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">

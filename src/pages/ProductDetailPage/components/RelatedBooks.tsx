@@ -1,13 +1,28 @@
 import { useProductStore } from "@/store/useProductStore";
 import Carousel from "./Carousel";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
+import { Product } from "@/types/product";
 
 const RelatedBooks = () => {
-  const { products, loading, handleFetchAllProduct } = useProductStore();
-   useEffect(() => {
-      handleFetchAllProduct();
-    }, [handleFetchAllProduct]);
+  const { currentProduct, loading, handleFetchRelatedProducts } = useProductStore();
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    let isMounted = true;
+    const fetchProducts = async () => {
+      if (currentProduct?.categories?.name) {
+        setProducts([]);
+        const result = await handleFetchRelatedProducts(currentProduct.categories.name);
+        if (isMounted) {
+          setProducts(result);
+        }
+      }
+    };
+    fetchProducts();
+    return () => {
+      isMounted = false;
+    };
+  }, [handleFetchRelatedProducts, currentProduct]);
   if (loading) {
     return (
       <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">
