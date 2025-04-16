@@ -27,12 +27,10 @@ import ProductPage from "./pages/AdminPage/ProductPage";
 import ProfileLayout from "./layout/ProfileLayout/ProfileLayout";
 import UserOrderListPage from "./pages/UserOrderPage/UserOrderListPage";
 import UserInfo from "./pages/UserInfoPage/UserInfo";
-import { useCartStore } from "@/store/useCartStore";
 import { isEmpty } from "lodash";
 
 function App() {
   const { user } = useUserStore();
-  const { selectedCart } = useCartStore();
 
   return (
     <>
@@ -47,9 +45,7 @@ function App() {
           />
           <Route
             path="/checkout"
-            element={
-              user && !isEmpty(selectedCart) ? <CheckoutPage /> : <NotFound />
-            }
+            element={user ? <CheckoutPage /> : <NotFound />}
           />
           <Route
             path="/cart"

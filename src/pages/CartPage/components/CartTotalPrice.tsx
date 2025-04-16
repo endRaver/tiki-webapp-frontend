@@ -1,7 +1,6 @@
 import { isEmpty } from "lodash";
 import { useMemo } from "react";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 import { useCartStore } from "@/store/useCartStore";
 import { formatCurrency } from "@/utils/utils";
@@ -9,8 +8,6 @@ import { formatCurrency } from "@/utils/utils";
 const CartTotalPrice = () => {
   const { selectedCart, subtotal, discountCoupon, productDiscount, cartTotal } =
     useCartStore();
-
-  const navigate = useNavigate();
 
   const discountPrice = useMemo(() => {
     return selectedCart.reduce((acc, item) => {
@@ -30,7 +27,8 @@ const CartTotalPrice = () => {
       return;
     }
 
-    navigate("/checkout");
+    localStorage.setItem("selectedCart", JSON.stringify(selectedCart));
+    window.location.href = "/checkout";
   };
 
   return (

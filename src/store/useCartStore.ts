@@ -31,7 +31,7 @@ interface CartStore {
   totalShippingPrice: number;
   shippingDiscount: number;
 
-  setSelectedCart: (cart: CartItem[]) => void;
+  setSelectedCart: (cart: CartItem[]) => Promise<void>;
   setGroupCart: (cart: CartItem[]) => void;
 
   calculateTotal: () => void;
@@ -75,7 +75,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   handleGetCartItems: async () => {
     set({ isLoading: true });
-    
+
     try {
       const response = await axiosInstance.get("/carts");
 
@@ -316,7 +316,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  setSelectedCart: (cart: CartItem[]) => {
+  setSelectedCart: async (cart: CartItem[]) => {
     set({ selectedCart: cart });
     get().calculateTotal();
   },

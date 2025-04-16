@@ -22,7 +22,16 @@ const CheckoutPage = () => {
     groupCart,
     setGroupCart,
     handleGetMyCoupons,
+    setSelectedCart,
   } = useCartStore();
+
+  const storedCart = localStorage.getItem("selectedCart");
+
+  useEffect(() => {
+    if (storedCart) {
+      setSelectedCart(JSON.parse(storedCart));
+    }
+  }, [storedCart, setSelectedCart]);
 
   useEffect(() => {
     handleGetMyCoupons();
@@ -33,7 +42,7 @@ const CheckoutPage = () => {
   return (
     <div className="bg-background">
       <div className="container mx-auto pt-5">
-        <div className="flex flex-col md:flex-row gap-5">
+        <div className="flex flex-col gap-5 md:flex-row">
           <div className="flex-1 space-y-4">
             {/* Choose delivery method section */}
             <div className="rounded bg-white px-4 pt-4 shadow">
@@ -98,7 +107,7 @@ const CheckoutPage = () => {
           </div>
 
           {/* Checkout summary */}
-          <div className="w-full  md:w-[320px] min-w-[320px] space-y-3">
+          <div className="w-full min-w-[320px] space-y-3 md:w-[320px]">
             <UserInformation />
 
             {coupons.length > 0 && <CouponSection />}

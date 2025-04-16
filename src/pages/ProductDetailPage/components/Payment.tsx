@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 
 import { useProductStore } from "@/store/useProductStore";
@@ -11,9 +10,8 @@ import { FaPlus, FaMinus } from "react-icons/fa6";
 
 const Payment = () => {
   const { user } = useUserStore();
-  const { currentProduct} = useProductStore();
-  const { handleAddToCart,cart,setSelectedCart } = useCartStore();
-  const navigate = useNavigate();
+  const { currentProduct } = useProductStore();
+  const { handleAddToCart, cart } = useCartStore();
 
   const [quantity, setQuantity] = useState(1);
 
@@ -39,16 +37,19 @@ const Payment = () => {
     }
   };
 
-  const onBuyNow  = async () => {
+  const onBuyNow = async () => {
     if (!user) {
       handleOpenModal();
       return;
     }
     if (currentProduct) {
       await handleAddToCart(currentProduct, quantity);
-      const productCart = cart.filter((item) => item._id === currentProduct._id)
-      setSelectedCart(productCart);
-      navigate("/checkout");
+      const productCart = cart.filter(
+        (item) => item._id === currentProduct._id,
+      );
+
+      localStorage.setItem("selectedCart", JSON.stringify(productCart));
+      window.location.href = "/checkout";
     }
   };
 
