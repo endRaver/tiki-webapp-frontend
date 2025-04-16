@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBell, FaChevronDown, FaHome, FaSignOutAlt } from "react-icons/fa";
+import { FaChevronDown, FaHome, FaSignOutAlt } from "react-icons/fa";
 import { useUserStore } from "@/store/useUserStore"; 
 
 const Header: React.FC = () => {
@@ -23,44 +23,27 @@ const Header: React.FC = () => {
       </div>
 
       <div className="flex items-center space-x-4">
-        {/* Nút về trang Home */}
         <Link to="/" className="flex items-center text-gray-700 hover:text-blue-500">
           <FaHome className="text-xl" />
           <span className="ml-2 hidden md:inline">Home</span>
         </Link>
-
-        {/* Phần thông báo với chuông */}
         <div className="relative">
-          <FaBell className="text-xl" />
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-xs text-white">
-            1
-          </span>
-        </div>
-
-        {/* Phần username với border tròn, icon cửa hàng, và dropdown */}
-        <div className="relative">
-          <div
+          <button
             className="flex cursor-pointer items-center space-x-2 rounded-full border border-gray-300 bg-gray-100 px-3 py-1"
             onClick={() => setIsOpen(!isOpen)}
           >
-            {/* Icon cửa hàng */}
             <img
               className="flex w-6 rounded-full"
               src="https://salt.tikicdn.com/cache/w40/ts/sellercenterFE/93/76/03/2a08fa4ae6a024a752fbba87d145bce8.png"
               alt=""
             />
-            {/* Username (lấy từ user.email hoặc fallback) */}
             <span className="text-gray-700">
               {user?.email ? user.email.slice(0, 12) + "..." : "User"}
             </span>
-            {/* Mũi tên dropdown */}
             <FaChevronDown className="text-gray-500" />
-          </div>
-
-          {/* Dropdown menu */}
+          </button>
           {isOpen && (
             <div className="absolute top-10 right-0 z-50 w-52 rounded-lg bg-white py-2 shadow-md">
-              {/* Header của dropdown */}
               <div className="flex items-center space-x-3 border-b border-gray-200 p-3">
                 <img
                   className="flex w-8 rounded-full"
@@ -76,8 +59,6 @@ const Header: React.FC = () => {
                   </p>
                 </div>
               </div>
-
-              {/* Các mục trong dropdown */}
               <Link
                 to="/profile/user-info"
                 className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200"
@@ -104,7 +85,7 @@ const Header: React.FC = () => {
               <button
                 className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200"
                 onClick={async () => {
-                  await handleLogout(); // Sử dụng handleLogout từ useUserStore
+                  await handleLogout(); 
                   setIsOpen(false);
                 }}
               >

@@ -1,34 +1,27 @@
 import React, { useState } from "react";
 import SearchBar from "../common/SearchBar";
-
 interface Order {
   orderNumber: string;
   status: string;
   paymentMethod: string;
 }
-
 interface OrderFilterProps {
   orders: Order[];
   onFilterChange: (filters: { orderNumber: string; status: string; paymentMethod: string }) => void;
 }
-
 const OrderFilter: React.FC<OrderFilterProps> = ({ orders, onFilterChange }) => {
   const [filters, setFilters] = useState({
     orderNumber: "",
     status: "",
     paymentMethod: "",
   });
-
   const handleFilterChange = (name: string, value: string) => {
     const newFilters = { ...filters, [name]: value };
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
-
-  // Lấy danh sách status và paymentMethod duy nhất từ orders
   const uniqueStatuses = Array.from(new Set(orders.map((order) => order.status)));
   const uniquePaymentMethods = Array.from(new Set(orders.map((order) => order.paymentMethod)));
-
   return (
     <div className="flex space-x-2 mb-4">
       <SearchBar
@@ -63,5 +56,4 @@ const OrderFilter: React.FC<OrderFilterProps> = ({ orders, onFilterChange }) => 
     </div>
   );
 };
-
 export default OrderFilter;

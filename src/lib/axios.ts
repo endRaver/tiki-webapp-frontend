@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useUserStore } from "@/store/useUserStore";
 
-const url = "http://localhost:5000/api";
-// const url = "https://tiki-webapp-backend.onrender.com/api";
+// const url = "http://localhost:5000/api";
+const url = "https://tiki-webapp-backend.onrender.com/api";
 
 const axiosInstance = axios.create({
   baseURL: url,

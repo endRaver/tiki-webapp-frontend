@@ -3,18 +3,18 @@ import { Product, Seller } from "@/types/product";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
+
 interface ErrorResponse {
   success: boolean;
   message: string;
 }
+
 interface ProductStore {
   loading: boolean;
   products: Product[];
   currentProduct: Product | null;
-
   categoryNames: string[];
   filteredProducts: Product[];
-
   sellers: Seller[];
   showDeleteModal: boolean;
   deleteProduct: Product | null;
@@ -24,6 +24,7 @@ interface ProductStore {
   confirmDeleteProduct: () => Promise<void>;
 
   handleFetchAllProduct: () => Promise<void>;
+  handleGetAllProductForAdmin: () => Promise<void>;
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
   handleSearchProductByKeyWord: (categoryName: string) => Promise<void>;
@@ -44,6 +45,7 @@ interface ProductStore {
 
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => void;
 }
+
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   loading: false,
@@ -72,7 +74,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         (name: string) => name.trim(),
       );
 
-      set({ categoryNames: normalizedCategoryNames }); // Đổi tên
+      set({ categoryNames: normalizedCategoryNames });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(
@@ -146,6 +148,22 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     try {
       const response = await axiosInstance.get("/products");
       set({ products: response.data.products });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleGetAllProductForAdmin: async () => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get("/products");
+      set({
+        products: response.data.products,
+        filteredProducts: response.data.products, // Cập nhật cả filteredProducts
+      });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
@@ -276,12 +294,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     category: string;
     seller: string;
   }) => {
-    const { products, handleFetchAllProduct, handleGetProductByCategory } =
-      get();
+    const { products, handleGetProductByCategory } = get();
 
     if (!filters.name && !filters.category && !filters.seller) {
-      await handleFetchAllProduct();
-      set({ filteredProducts: get().products });
+      set({ filteredProducts: products });
       return;
     }
 
@@ -291,7 +307,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       await handleGetProductByCategory(filters.category);
       tempProducts = get().filteredProducts;
     } else {
-      await handleFetchAllProduct();
       tempProducts = get().products;
     }
 
@@ -316,25 +331,22 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => {
     const { filteredProducts } = get();
     const tempProducts = [...filteredProducts];
-
     if (sortBy === "price") {
       tempProducts.sort(
         (a, b) =>
           (b.current_seller?.price || 0) - (a.current_seller?.price || 0),
       );
     } else if (sortBy === "profit") {
-      tempProducts.sort(
-        (a, b) =>
-          (b.original_price || 0) -
-          (b.current_seller?.price || 0) -
-          ((a.original_price || 0) - (a.current_seller?.price || 0)),
-      );
+      tempProducts.sort((a, b) => {
+        const profitA = ((a.current_seller?.price || 0) - (a.original_price || 0)) * (a.quantity_sold?.value || 0);
+        const profitB = ((b.current_seller?.price || 0) - (b.original_price || 0)) * (b.quantity_sold?.value || 0);
+        return profitA - profitB;
+      });
     } else if (sortBy === "quantitySold") {
       tempProducts.sort(
         (a, b) => (b.quantity_sold?.value || 0) - (a.quantity_sold?.value || 0),
       );
     }
-
     set({ filteredProducts: tempProducts });
   },
 }));

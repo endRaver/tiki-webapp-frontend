@@ -17,7 +17,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
     sellers,
     fetchCategories,
     fetchSellers,
-    filterProducts,
+    handleAdminFilterProducts,
   } = useProductStore();
   const [filters, setFilters] = React.useState({
     name: "",
@@ -36,7 +36,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
     const { name, value } = e.target;
     const newFilters = { ...filters, [name]: value };
     setFilters(newFilters);
-    filterProducts(newFilters);
+    handleAdminFilterProducts(newFilters);
     if (onFilterChange) onFilterChange(newFilters);
   };
 
