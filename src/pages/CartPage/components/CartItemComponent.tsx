@@ -38,7 +38,10 @@ const CartItemComponent = ({ item }: CartItemProps) => {
           }}
         />
 
-        <Link to={`/product/${item._id}`} className="flex w-full items-center gap-2">
+        <Link
+          to={`/product/${item._id}`}
+          className="flex w-full items-center gap-2"
+        >
           <div
             className="h-20 w-20 bg-gray-200"
             style={{
@@ -47,7 +50,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
               backgroundPosition: "center",
             }}
           />
-          <p className="hover:text-primary-300 mx-2 line-clamp-2 flex-1 hidden md:block">
+          <p className="hover:text-primary-300 mx-2 line-clamp-2 hidden flex-1 md:block">
             {item.name}
           </p>
 
@@ -70,7 +73,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
             </span>
           </p>
           {item.original_price !== item.current_seller.price && (
-            <p className="text-xs text-neutral-600 line-through">
+            <p className="relative text-xs text-neutral-600 line-through">
               {formatCurrency(item.original_price)}
               <span className="absolute top-0 text-xs text-[10px] underline underline-offset-1">
                 đ

@@ -18,7 +18,6 @@ import AdminLayout from "./pages/AdminPage/AdminLayout";
 import AddProductForm from "./pages/AdminPage/components/product/ProductAdd";
 import EditProductForm from "./pages/AdminPage/components/product/ProductEdit";
 import UserPage from "./pages/AdminPage/UserPage";
-import EditUserForm from "./pages/AdminPage/components/user/UserEditForm";
 import OrderPage from "./pages/AdminPage/OrderPage";
 import EditOrderForm from "./pages/AdminPage/components/order/EditOrderForm";
 import ReturnOrderPage from "./pages/AdminPage/ReturnOrderPage";
@@ -91,7 +90,6 @@ function App() {
               element={<EditProductForm />}
             />
             <Route path="/admin/users" element={<UserPage />} />
-            <Route path="/admin/users/edit/:id" element={<EditUserForm />} />
             <Route path="/admin/orders" element={<OrderPage />} />
             <Route path="/admin/orders/edit/:id" element={<EditOrderForm />} />
             <Route path="/admin/orders/return" element={<ReturnOrderPage />} />

@@ -9,6 +9,7 @@ interface Order {
 
 interface OrderFilterProps {
   orders: Order[];
+  filteredOrders: Order[];
   onFilterChange: (filters: { orderNumber: string; status: string; paymentMethod: string }) => void;
 }
 
@@ -25,7 +26,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({ orders, onFilterChange }) => 
     onFilterChange(newFilters);
   };
 
-  // Lấy danh sách status và paymentMethod duy nhất từ orders
+  // Use the full orders list to calculate unique statuses, so all statuses are always shown
   const uniqueStatuses = Array.from(new Set(orders.map((order) => order.status)));
   const uniquePaymentMethods = Array.from(new Set(orders.map((order) => order.paymentMethod)));
 

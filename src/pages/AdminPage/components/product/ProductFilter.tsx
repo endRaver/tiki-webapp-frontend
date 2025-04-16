@@ -17,7 +17,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
     sellers,
     fetchCategories,
     fetchSellers,
-    filterProducts,
+    handleAdminFilterProducts,
   } = useProductStore();
   const [filters, setFilters] = React.useState({
     name: "",
@@ -36,11 +36,9 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
     const { name, value } = e.target;
     const newFilters = { ...filters, [name]: value };
     setFilters(newFilters);
-    filterProducts(newFilters);
+    handleAdminFilterProducts(newFilters);
     if (onFilterChange) onFilterChange(newFilters);
   };
-
-  console.log("Category names:", categoryNames);
 
   return (
     <div className="mb-4 space-x-4">
@@ -56,7 +54,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
         onChange={handleChange}
         className="rounded border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
-        <option value="">Category</option>
+        <option value="">All Category</option>
         {categoryNames.map((categoryName, index) => (
           <option key={index} value={categoryName}>
             {categoryName}
@@ -77,10 +75,10 @@ const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
         onChange={handleChange}
         className="rounded border px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
-        <option value="">Seller</option>
+        <option value="">All Seller</option>
         {Array.isArray(sellers) && sellers.length > 0 ? (
           sellers.map((seller) => (
-            <option key={seller._id} value={seller._id}>
+            <option key={seller._id} value={seller.name}>
               {seller.name}
             </option>
           ))

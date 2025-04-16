@@ -130,6 +130,10 @@ export const useOrderAdminStore = create<OrderAdminStore>((set, get) => ({
 
     if (filters.status) {
       tempOrders = tempOrders.filter((order) => order.status === filters.status);
+    } else {
+      tempOrders = tempOrders.filter((order) =>
+        ["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(order.status)
+      );
     }
 
     if (filters.paymentMethod) {

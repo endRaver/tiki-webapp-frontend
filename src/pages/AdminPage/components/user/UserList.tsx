@@ -1,6 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { FaEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { useUserAdminStore } from "@/store/useUserAdminStore";
 import { createPortal } from "react-dom";
@@ -31,7 +29,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, user, onConfirm, onCanc
   if (!show || !user) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
       <div className="w-[400px] rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-4 flex items-center">
           <span className="mr-2 text-orange-500">⚠️</span>
@@ -170,13 +168,6 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
                 <td className="p-2">{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td className="p-2">{new Date(user.updatedAt).toLocaleDateString()}</td>
                 <td className="p-2 flex space-x-2">
-                  <Link
-                    to={`/admin/users/edit/${user._id}`}
-                    state={{ user }}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <FaEdit />
-                  </Link>
                   <button
                     onClick={() => handleDelete(user._id)}
                     className="text-red-500 hover:text-red-700"

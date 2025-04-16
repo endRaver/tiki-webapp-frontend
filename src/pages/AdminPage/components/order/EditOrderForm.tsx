@@ -50,7 +50,6 @@ const EditOrderForm: React.FC = () => {
   const handleSubmit = async () => {
     if (id && order) {
       try {
-        // Tạo updatedOrder bằng cách giữ nguyên dữ liệu order và chỉ cập nhật status
         const updatedOrder = {
           ...order,
           status: formData.status,
@@ -75,7 +74,6 @@ const EditOrderForm: React.FC = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="text-center py-10 text-red-500">
@@ -88,11 +86,9 @@ const EditOrderForm: React.FC = () => {
       </div>
     );
   }
-
   if (!order) {
     return <div className="text-center py-10">Loading order...</div>;
   }
-
   return (
     <div className="flex-1 p-6">
       <div className="flex items-center mb-4">
@@ -101,7 +97,6 @@ const EditOrderForm: React.FC = () => {
         </Link>
         <h1 className="text-2xl font-semibold text-gray-800">Edit Order</h1>
       </div>
-
       <div className="bg-white border border-gray-200 rounded p-6">
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">1. Order Information</h2>
@@ -124,7 +119,6 @@ const EditOrderForm: React.FC = () => {
             </select>
           </div>
         </div>
-
         <div className="flex justify-end space-x-2">
           <Link
             to="/admin/orders"
@@ -144,5 +138,4 @@ const EditOrderForm: React.FC = () => {
     </div>
   );
 };
-
 export default EditOrderForm;

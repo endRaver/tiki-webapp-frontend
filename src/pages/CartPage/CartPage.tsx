@@ -26,7 +26,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-background min-h-[500px] px-6 py-6">
+    <div className="bg-background min-h-[calc(100vh-56px)] px-6 py-6">
       <div className="container mx-auto">
         <div className="font-inter mb-3 text-[20px] font-[500] text-black">
           GIỎ HÀNG
@@ -35,7 +35,7 @@ const CartPage: React.FC = () => {
         {isEmpty(cart) ? (
           <EmptyCart />
         ) : (
-          <div className="flex flex-col lg:flex-row gap-5">
+          <div className="flex flex-col gap-5 lg:flex-row">
             <div className="min-w-0 flex-1 space-y-4">
               <CartHeader />
               <CartList />

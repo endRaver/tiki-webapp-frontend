@@ -9,6 +9,7 @@ interface User {
 
 interface UserFilterProps {
   users: User[];
+  filteredUsers: User[];
   onFilterChange: (filters: { name: string; role: string; isVerified: string }) => void;
 }
 
@@ -25,7 +26,6 @@ const UserFilter: React.FC<UserFilterProps> = ({ users, onFilterChange }) => {
     onFilterChange(newFilters);
   };
 
-  // Lấy danh sách role duy nhất từ users
   const uniqueRoles = Array.from(new Set(users.map((user) => user.role)));
 
   return (

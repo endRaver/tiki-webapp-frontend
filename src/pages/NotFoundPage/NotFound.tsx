@@ -3,7 +3,7 @@ import NotFoundImage from "@/assets/logos/not_found.png";
 
 const NotFound = () => {
   return (
-    <div className="bg-background flex h-100 w-full flex-col items-center justify-center">
+    <div className="bg-background flex h-[calc(100vh-56px)] w-full flex-col items-center justify-center md:h-100">
       <div className="mb-6">
         <img className="w-50" src={NotFoundImage} alt="not found" />
       </div>

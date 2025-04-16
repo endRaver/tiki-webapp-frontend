@@ -23,7 +23,7 @@ const DeliveryItem = ({
   shippingPrice: number;
   shippingDate: Date;
 }) => {
-  const { shippingType, } = useCartStore();
+  const { shippingType } = useCartStore();
 
   return (
     <div className="relative rounded-xl border border-[#DDDDE3] px-4 pt-5 pb-4">
@@ -49,9 +49,9 @@ const DeliveryItem = ({
           </div>
 
           <div className="flex items-center gap-2 font-medium">
-            <span className="text-xs text-neutral-600 line-through">
+            {/* <span className="text-xs text-neutral-600 line-through">
               25.000 <span className="underline underline-offset-1">đ</span>
-            </span>
+            </span> */}
 
             <div className="flex items-center gap-0.5">
               <span className="text-success-100 text-sm font-medium">

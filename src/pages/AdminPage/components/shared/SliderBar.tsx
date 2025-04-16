@@ -43,7 +43,6 @@ const SliderBar: React.FC = () => {
     }
   };
 
-  // Lọc menuItems dựa trên searchQuery
   const filteredItems = menuItems
     .map((item) => {
       const matchedSubItems = item.subItems?.filter((subItem) =>
@@ -68,7 +67,6 @@ const SliderBar: React.FC = () => {
         isCollapsed ? "w-16" : "w-64"
       } fixed left-0 h-[calc(100vh-64px)] top-[64px]`}
     >
-      {/* Thanh tìm kiếm */}
       {!isCollapsed && (
         <div className="px-4 mb-4 mt-4">
           <div className="relative">
@@ -83,11 +81,8 @@ const SliderBar: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Menu */}
       <ul className="flex-1 space-y-1 px-2 overflow-y-auto">
         {searchQuery ? (
-          // Hiển thị kết quả tìm kiếm
           filteredItems.map((item, index) => (
             <li key={index}>
               <div
@@ -133,12 +128,11 @@ const SliderBar: React.FC = () => {
             </li>
           ))
         ) : (
-          // Hiển thị menu mặc định
           menuItems.map((item, index) => (
             <li key={index}>
               <div
                 className={`flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded cursor-pointer ${
-                  isCollapsed ? "justify-center" : ""
+                  isCollapsed ? "justify-center mt-2" : ""
                 }`}
                 onClick={() => !isCollapsed && toggleSubmenu(item.name)}
               >
@@ -166,11 +160,6 @@ const SliderBar: React.FC = () => {
                         className="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded"
                       >
                         <span className="flex-1">{subItem.name}</span>
-                        {subItem.name === "Return Orders" && (
-                          <span className="bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded">
-                            NEW
-                          </span>
-                        )}
                       </Link>
                     </li>
                   ))}

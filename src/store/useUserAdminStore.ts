@@ -135,6 +135,8 @@ export const useUserAdminStore = create<UserAdminStore>((set, get) => ({
 
     if (filters.role) {
       tempUsers = tempUsers.filter((user) => user.role === filters.role);
+    } else {
+      tempUsers = tempUsers.filter((user) => user.role === "admin" || user.role === "customer");
     }
 
     if (filters.isVerified !== "") {
