@@ -52,7 +52,10 @@ function App() {
               user && !isEmpty(selectedCart) ? <CheckoutPage /> : <NotFound />
             }
           />
-          <Route path="/cart" element={<CartPage />} />
+          <Route
+            path="/cart"
+            element={!isEmpty(user) ? <CartPage /> : <Navigate to="/" />}
+          />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/purchase-success" element={<SuccessPaymentPage />} />
           <Route path="/*" element={<NotFound />} />

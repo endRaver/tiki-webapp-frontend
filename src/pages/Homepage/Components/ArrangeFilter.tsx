@@ -1,38 +1,40 @@
 import { ChevronDown, Check } from "lucide-react";
 import { useProductStore } from "@/store/useProductStore";
 import { useState } from "react";
-interface softType{
-  title:string,
-  keySoft:string,
+interface softType {
+  title: string;
+  keySoft: string;
 }
-const sortOptions:softType[] = [
+const sortOptions: softType[] = [
   {
-    title:"Phổ biến",
-    keySoft:""
+    title: "Phổ biến",
+    keySoft: "",
   },
   {
-    title:"Bán chạy",
-    keySoft:"best_seller"
+    title: "Bán chạy",
+    keySoft: "best_seller",
   },
   {
-    title:"Hàng mới",
-    keySoft:"date_desc"
+    title: "Hàng mới",
+    keySoft: "date_desc",
   },
   {
-    title:"Giá thấp đến cao",
-    keySoft:"price_asc"
+    title: "Giá thấp đến cao",
+    keySoft: "price_asc",
   },
   {
-    title:"Giá cao đến thấp",
-    keySoft:"price_desc"
-  }
+    title: "Giá cao đến thấp",
+    keySoft: "price_desc",
+  },
 ];
 
 const ArrangeFilter = () => {
   const [selected, setSelected] = useState(sortOptions[0].title); // Mặc định "Phổ biến"
   const [isOpen, setIsOpen] = useState(false);
-  const { handleFilterProducts } = useProductStore();
-
+  const { handleFilterProduct } = useProductStore();
+  // useEffect(() => {
+  //   handleFilterProduct("best_seller");
+  // }, [selected]);
   return (
     <div className="relative inline-flex gap-[7px] align-middle">
       <span className="px-[8px] py-[5px] text-gray-500">Sắp xếp</span>
@@ -50,10 +52,11 @@ const ArrangeFilter = () => {
           {sortOptions.map((option, index) => (
             <button
               key={index}
-              className={`flex w-full cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-100 ${selected === option.title ? "bg-blue-100" : ""
-                }`}
+              className={`flex w-full cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-100 ${
+                selected === option.title ? "bg-blue-100" : ""
+              }`}
               onClick={() => {
-                handleFilterProducts({ sort: option.keySoft });
+                handleFilterProduct(option.keySoft);
                 setSelected(option.title);
                 setIsOpen(false);
               }}

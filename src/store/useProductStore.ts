@@ -1,191 +1,66 @@
 import axiosInstance from "@/lib/axios";
-import { Product } from "@/types/product";
+import { Product, Seller } from "@/types/product";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
-
 interface ErrorResponse {
   success: boolean;
   message: string;
 }
-
-interface Seller {
-  _id: string;
-  name: string;
-  link: string;
-  logo: string;
-  store_id: number;
-  is_best_store: boolean;
-  is_offline_installment_supported: boolean | null;
-  __v: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface ProductStore {
   loading: boolean;
-  deleting: boolean;
   products: Product[];
-  filteredProducts: Product[];
   currentProduct: Product | null;
-  categoryNames: string[]; // Đổi từ categories thành categoryNames, kiểu là string[]
+
+  categoryNames: string[];
+  filteredProducts: Product[];
+
   sellers: Seller[];
   showDeleteModal: boolean;
   deleteProduct: Product | null;
-  setShowDeleteModal: (show: boolean) => void;
+
   setDeleteProduct: (product: Product | null) => void;
+  setShowDeleteModal: (show: boolean) => void;
   confirmDeleteProduct: () => Promise<void>;
 
   handleFetchAllProduct: () => Promise<void>;
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
+  handleSearchProductByKeyWord: (categoryName: string) => Promise<void>;
+  handleFilterProduct: (categoryName: string) => Promise<void>;
+  handleSetNullCurrentProduct: () => Promise<void>;
+
   fetchCategories: () => Promise<void>;
   fetchSellers: () => Promise<void>;
 
   handleCreateProduct: (productData: FormData) => Promise<void>;
   handleUpdateProduct: (id: string, productData: FormData) => Promise<void>;
   handleDeleteProduct: (id: string) => Promise<void>;
-
-  handleFilterProducts: (filters: {
+  handleAdminFilterProducts: (filters: {
     name: string;
     category: string;
     seller: string;
   }) => Promise<void>;
+
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => void;
 }
-
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
-  filteredProducts: [],
-  currentProduct: null,
-  categoryNames: [], // Đổi tên
-  sellers: [],
   loading: false,
-  deleting: false,
-  showDeleteModal: false,
+  currentProduct: null,
+  sellers: [],
+  filteredProducts: [],
+  categoryNames: [],
   deleteProduct: null,
+  showDeleteModal: false,
 
   setShowDeleteModal: (show: boolean) => set({ showDeleteModal: show }),
 
   setDeleteProduct: (product: Product | null) =>
     set({ deleteProduct: product }),
 
-  confirmDeleteProduct: async () => {
-    const { deleteProduct, handleDeleteProduct } = get();
-    if (deleteProduct) {
-      set({ deleting: true });
-      try {
-        await handleDeleteProduct(deleteProduct._id);
-        set({ showDeleteModal: false, deleteProduct: null, deleting: false });
-      } catch (error) {
-        console.error("Failed to delete product:", error);
-        set({ deleting: false });
-        toast.error("Failed to delete product");
-      }
-    }
-  },
-
-  handleFetchAllProduct: async () => {
-    set({ loading: true });
-    try {
-      const response = await axiosInstance.get("/products");
-      const fetchedProducts = Array.isArray(response.data.products)
-        ? response.data.products
-        : [];
-      set({ products: fetchedProducts, filteredProducts: fetchedProducts });
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response) {
-        console.error("❌ Server responded with error:");
-        console.error("Status:", axiosError.response.status);
-        console.error(
-          "Message:",
-          axiosError.response.data?.message || "No message",
-        );
-        console.error("Details:", axiosError.response.data);
-        toast.error(
-          axiosError.response.data?.message || "Failed to fetch products",
-        );
-      } else if (axiosError.request) {
-        console.error("❌ No response received from server:");
-        console.error(axiosError.request);
-        toast.error("No response from server");
-      } else {
-        console.error("❌ Error setting up request:");
-        console.error("Message:", axiosError.message);
-        toast.error("Error: " + axiosError.message);
-      }
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  handleGetProductById: async (id: string | undefined) => {
-    if (!id) {
-      toast.error("Product ID is required");
-      return;
-    }
-    set({ loading: true });
-    try {
-      const response = await axiosInstance.get(`/products/${id}`);
-      const product: Product = response.data;
-      if (
-        product.current_seller &&
-        typeof product.current_seller.seller === "string"
-      ) {
-        product.current_seller.seller = {
-          _id: product.current_seller.seller,
-          name: "",
-          link: "",
-          logo: "",
-          store_id: 0,
-          is_best_store: false,
-          is_offline_installment_supported: null,
-          __v: 0,
-          createdAt: "",
-          updatedAt: "",
-        };
-      }
-      console.log("Fetched product:", product);
-      set({ currentProduct: product });
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(
-        axiosError.response?.data?.message ?? "Failed to fetch product",
-      );
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  handleGetProductByCategory: async (categoryName: string) => {
-    set({ loading: true });
-    try {
-      const normalizedCategoryName = categoryName.trim().toLowerCase();
-      console.log(
-        "Fetching products for category (normalized):",
-        normalizedCategoryName,
-      );
-      const response = await axiosInstance.get(
-        `/products/category/${encodeURIComponent(categoryName)}`,
-      );
-      console.log("Products by category response:", response.data);
-      const fetchedProducts = Array.isArray(response.data) ? response.data : [];
-      set({ filteredProducts: fetchedProducts });
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      console.error(
-        "Error fetching products by category:",
-        axiosError.response?.data,
-      );
-      toast.error(
-        axiosError.response?.data?.message ??
-          "Failed to fetch products by category",
-      );
-      set({ filteredProducts: [] });
-    } finally {
-      set({ loading: false });
-    }
+  handleSetNullCurrentProduct: async () => {
+    set({ currentProduct: null });
   },
 
   fetchCategories: async () => {
@@ -196,10 +71,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const normalizedCategoryNames = (response.data || []).map(
         (name: string) => name.trim(),
       );
-      console.log(
-        "Fetched category names (normalized):",
-        normalizedCategoryNames,
-      );
+
       set({ categoryNames: normalizedCategoryNames }); // Đổi tên
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -216,18 +88,130 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     try {
       const response = await axiosInstance.get("/sellers");
       const fetchedSellers = Array.isArray(response.data.sellers)
-        ? response.data.sellers.map((seller: any) => ({
+        ? response.data.sellers.map((seller: Seller) => ({
             ...seller,
             id: seller._id,
           }))
         : [];
-      console.log("Fetched sellers:", fetchedSellers);
       set({ sellers: fetchedSellers });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(
         axiosError.response?.data?.message ?? "Failed to fetch sellers",
       );
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleDeleteProduct: async (id: string) => {
+    set({ loading: true });
+    try {
+      await axiosInstance.delete(`/products/${id}`);
+      set((state) => ({
+        products: state.products.filter((p) => p._id !== id),
+        filteredProducts: state.filteredProducts.filter((p) => p._id !== id),
+        currentProduct:
+          state.currentProduct?._id === id ? null : state.currentProduct,
+      }));
+      toast.success("Product deleted successfully");
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to delete product",
+      );
+      throw error;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  confirmDeleteProduct: async () => {
+    const { deleteProduct, handleDeleteProduct } = get();
+    if (deleteProduct) {
+      set({ loading: true });
+      try {
+        await handleDeleteProduct(deleteProduct._id);
+        set({ showDeleteModal: false, deleteProduct: null, loading: false });
+      } catch (error) {
+        console.error("Failed to delete product:", error);
+        set({ loading: false });
+        toast.error("Failed to delete product");
+      }
+    }
+  },
+
+  handleFetchAllProduct: async () => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get("/products");
+      set({ products: response.data.products });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleGetProductById: async (id: string | undefined) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(`/products/${id}`);
+      const product: Product = await response.data;
+      set({ currentProduct: product });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleGetProductByCategory: async (categoryName: string) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(
+        `/products/category/${categoryName}`,
+      );
+
+      const fetchedProducts = Array.isArray(response.data) ? response.data : [];
+      set({ filteredProducts: fetchedProducts });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      console.error(
+        "Error fetching products by category:",
+        axiosError.response?.data,
+      );
+      set({ filteredProducts: [] });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleSearchProductByKeyWord: async (keyWord: string) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(`/products/search/${keyWord}`);
+      set({ products: response.data });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleFilterProduct: async (typeSearch: string) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(`/products?sort=${typeSearch}`);
+      console.log("response.data");
+      console.log(response.data);
+      set({ products: response.data.products });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
     } finally {
       set({ loading: false });
     }
@@ -287,29 +271,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  handleDeleteProduct: async (id: string) => {
-    set({ deleting: true });
-    try {
-      await axiosInstance.delete(`/products/${id}`);
-      set((state) => ({
-        products: state.products.filter((p) => p._id !== id),
-        filteredProducts: state.filteredProducts.filter((p) => p._id !== id),
-        currentProduct:
-          state.currentProduct?._id === id ? null : state.currentProduct,
-      }));
-      toast.success("Product deleted successfully");
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(
-        axiosError.response?.data?.message ?? "Failed to delete product",
-      );
-      throw error;
-    } finally {
-      set({ deleting: false });
-    }
-  },
-
-  handleFilterProducts: async (filters: {
+  handleAdminFilterProducts: async (filters: {
     name: string;
     category: string;
     seller: string;
@@ -326,7 +288,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     let tempProducts = [...products];
 
     if (filters.category) {
-      console.log("Filtering by category:", filters.category);
       await handleGetProductByCategory(filters.category);
       tempProducts = get().filteredProducts;
     } else {
@@ -349,13 +310,12 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       );
     }
 
-    console.log("Filtered products:", tempProducts);
     set({ filteredProducts: tempProducts });
   },
 
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => {
     const { filteredProducts } = get();
-    let tempProducts = [...filteredProducts];
+    const tempProducts = [...filteredProducts];
 
     if (sortBy === "price") {
       tempProducts.sort(

@@ -11,8 +11,8 @@ import { FaPlus, FaMinus } from "react-icons/fa6";
 
 const Payment = () => {
   const { user } = useUserStore();
-  const { currentProduct } = useProductStore();
-  const { handleAddToCart } = useCartStore();
+  const { currentProduct} = useProductStore();
+  const { handleAddToCart,cart,setSelectedCart } = useCartStore();
   const navigate = useNavigate();
 
   const [quantity, setQuantity] = useState(1);
@@ -39,13 +39,15 @@ const Payment = () => {
     }
   };
 
-  const onBuyNow = () => {
+  const onBuyNow  = async () => {
     if (!user) {
       handleOpenModal();
       return;
     }
     if (currentProduct) {
-      handleAddToCart(currentProduct, quantity);
+      await handleAddToCart(currentProduct, quantity);
+      const productCart = cart.filter((item) => item._id === currentProduct._id)
+      setSelectedCart(productCart);
       navigate("/checkout");
     }
   };
