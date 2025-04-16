@@ -25,11 +25,13 @@ interface ProductStore {
 
   handleFetchAllProduct: () => Promise<void>;
   handleGetAllProductForAdmin: () => Promise<void>;
+  handleFetchTopDealsProducts: () => Promise<Product[]>;
+  handleFetchRelatedProducts: (categoryName: string) => Promise<Product[]>;
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
   handleSearchProductByKeyWord: (categoryName: string) => Promise<void>;
   handleFilterProduct: (categoryName: string) => Promise<void>;
-  handleSetNullCurrentProduct: () => Promise<void>;
+  handleSetNullCurrentProduct: () => void;
 
   fetchCategories: () => Promise<void>;
   fetchSellers: () => Promise<void>;
@@ -139,6 +141,40 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         set({ loading: false });
         toast.error("Failed to delete product");
       }
+    }
+  },
+
+  handleFetchRelatedProducts: async (categoryName: string) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(
+        `/products/category/${categoryName}`,
+      );
+      const related = response.data;
+      return related;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+      return [];
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleFetchTopDealsProducts: async (): Promise<Product[]> => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(`/products?sort=best_seller`);
+      console.log("response.data");
+      console.log(response.data);
+      const topdeals = response.data.products.slice(0, 12);
+      return topdeals;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+      return [];
+    } finally {
+      set({ loading: false });
     }
   },
 

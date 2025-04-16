@@ -9,7 +9,7 @@ const BookCard = ({ product }: { product: Product }) => {
       >
         <div className="flex w-full justify-center">
           <div
-            className="relative flex h-32.5 w-32.5 justify-center bg-cover bg-center"
+            className="relative flex h-32.5 w-32.5 justify-center bg-cover bg-center rounded-t-lg"
             style={{ backgroundImage: `url(${product.images[0].base_url})` }}
           />
         </div>
