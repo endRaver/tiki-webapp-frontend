@@ -128,7 +128,6 @@ export const useOrderAdminStore = create<OrderAdminStore>((set, get) => ({
       );
     }
 
-    // Filter by status: empty status ("") means include all specified statuses
     if (filters.status) {
       tempOrders = tempOrders.filter((order) => order.status === filters.status);
     } else {
