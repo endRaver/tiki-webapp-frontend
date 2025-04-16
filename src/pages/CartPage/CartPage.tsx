@@ -35,8 +35,8 @@ const CartPage: React.FC = () => {
         {isEmpty(cart) ? (
           <EmptyCart />
         ) : (
-          <div className="flex flex-col lg:flex-row">
-            <div className="mr-5 min-w-0 flex-1 space-y-4">
+          <div className="flex flex-col lg:flex-row gap-5">
+            <div className="min-w-0 flex-1 space-y-4">
               <CartHeader />
               <CartList />
             </div>

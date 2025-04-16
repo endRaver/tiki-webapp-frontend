@@ -13,7 +13,7 @@ const CartSummary = () => {
   }, [handleGetMyCoupons]);
 
   return (
-    <div className="w-full max-w-[320px] space-y-3">
+    <div className="w-full  lg:max-w-[320px] space-y-3">
       {/* User Information */}
       <UserInformation />
 

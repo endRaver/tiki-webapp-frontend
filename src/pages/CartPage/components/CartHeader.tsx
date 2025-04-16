@@ -13,9 +13,9 @@ const CartHeader = () => {
     );
 
   return (
-    <div className="bg-background">
+    <div className="bg-background hidden md:block">
       <div className="mb-3 flex w-full items-center rounded-t bg-white px-4 py-2 text-[13px]">
-        <div className="flex min-w-[324px] flex-1 items-center gap-2">
+        <div className="flex min-w-[260px] flex-1 items-center gap-2 xl:min-w-[324px]">
           <input
             type="checkbox"
             className="checkbox checkbox-sm checked:bg-primary-200 rounded bg-[white] text-white"
@@ -35,15 +35,15 @@ const CartHeader = () => {
         </div>
 
         {/* Đơn giá */}
-        <div className="min-w-[180px]">
+        <div className="min-w-[120px] xl:min-w-[180px]">
           <span className="text-sm text-gray-600">Đơn giá</span>
         </div>
         {/* Số lượng */}
-        <div className="min-w-[120px]">
+        <div className="min-w-[100px] xl:min-w-[120px]">
           <span className="text-sm text-gray-600">Số lượng</span>
         </div>
         {/* Thành tiền */}
-        <div className="min-w-[120px]">
+        <div className="min-w-[90px] xl:min-w-[120px]">
           <span className="text-sm text-gray-600">Thành tiền</span>
         </div>
         {/* Trash bin button */}

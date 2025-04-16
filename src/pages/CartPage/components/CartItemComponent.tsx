@@ -3,6 +3,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { CartItem } from "@/types/user";
 import { formatCurrency } from "@/utils/utils";
 import { Link } from "react-router-dom";
+import CartItemMobile from "./CartItemMobile";
 
 interface CartItemProps {
   item: CartItem;
@@ -23,7 +24,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
 
   return (
     <div className="flex w-full items-center p-4 text-sm">
-      <div className="flex w-full min-w-[324px] flex-1 items-center gap-2">
+      <div className="flex w-full min-w-[260px] flex-1 items-center gap-2 xl:min-w-[324px]">
         <input
           type="checkbox"
           className="checkbox checkbox-sm checked:bg-primary-200 rounded bg-[white] text-white"
@@ -37,7 +38,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
           }}
         />
 
-        <Link to={`/product/${item._id}`} className="flex items-center gap-2">
+        <Link to={`/product/${item._id}`} className="flex w-full items-center gap-2">
           <div
             className="h-20 w-20 bg-gray-200"
             style={{
@@ -46,14 +47,16 @@ const CartItemComponent = ({ item }: CartItemProps) => {
               backgroundPosition: "center",
             }}
           />
-          <p className="hover:text-primary-300 mx-2 line-clamp-2 flex-1">
+          <p className="hover:text-primary-300 mx-2 line-clamp-2 flex-1 hidden md:block">
             {item.name}
           </p>
+
+          <CartItemMobile item={item} />
         </Link>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <div className="relative flex min-w-[180px] items-center gap-3">
+      <div className="hidden flex-col gap-1 md:flex">
+        <div className="relative flex min-w-[120px] flex-col gap-1 xl:min-w-[180px] xl:flex-row xl:items-center xl:gap-3">
           <p
             className={`font-semibold ${
               item.original_price === item.current_seller.price
@@ -83,7 +86,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
         )}
       </div>
 
-      <div className="min-w-[120px]">
+      <div className="hidden min-w-[100px] md:block xl:min-w-[120px]">
         <div className="flex w-fit items-center rounded border border-[#C8C8C8]">
           <button
             className="cursor-pointer border-r border-[#C8C8C8]"
@@ -131,7 +134,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
         </div>
       </div>
 
-      <div className="relative min-w-[120px]">
+      <div className="relative hidden min-w-[90px] md:block xl:min-w-[120px]">
         <p className="text-danger-100 font-semibold">
           {formatCurrency(item.current_seller.price * item.quantity)}
           <span className="absolute top-0 text-xs underline underline-offset-1">
@@ -141,7 +144,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
       </div>
 
       <button
-        className="ml-auto flex min-w-8 cursor-pointer justify-end"
+        className="ml-auto hidden min-w-8 cursor-pointer justify-end md:flex"
         onClick={() => {
           const confirm = window.confirm(
             "Bạn có muốn xóa sản phẩm này trong giỏ hàng không?",

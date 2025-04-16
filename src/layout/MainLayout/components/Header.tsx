@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { freeship_extra } from "@/assets/icons/home_page_icons";
 import {
   header_account,
@@ -26,6 +26,7 @@ import { useProductStore } from "@/store/useProductStore";
 type SearchFormValues = {
   query: string;
 };
+
 const Header = () => {
   const recommendTags = [
     "điện gia dụng",
@@ -41,15 +42,17 @@ const Header = () => {
   ];
 
   const { user, handleLogout } = useUserStore();
-  const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const { cart, handleGetCartItems } = useCartStore();
-  const [cartQuantity, setCartQuantity] = useState(0);
   const { handleSearchProductByKeyWord } = useProductStore();
+  const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { register, handleSubmit } = useForm<SearchFormValues>();
 
   const onSubmit = (data: SearchFormValues) => {
-    if (data.query.trim() === '') return;
+    if (data.query.trim() === "") return;
     handleSearchProductByKeyWord(data.query);
   };
   const handleOpenModal = () => {
@@ -97,18 +100,23 @@ const Header = () => {
 
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex gap-4 lg:gap-12">
-            
-            <form className="flex flex-1 items-center overflow-hidden rounded-lg border border-[#DDDDE3] ps-4" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="flex flex-1 items-center overflow-hidden rounded-lg border border-[#DDDDE3] ps-4"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="flex w-full py-2.5">
                 <img src={icon_search} alt="search" className="size-5" />
                 <input
                   type="text"
                   className="ms-2 flex-1 border-r-1 border-[#DDDDE3] focus:outline-none"
                   placeholder="100% hàng thật"
-                  {...register('query')}
+                  {...register("query")}
                 />
               </div>
-              <button type="submit" className="h-full cursor-pointer px-4 text-nowrap text-[#0A68FF] hover:bg-[#0A68FF66]">
+              <button
+                type="submit"
+                className="h-full cursor-pointer px-4 text-nowrap text-[#0A68FF] hover:bg-[#0A68FF66]"
+              >
                 Tìm kiếm
               </button>
             </form>
@@ -178,7 +186,16 @@ const Header = () => {
 
               <span className="h-5 w-0.5 bg-[#EBEBF0]" />
 
-              <Link to="/cart" className="relative flex items-center gap-4">
+              <button
+                className="relative flex cursor-pointer items-center gap-4"
+                onClick={() => {
+                  if (isEmpty(user)) {
+                    handleOpenModal();
+                  } else {
+                    navigate("/cart");
+                  }
+                }}
+              >
                 <img
                   src={header_img_Cart}
                   alt="cart"
@@ -187,7 +204,7 @@ const Header = () => {
                 <span className="absolute -top-0 -right-2 rounded-full bg-red-500 px-1 py-0.5 text-[8px] font-bold text-white">
                   {cartQuantity}
                 </span>
-              </Link>
+              </button>
             </div>
           </div>
 
