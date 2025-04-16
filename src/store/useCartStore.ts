@@ -110,14 +110,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   handleAddToCart: async (product, quantity = 1) => {
     try {
-      await axiosInstance.post("/carts", {
+      const response = await axiosInstance.post("/carts", {
         productId: product._id,
         quantity,
       });
 
       await get().handleGetCartItems();
-
       toast.success("Product added to cart");
+      return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(

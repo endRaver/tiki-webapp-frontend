@@ -11,7 +11,7 @@ import { FaPlus, FaMinus } from "react-icons/fa6";
 const Payment = () => {
   const { user } = useUserStore();
   const { currentProduct } = useProductStore();
-  const { handleAddToCart, cart } = useCartStore();
+  const { handleAddToCart } = useCartStore();
 
   const [quantity, setQuantity] = useState(1);
 
@@ -43,12 +43,9 @@ const Payment = () => {
       return;
     }
     if (currentProduct) {
-      await handleAddToCart(currentProduct, quantity);
-      const productCart = cart.filter(
-        (item) => item._id === currentProduct._id,
-      );
+      const productCart = await handleAddToCart(currentProduct, quantity);
 
-      localStorage.setItem("selectedCart", JSON.stringify(productCart));
+      localStorage.setItem("selectedCart", JSON.stringify([productCart]));
       window.location.href = "/checkout";
     }
   };
