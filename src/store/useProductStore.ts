@@ -18,20 +18,21 @@ interface ProductStore {
   sellers: Seller[];
   showDeleteModal: boolean;
   deleteProduct: Product | null;
+  totalPages: number;
 
   setDeleteProduct: (product: Product | null) => void;
   setShowDeleteModal: (show: boolean) => void;
   confirmDeleteProduct: () => Promise<void>;
 
-  handleFetchAllProduct: () => Promise<void>;
-  handleGetAllProductForAdmin: () => Promise<void>;
+  handleFetchAllProduct: (currentPage?: number) => Promise<void>;
+  handleGetAllProductForAdmin: (currentPage?: number) => Promise<void>;
   handleFetchTopDealsProducts: () => Promise<Product[]>;
   handleFetchRelatedProducts: (categoryName: string) => Promise<Product[]>;
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
   handleSearchProductByKeyWord: (categoryName: string) => Promise<void>;
   handleFilterProduct: (categoryName: string) => Promise<void>;
-  handleSetNullCurrentProduct: () => void;
+  resetCurrentProduct: () => void;
 
   fetchCategories: () => Promise<void>;
   fetchSellers: () => Promise<void>;
@@ -46,6 +47,7 @@ interface ProductStore {
   }) => Promise<void>;
 
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => void;
+  resetProducts: () => void;
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
@@ -57,15 +59,11 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   categoryNames: [],
   deleteProduct: null,
   showDeleteModal: false,
-
+  totalPages: 0,
   setShowDeleteModal: (show: boolean) => set({ showDeleteModal: show }),
 
   setDeleteProduct: (product: Product | null) =>
     set({ deleteProduct: product }),
-
-  handleSetNullCurrentProduct: async () => {
-    set({ currentProduct: null });
-  },
 
   fetchCategories: async () => {
     set({ loading: true });
@@ -145,7 +143,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   handleFetchRelatedProducts: async (categoryName: string) => {
-    set({ loading: true });
     try {
       const response = await axiosInstance.get(
         `/products/category/${categoryName}`,
@@ -156,33 +153,35 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
       return [];
-    } finally {
-      set({ loading: false });
     }
   },
 
   handleFetchTopDealsProducts: async (): Promise<Product[]> => {
-    set({ loading: true });
     try {
-      const response = await axiosInstance.get(`/products?sort=best_seller`);
-      console.log("response.data");
-      console.log(response.data);
-      const topdeals = response.data.products.slice(0, 12);
-      return topdeals;
+      const response = await axiosInstance.get(`/products/recommended`);
+
+      return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
       return [];
-    } finally {
-      set({ loading: false });
     }
   },
 
-  handleFetchAllProduct: async () => {
-    set({ loading: true });
+  handleFetchAllProduct: async (currentPage?: number) => {
+    if (currentPage === 1) {
+      set({ loading: true });
+    }
+
+    const previousProducts = get().products;
+
     try {
-      const response = await axiosInstance.get("/products");
-      set({ products: response.data.products });
+      const response = await axiosInstance.get(`/products?page=${currentPage}`);
+
+      set({
+        products: [...previousProducts, ...response.data.products],
+        totalPages: response.data.pagination.pages,
+      });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
@@ -191,13 +190,24 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  handleGetAllProductForAdmin: async () => {
-    set({ loading: true });
+  handleGetAllProductForAdmin: async (currentPage?: number) => {
+    if (currentPage === 1) {
+      set({ loading: true });
+    }
+
+    const previousProducts = get().products;
+    const previousFilteredProducts = get().filteredProducts;
+
     try {
-      const response = await axiosInstance.get("/products");
+      const response = await axiosInstance.get(`/products?page=${currentPage}`);
+
       set({
-        products: response.data.products,
-        filteredProducts: response.data.products,
+        products: [...previousProducts, ...response.data.products],
+        filteredProducts: [
+          ...previousFilteredProducts,
+          ...response.data.products,
+        ],
+        totalPages: response.data.pagination.pages,
       });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -228,15 +238,17 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         `/products/category/${categoryName}`,
       );
 
+      console.log(response.data);
+
       const fetchedProducts = Array.isArray(response.data) ? response.data : [];
-      set({ filteredProducts: fetchedProducts });
+      set({ products: fetchedProducts });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       console.error(
         "Error fetching products by category:",
         axiosError.response?.data,
       );
-      set({ filteredProducts: [] });
+      set({ products: [] });
     } finally {
       set({ loading: false });
     }
@@ -336,23 +348,21 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       return;
     }
 
-    let tempProducts = [...products];
+    let filteredProducts = [...products];
 
     if (filters.category) {
       await handleGetProductByCategory(filters.category);
-      tempProducts = get().filteredProducts;
-    } else {
-      tempProducts = get().products;
+      filteredProducts = get().filteredProducts;
     }
 
     if (filters.name) {
-      tempProducts = tempProducts.filter((product) =>
+      filteredProducts = filteredProducts.filter((product) =>
         product.name.toLowerCase().includes(filters.name.toLowerCase()),
       );
     }
 
     if (filters.seller) {
-      tempProducts = tempProducts.filter(
+      filteredProducts = filteredProducts.filter(
         (product) =>
           product.current_seller?.seller &&
           typeof product.current_seller.seller !== "string" &&
@@ -360,7 +370,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       );
     }
 
-    set({ filteredProducts: tempProducts });
+    set({ filteredProducts });
   },
 
   sortProducts: (sortBy: "price" | "profit" | "quantitySold") => {
@@ -388,4 +398,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
     set({ filteredProducts: tempProducts });
   },
+
+  resetProducts: () => {
+    set({ products: [], filteredProducts: [], totalPages: 0 });
+  },
+
+  resetCurrentProduct: () => set({ currentProduct: null }),
 }));

@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "@/store/useProductStore";
 import { Product } from "@/types/product";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
+import { Loader2 } from "lucide-react";
 
 const ProductList: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const {
     filteredProducts,
-    products,
     loading,
     handleGetAllProductForAdmin,
     showDeleteModal,
@@ -17,11 +19,19 @@ const ProductList: React.FC = () => {
     setDeleteProduct,
     confirmDeleteProduct,
     sortProducts,
+    totalPages,
+    resetProducts,
   } = useProductStore();
 
   useEffect(() => {
-    handleGetAllProductForAdmin();
-  }, [handleGetAllProductForAdmin]);
+    handleGetAllProductForAdmin(currentPage);
+  }, [handleGetAllProductForAdmin, currentPage]);
+
+  useEffect(() => {
+    return () => {
+      resetProducts();
+    };
+  }, [resetProducts]);
 
   const handleDelete = (product: Product) => {
     setDeleteProduct(product);
@@ -33,56 +43,12 @@ const ProductList: React.FC = () => {
     setDeleteProduct(null);
   };
 
-  console.log(filteredProducts);
-
   const renderTableBody = () => {
     if (loading) {
       return (
         <tr>
           <td colSpan={9} className="py-10 text-center">
-            <div className="text-gray-500">
-              <svg
-                className="mx-auto h-12 w-12 animate-spin text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 12a8 8 0 0116 0A8 8 0 014 12z"
-                />
-              </svg>
-              <p>Loading...</p>
-            </div>
-          </td>
-        </tr>
-      );
-    }
-
-    if (!loading && products.length === 0 && filteredProducts.length === 0) {
-      return (
-        <tr>
-          <td colSpan={9} className="py-10 text-center">
-            <div className="text-gray-500">
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 7h18M3 11h18M3 15h18M3 19h18"
-                />
-              </svg>
-              <p>No data available</p>
-            </div>
+            <Loader2 className="text-primary-300 mx-auto h-12 w-12 animate-spin" />
           </td>
         </tr>
       );
@@ -91,13 +57,15 @@ const ProductList: React.FC = () => {
     return filteredProducts.map((product) => (
       <tr key={product._id} className="border-b border-gray-200">
         <td className="flex items-center p-2">
-          <img
-            src={
-              product.images[0]?.large_url || "https://via.placeholder.com/40"
-            }
-            alt={product.name}
-            className="mr-4 h-10 w-10"
+          <div
+            className="mr-4 h-10 w-10 min-w-10 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${
+                product.images[0]?.large_url || "https://via.placeholder.com/40"
+              })`,
+            }}
           />
+
           <div>
             <p className="line-clamp-2 font-semibold">{product.name}</p>
             <p className="font-inter text-sm text-gray-500">
@@ -252,6 +220,17 @@ const ProductList: React.FC = () => {
           </thead>
           <tbody>{renderTableBody()}</tbody>
         </table>
+
+        {currentPage < totalPages && (
+          <div className="mt-4 flex justify-center">
+            <button
+              className="btn mb-2 cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]"
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Xem Thêm
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

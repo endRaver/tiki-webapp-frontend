@@ -1,5 +1,4 @@
 import { percentage, bank_logo } from "@/assets/icons/checkout_page_icons";
-import { tiki_pay } from "@/assets/icons/footer_icons";
 
 import OfferCard from "./OfferCard";
 const offerCard = [
@@ -15,7 +14,7 @@ const offerCard = [
   "Đơn từ 500k",
   "Đơn từ 500k",
   "TikiCARD",
-]
+];
 const PaymentOffersSection = () => {
   return (
     <div className="bg-background p-4">
@@ -26,8 +25,8 @@ const PaymentOffersSection = () => {
         </span>
       </div>
 
-      <div className=" mt-2 grid grid-cols-1 overflow-y-auto lg:grid-cols-3 max-h-48 lg:max-h-full md:grid-cols-2 gap-2">
-        {offerCard.map((item,index) => (
+      <div className="mt-2 grid max-h-48 grid-cols-1 gap-2 overflow-y-auto md:grid-cols-2 lg:max-h-full lg:grid-cols-3">
+        {offerCard.map((item, index) => (
           <OfferCard title="Freeship" logo={bank_logo} key={index}>
             {item}
           </OfferCard>

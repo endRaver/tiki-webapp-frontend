@@ -9,14 +9,17 @@ import { useProductStore } from "@/store/useProductStore";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { handleGetProductById,handleSetNullCurrentProduct } = useProductStore();
+  const { handleGetProductById, resetCurrentProduct } = useProductStore();
 
   useEffect(() => {
     if (id) {
-      handleSetNullCurrentProduct();
       handleGetProductById(id);
     }
-  }, [handleGetProductById, id]);
+
+    return () => {
+      resetCurrentProduct();
+    };
+  }, [handleGetProductById, id, resetCurrentProduct]);
 
   return (
     <div className="bg-background">

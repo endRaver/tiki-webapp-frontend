@@ -7,7 +7,7 @@ const ItemFilterDesktop = () => {
     <>
       <span className="font-semibold">Tất cả sản phẩm</span>
       <div className="space-y-9 py-5.5">
-        <div className="flex cursor-pointer align-middle">
+        <div className="flex cursor-pointer flex-wrap gap-y-2 align-middle">
           <div className="flex items-center gap-2">
             <input
               type="checkbox"

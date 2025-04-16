@@ -3,26 +3,30 @@ import Carousel from "./Carousel";
 import { useEffect, useState } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
 import { Product } from "@/types/product";
+import { isEmpty } from "lodash";
 
 const RelatedBooks = () => {
-  const { currentProduct, loading, handleFetchRelatedProducts } = useProductStore();
+  const { currentProduct, handleFetchRelatedProducts } = useProductStore();
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    let isMounted = true;
     const fetchProducts = async () => {
       if (currentProduct?.categories?.name) {
-        setProducts([]);
-        const result = await handleFetchRelatedProducts(currentProduct.categories.name);
-        if (isMounted) {
+        setLoading(true);
+        const result = await handleFetchRelatedProducts(
+          currentProduct.categories.name,
+        );
+        if (!isEmpty(result)) {
           setProducts(result);
         }
+        setLoading(false);
       }
     };
+
     fetchProducts();
-    return () => {
-      isMounted = false;
-    };
   }, [handleFetchRelatedProducts, currentProduct]);
+
   if (loading) {
     return (
       <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">
@@ -33,24 +37,24 @@ const RelatedBooks = () => {
 
         {/* Danh sách sản phẩm và nút điều hướng */}
         <div className="">
-          <div className="hidden 2xl:grid container mx-auto grid-cols-4 gap-2">
+          <div className="container mx-auto hidden grid-cols-4 gap-2 2xl:grid">
             {[...Array(8)].map((_, index) => (
               <BookCardSkeleton key={index} />
             ))}
           </div>
-          <div className="hidden xl:grid 2xl:hidden container mx-auto grid-cols-3 gap-2">
+          <div className="container mx-auto hidden grid-cols-3 gap-2 xl:grid 2xl:hidden">
             {[...Array(6)].map((_, index) => (
               <BookCardSkeleton key={index} />
             ))}
           </div>
-          <div className="grid min-[390px]:grid sm:grid lg:grid xl:hidden container mx-auto grid-cols-2 gap-2">
+          <div className="container mx-auto grid grid-cols-2 gap-2 min-[390px]:grid sm:grid lg:grid xl:hidden">
             {[...Array(4)].map((_, index) => (
               <BookCardSkeleton key={index} />
             ))}
           </div>
         </div>
       </div>
-    )
+    );
   }
   return (
     <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">

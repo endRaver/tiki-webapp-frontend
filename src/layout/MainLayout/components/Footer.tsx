@@ -174,7 +174,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="">
+        <div className="hidden lg:block">
           <span className="font-medium">Phương thức thanh toán</span>
           <div className="mt-3 flex flex-col">
             <div className="grid grid-cols-5 gap-[8px]">

@@ -3,11 +3,19 @@ import { useProductStore } from "@/store/useProductStore";
 import SkeletonCardProduct from "../skeleton/ProductCardSkeleton";
 import { useEffect } from "react";
 
-const ListProductItem = () => {
-  const { products, loading, handleFetchAllProduct } = useProductStore();
+const ListProductItem: React.FC<{ page: number }> = ({ page }) => {
+  const { products, loading, handleFetchAllProduct, resetProducts } =
+    useProductStore();
+
   useEffect(() => {
-    handleFetchAllProduct();
-  }, [handleFetchAllProduct]);
+    handleFetchAllProduct(page);
+  }, [handleFetchAllProduct, page]);
+
+  useEffect(() => {
+    return () => {
+      resetProducts();
+    };
+  }, [resetProducts]);
 
   if (loading) {
     return (

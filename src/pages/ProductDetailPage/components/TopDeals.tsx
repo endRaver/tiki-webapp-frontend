@@ -3,17 +3,25 @@ import Carousel from "./Carousel";
 import { useEffect, useState } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
 import { Product } from "@/types/product";
+import { isEmpty } from "lodash";
 
 const TopDeals = () => {
-  const {loading, handleFetchTopDealsProducts } = useProductStore();
+  const { handleFetchTopDealsProducts } = useProductStore();
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const result = await handleFetchTopDealsProducts();
-      setProducts(result);
+      if (!isEmpty(result)) {
+        setProducts(result);
+      }
+      setLoading(false);
     };
     fetchProducts();
   }, [handleFetchTopDealsProducts]);
+
   if (loading) {
     return (
       <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">
@@ -24,25 +32,24 @@ const TopDeals = () => {
 
         {/* Danh sách sản phẩm và nút điều hướng */}
         <div>
-          <div className="hidden 2xl:grid container mx-auto grid-cols-4 gap-2">
+          <div className="container mx-auto hidden grid-cols-4 gap-2 2xl:grid">
             {[...Array(4)].map((_, index) => (
               <BookCardSkeleton key={index} />
             ))}
           </div>
-          <div className="hidden xl:grid 2xl:hidden container mx-auto grid-cols-3 gap-2">
+          <div className="container mx-auto hidden grid-cols-3 gap-2 xl:grid 2xl:hidden">
             {[...Array(3)].map((_, index) => (
               <BookCardSkeleton key={index} />
             ))}
           </div>
-          <div className="grid min-[390px]:grid sm:grid lg:grid xl:hidden container mx-auto grid-cols-2 gap-2">
+          <div className="container mx-auto grid grid-cols-2 gap-2 min-[390px]:grid sm:grid lg:grid xl:hidden">
             {[...Array(2)].map((_, index) => (
               <BookCardSkeleton key={index} />
             ))}
           </div>
         </div>
       </div>
-
-    )
+    );
   }
   return (
     <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">

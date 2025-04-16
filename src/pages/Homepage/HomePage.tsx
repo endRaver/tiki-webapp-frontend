@@ -5,6 +5,7 @@ import {
   vietnames_book,
   return_days,
 } from "@/assets/icons/home_page_icons";
+
 import CategoryItem from "./Components/CategoryItem";
 import Carousel from "./Components/Carousel";
 import BreadCrumb from "@/components/ui/BreadCrumb";
@@ -12,6 +13,9 @@ import ItemFilterDesktop from "./Components/ItemFilterDesktop";
 import ItemFilterMobile from "./Components/ItemFilterMobile";
 import SideBar from "@/layout/MainLayout/components/Sidebar";
 import ListProductItem from "@/components/ui/ListProductItem";
+import { useState } from "react";
+import { useProductStore } from "@/store/useProductStore";
+import TopSellingItem from "./Components/TopSellingItem";
 
 const categories = [
   {
@@ -24,33 +28,18 @@ const categories = [
   },
   {
     image: calculator,
-    name: "Văn phòng phẩm",
+    name: "Fiction - Literature",
   },
   {
     image: souvenir,
-    name: "Quà lưu niệm",
-  },
-];
-const bestBooksSeller = [
-  {
-    name: "(Tập Thơ) NGƯỜI LÀ MỘT BÓNG CHIM KHUÊ TÚ - Nguyễn Thiên Ngân – Phục Hưng Books",
-    price: 365000,
-  },
-  {
-    name: "(Tập Thơ) NGƯỜI LÀ MỘT BÓNG CHIM KHUÊ TÚ - Nguyễn Thiên Ngân – Phục Hưng Books",
-    price: 365000,
-  },
-  {
-    name: "(Tập Thơ) NGƯỜI LÀ MỘT BÓNG CHIM KHUÊ TÚ - Nguyễn Thiên Ngân – Phục Hưng Books",
-    price: 365000,
-  },
-  {
-    name: "(Tập Thơ) NGƯỜI LÀ MỘT BÓNG CHIM KHUÊ TÚ - Nguyễn Thiên Ngân – Phục Hưng Books",
-    price: 365000,
+    name: "Tác phẩm kinh điển",
   },
 ];
 
 const Homepage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const { totalPages } = useProductStore();
+
   return (
     <main className="bg-background text-neutral-200">
       <BreadCrumb />
@@ -70,9 +59,9 @@ const Homepage = () => {
           <div className="container mx-auto hidden rounded-lg bg-white px-4 py-3 md:block">
             <span className="font-semibold">Khám phá theo danh mục</span>
             <div className="mt-3 flex flex-row gap-3">
-              {categories.map((category, index) => (
+              {categories.map((category) => (
                 <CategoryItem
-                  key={index}
+                  key={category.name}
                   image={category.image}
                   nameItem={category.name}
                 />
@@ -95,38 +84,29 @@ const Homepage = () => {
             <ItemFilterMobile />
           </div>
 
-          <ListProductItem />
-          <div className="flex justify-center">
-            <button className="cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]">
-              Xem Thêm
-            </button>
-          </div>
+          <ListProductItem page={currentPage} />
+
+          {currentPage < totalPages && (
+            <div className="flex justify-center">
+              <button
+                className="btn mb-2 cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]"
+                onClick={() => {
+                  setCurrentPage(currentPage + 1);
+                }}
+              >
+                Xem Thêm
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="my-10 hidden w-full flex-col gap-10 md:flex">
-        <div className="flex rounded-xl bg-[#FFFFFF] p-[16px] align-middle">
-          <span className="font-medium">Tìm kiếm liên quan</span>
+      <section className="my-10 hidden w-full flex-col gap-4 md:flex">
+        <div className="flex rounded-xl bg-[#FFFFFF] px-4 pt-3 pb-7 align-middle">
+          <span className="text-xl">Tìm kiếm liên quan</span>
         </div>
 
-        <div className="rounded-xl bg-[#FFFFFF] p-[16px]">
-          <span className="font-medium">
-            Top Bán Chạy Sản Phẩm Nhà Sách Tiki
-          </span>
-          <ul className="m-4">
-            {bestBooksSeller.map((book, index) => (
-              <li key={index} className="flex flex-row justify-between">
-                <p>
-                  1.
-                  <span className="cursor-pointer text-[#0B74E5]">
-                    {book.name}
-                  </span>
-                </p>{" "}
-                <span>{book.price.toLocaleString("vi-VN")}đ</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <TopSellingItem />
       </section>
     </main>
   );

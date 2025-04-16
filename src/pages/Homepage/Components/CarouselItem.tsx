@@ -19,7 +19,7 @@ const CarouselItem = ({
       className={`${index > 0 && index % 2 === 0 && "-ml-3"} flex w-[calc(50%-6px)] flex-shrink-0 cursor-pointer overflow-hidden rounded-lg border border-black/5 bg-white`}
     >
       <div
-        className="aspect-square w-full flex-1"
+        className="hidden aspect-square w-full flex-1 xl:block"
         style={{
           backgroundImage: `url(${brandImage})`,
           backgroundSize: "cover",
