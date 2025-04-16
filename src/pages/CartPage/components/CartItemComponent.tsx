@@ -142,7 +142,7 @@ const CartItemComponent = ({ item }: CartItemProps) => {
         className="ml-auto flex min-w-8 cursor-pointer justify-end"
         onClick={() => {
           const confirm = window.confirm(
-            "Bạn có muốn xóa tất cả sản phẩm trong giỏ hàng không?",
+            "Bạn có muốn xóa sản phẩm này trong giỏ hàng không?",
           );
           if (confirm) {
             handleRemoveFromCart(item._id);

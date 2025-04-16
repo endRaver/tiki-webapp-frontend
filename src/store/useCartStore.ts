@@ -153,7 +153,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
   handleUpdateQuantity: async (productId, quantity) => {
     try {
       await axiosInstance.put(`/carts/${productId}`, { quantity });
-
       set((prevState) => {
         const newCart = prevState.cart.map((item) =>
           item._id === productId ? { ...item, quantity } : item,
