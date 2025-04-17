@@ -8,6 +8,9 @@ import { format } from "date-fns";
 const UserOrderPage = () => {
   const { id } = useParams();
   const { handleGetOrderById, currentOrder } = useOrderStore();
+  // const {user} = useUserStore();
+  console.log(currentOrder?.user);
+  
 
   useEffect(() => {
     if (id) {
@@ -41,9 +44,9 @@ const UserOrderPage = () => {
         <div className="flex-1">
           <p className="mb-4 uppercase">Địa chỉ người nhận</p>
           <div className="flex h-35 flex-col gap-y-2 rounded-sm bg-white p-2 text-[13px] text-black/65">
-            <p className="font-bold text-black">Vũ Anh Tú</p>
-            <p>Số 17 Duy Tân, Phường Dịch Vọng, Cầu Giấy, Hà Nội, Việt Nam</p>
-            <p>Điện thoại: 0942438693</p>
+            <p className="font-bold text-black">{currentOrder?.user.name}</p>
+            <p>{currentOrder?.user.address}</p>
+            <p>Điện thoại: {currentOrder?.user.phoneNumber}</p>
           </div>
         </div>
 
