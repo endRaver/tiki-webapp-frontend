@@ -6,6 +6,7 @@ import {
   header_img_Cart,
   icon_search,
   tikiLogo,
+  active_home,
 } from "../../../assets/icons/header_icons";
 
 import {
@@ -16,7 +17,6 @@ import {
   nav_real,
   nav_refund,
 } from "../../../assets/icons/navbar_header_icons";
-import AuthModal from "../../AuthModal";
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
@@ -128,8 +128,18 @@ const Header = () => {
                   to="/"
                   className="hidden min-w-[100px] cursor-pointer items-center gap-1 rounded-md border-none bg-transparent px-4 py-2 shadow-none hover:bg-[#27272a1f] lg:flex"
                 >
-                  <img src={header_home} alt="home" />
-                  <span className="text-sm text-nowrap text-[#82828B]">
+                  <img
+                    src={location.pathname === "/" ? active_home : header_home}
+                    alt="home"
+                    className="size-6"
+                  />
+                  <span
+                    className={`text-sm text-nowrap ${
+                      location.pathname === "/"
+                        ? "text-primary-200"
+                        : "text-[#82828B]"
+                    }`}
+                  >
                     Trang chủ
                   </span>
                 </Link>
@@ -144,7 +154,13 @@ const Header = () => {
                   onMouseLeave={() => setIsOpenDropdown(false)}
                 >
                   <img src={header_account} alt="" />
-                  <span className="text-sm text-nowrap text-[#82828B]">
+                  <span
+                    className={`text-sm text-nowrap ${
+                      location.pathname.includes("/profile")
+                        ? "text-primary-200"
+                        : "text-[#82828B]"
+                    }`}
+                  >
                     Tài khoản
                   </span>
 
@@ -272,8 +288,6 @@ const Header = () => {
           </ul>
         </Link>
       </nav>
-
-      <AuthModal />
     </>
   );
 };

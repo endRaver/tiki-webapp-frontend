@@ -2,6 +2,7 @@ import { sidebar_more } from "@/assets/icons/home_page_icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import UserProfileMobile from "./UserProfileMobile";
 
 const categories = [
   {
@@ -39,7 +40,13 @@ const categories = [
   },
 ];
 
-const SidebarMobile = ({ isOpenSidebar }: { isOpenSidebar: boolean }) => {
+const SidebarMobile = ({
+  isOpenSidebar,
+  onClose,
+}: {
+  isOpenSidebar: boolean;
+  onClose: () => void;
+}) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleDropdown = (index: number) => {
@@ -61,6 +68,8 @@ const SidebarMobile = ({ isOpenSidebar }: { isOpenSidebar: boolean }) => {
           }}
           className="absolute top-14 left-0 z-50 h-[calc(100vh-56px)] w-full bg-white"
         >
+          <UserProfileMobile onClose={onClose} />
+
           <h1 className="border-border-line text- border-b p-4 text-sm font-semibold">
             Khám phá theo danh mục
           </h1>
