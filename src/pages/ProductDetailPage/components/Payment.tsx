@@ -7,11 +7,15 @@ import { useUserStore } from "@/store/useUserStore";
 
 import { logo, official } from "@/assets/icons/detail_page_icons";
 import { FaPlus, FaMinus } from "react-icons/fa6";
+import { Loader2 } from "lucide-react";
 
 const Payment = () => {
   const { user } = useUserStore();
   const { currentProduct } = useProductStore();
   const { handleAddToCart } = useCartStore();
+
+  const [isLoadingBuyNow, setIsLoadingBuyNow] = useState(false);
+  const [isLoadingAddToCart, setIsLoadingAddToCart] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
 
@@ -27,13 +31,15 @@ const Payment = () => {
     }
   };
 
-  const onAddToCart = () => {
+  const onAddToCart = async () => {
     if (!user) {
       handleOpenModal();
       return;
     }
     if (currentProduct) {
-      handleAddToCart(currentProduct, quantity);
+      setIsLoadingAddToCart(true);
+      await handleAddToCart(currentProduct, quantity);
+      setIsLoadingAddToCart(false);
     }
   };
 
@@ -43,10 +49,12 @@ const Payment = () => {
       return;
     }
     if (currentProduct) {
+      setIsLoadingBuyNow(true);
       const productCart = await handleAddToCart(currentProduct, quantity);
 
       localStorage.setItem("selectedCart", JSON.stringify([productCart]));
       window.location.href = "/checkout";
+      setIsLoadingBuyNow(false);
     }
   };
 
@@ -102,13 +110,21 @@ const Payment = () => {
             className="btn h-10 w-full cursor-pointer rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600"
             onClick={onBuyNow}
           >
-            Mua ngay
+            {isLoadingBuyNow ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              "Mua ngay"
+            )}
           </button>
           <button
-            className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
+            className="flex min-h-[41px] w-full cursor-pointer items-center justify-center rounded border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
             onClick={onAddToCart}
           >
-            Thêm vào giỏ
+            {isLoadingAddToCart ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              "Thêm vào giỏ"
+            )}
           </button>
           <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
             Mua trước trả sau

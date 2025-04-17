@@ -13,9 +13,10 @@ import ItemFilterDesktop from "./Components/ItemFilterDesktop";
 import ItemFilterMobile from "./Components/ItemFilterMobile";
 import SideBar from "@/layout/MainLayout/components/Sidebar";
 import ListProductItem from "@/components/ui/ListProductItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "@/store/useProductStore";
 import TopSellingItem from "./Components/TopSellingItem";
+import { Loader2 } from "lucide-react";
 
 const categories = [
   {
@@ -39,6 +40,25 @@ const categories = [
 const Homepage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { totalPages } = useProductStore();
+  const [moreLoading, setMoreLoading] = useState(false);
+
+  const { handleFetchAllProduct, resetProducts } = useProductStore();
+
+  useEffect(() => {
+    const fetchMoreProducts = async () => {
+      setMoreLoading(true);
+      await handleFetchAllProduct(currentPage);
+      setMoreLoading(false);
+    };
+
+    fetchMoreProducts();
+  }, [handleFetchAllProduct, currentPage]);
+
+  useEffect(() => {
+    return () => {
+      resetProducts();
+    };
+  }, [resetProducts]);
 
   return (
     <main className="bg-background text-neutral-200">
@@ -84,17 +104,21 @@ const Homepage = () => {
             <ItemFilterMobile />
           </div>
 
-          <ListProductItem page={currentPage} />
+          <ListProductItem />
 
-          {currentPage < totalPages && (
+          {currentPage <= totalPages && (
             <div className="flex justify-center">
               <button
-                className="btn mb-2 cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]"
+                className="btn mb-2 w-[265px] cursor-pointer rounded-md border border-blue-400 py-2 text-blue-500 hover:bg-[#0060ff1f]"
                 onClick={() => {
                   setCurrentPage(currentPage + 1);
                 }}
               >
-                Xem Thêm
+                {moreLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Xem Thêm"
+                )}
               </button>
             </div>
           )}

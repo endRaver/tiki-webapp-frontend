@@ -1,21 +1,9 @@
 import ProductItem from "./ProductItem";
-import { useProductStore } from "@/store/useProductStore";
 import SkeletonCardProduct from "../skeleton/ProductCardSkeleton";
-import { useEffect } from "react";
+import { useProductStore } from "@/store/useProductStore";
 
-const ListProductItem: React.FC<{ page: number }> = ({ page }) => {
-  const { products, loading, handleFetchAllProduct, resetProducts } =
-    useProductStore();
-
-  useEffect(() => {
-    handleFetchAllProduct(page);
-  }, [handleFetchAllProduct, page]);
-
-  useEffect(() => {
-    return () => {
-      resetProducts();
-    };
-  }, [resetProducts]);
+const ListProductItem = () => {
+  const { products, loading } = useProductStore();
 
   if (loading) {
     return (
