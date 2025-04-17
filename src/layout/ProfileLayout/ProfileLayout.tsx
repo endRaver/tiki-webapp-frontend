@@ -20,7 +20,7 @@ const ProfileLayout = () => {
         <div className="container mx-auto flex gap-4">
           <ProfileSidebar />
 
-          <div className="min-h-[800px] flex-1">
+          <div className="min-h-[calc(100vh-56px)] flex-1">
             <Outlet />
           </div>
         </div>

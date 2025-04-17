@@ -30,8 +30,8 @@ const UserInfo = () => {
   };
 
   return (
-    <div className="space-y-6 pb-8">
-      <h5 className="text-2xl font-medium text-gray-800">
+    <div className="space-y-6 pt-4 pb-8 md:pt-0">
+      <h5 className="hidden text-2xl font-medium text-gray-800 md:block">
         Thông tin tài khoản
       </h5>
 
@@ -106,7 +106,7 @@ const UserInfo = () => {
               >
                 Địa chỉ
               </label>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col items-center gap-2 md:flex-row">
                 <input
                   id="address"
                   className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-700 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
@@ -118,7 +118,7 @@ const UserInfo = () => {
 
                 <select
                   defaultValue="Pick a color"
-                  className="select"
+                  className="select w-full md:w-fit"
                   onChange={(e) =>
                     setLocationType(e.target.value as "home" | "office")
                   }
