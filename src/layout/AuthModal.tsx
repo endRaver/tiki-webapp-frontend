@@ -68,7 +68,7 @@ const AuthModal = () => {
             <img className="w-10" src={close} alt="close" />
           </button>
 
-          <div className="flex flex-1 flex-col rounded-l-xl bg-white px-[45px] py-10">
+          <div className="flex flex-1 flex-col rounded-xl md:rounded-l-xl bg-white md:px-[45px] md:py-10 p-4">
             {(modalType === "signup" || modalType === "forget") && (
               <button
                 className="mb-8 cursor-pointer"
@@ -177,7 +177,7 @@ const AuthModal = () => {
           </div>
 
           {/* Right side */}
-          <div className="flex flex-col items-center justify-center px-[50px]">
+          <div className="md:flex flex-col items-center justify-center px-[50px] hidden">
             <img className="w-ơ" src={auth_logo} alt="logo" />
             <div className="text-primary-200 flex flex-col items-center">
               <p className="text-lg font-medium">Mua sắm tại Tiki</p>

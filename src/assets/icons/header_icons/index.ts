@@ -8,6 +8,7 @@ import cart_mobile from "./cart_mobile.svg";
 import back_mobile from "./back_mobile.svg";
 import search from "./search.svg";
 import logo_slogan from "./logo_slogan.svg";
+import active_home from "./active_home.png";
 
 export {
   header_account,
@@ -20,4 +21,5 @@ export {
   back_mobile,
   search,
   logo_slogan,
+  active_home,
 };

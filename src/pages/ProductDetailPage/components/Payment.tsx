@@ -108,6 +108,7 @@ const Payment = () => {
         <div className="mt-4 flex flex-col gap-2">
           <button
             className="btn h-10 w-full cursor-pointer rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600"
+            disabled={isLoadingBuyNow}
             onClick={onBuyNow}
           >
             {isLoadingBuyNow ? (
@@ -118,6 +119,7 @@ const Payment = () => {
           </button>
           <button
             className="flex min-h-[41px] w-full cursor-pointer items-center justify-center rounded border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
+            disabled={isLoadingAddToCart}
             onClick={onAddToCart}
           >
             {isLoadingAddToCart ? (

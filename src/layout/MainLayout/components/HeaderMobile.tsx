@@ -47,7 +47,7 @@ const HeaderMobile = () => {
         </div>
       </div>
 
-      <SidebarMobile isOpenSidebar={isOpenSidebar} />
+      <SidebarMobile isOpenSidebar={isOpenSidebar} onClose={() => setIsOpenSidebar(false)} />
     </>
   );
 };

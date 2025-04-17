@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import HeaderMobile from "./components/HeaderMobile";
 import HeaderCheckout from "./components/HeaderCheckout";
 import FooterCheckout from "./components/FooterCheckout";
+import AuthModal from "../AuthModal";
 
 const MainLayout = () => {
   const pathname = useLocation().pathname;
@@ -18,6 +19,7 @@ const MainLayout = () => {
       </div>
       <Outlet />
       {pathname.includes("checkout") ? <FooterCheckout /> : <Footer />}
+      <AuthModal />
     </div>
   );
 };
