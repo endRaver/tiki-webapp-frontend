@@ -9,6 +9,8 @@ import back_mobile from "./back_mobile.svg";
 import search from "./search.svg";
 import logo_slogan from "./logo_slogan.svg";
 import active_home from "./active_home.png";
+import history_icon from "./history_icon.png";
+import search_icon from "./search_icon.png";
 
 export {
   header_account,
@@ -22,4 +24,6 @@ export {
   search,
   logo_slogan,
   active_home,
+  history_icon,
+  search_icon,
 };

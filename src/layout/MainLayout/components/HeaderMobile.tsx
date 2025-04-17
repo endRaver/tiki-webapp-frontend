@@ -6,11 +6,22 @@ import {
   cart_mobile,
 } from "@/assets/icons/header_icons";
 import SidebarMobile from "./SidebarMobile";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
+import { useUserStore } from "@/store/useUserStore";
 
 const HeaderMobile = () => {
+  const { user } = useUserStore();
   const [isOpenSidebar, setIsOpenSidebar] = useState(false);
-
+  const navigate = useNavigate();
+  const handleOpenModal = () => {
+    if (isEmpty(user)) {
+      const modal = document.getElementById(
+        "auth_modal",
+      ) as HTMLDialogElement | null;
+      if (modal) modal.showModal();
+    }
+  };
   return (
     <>
       <div className="bg-[#1BA8FF]">
@@ -40,7 +51,15 @@ const HeaderMobile = () => {
           </div>
 
           <div className="flex items-center gap-1">
-            <button className="flex size-10 cursor-pointer items-center justify-center">
+            <button className="flex size-10 cursor-pointer items-center justify-center"
+              onClick={() => {
+                if (isEmpty(user)) {
+                  handleOpenModal();
+                } else {
+                  navigate("/cart");
+                }
+              }}
+            >
               <img src={cart_mobile} alt="cart" />
             </button>
           </div>

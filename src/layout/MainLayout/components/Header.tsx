@@ -4,7 +4,6 @@ import {
   header_account,
   header_home,
   header_img_Cart,
-  icon_search,
   tikiLogo,
   active_home,
 } from "../../../assets/icons/header_icons";
@@ -21,11 +20,8 @@ import { useUserStore } from "@/store/useUserStore";
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
 import { useCartStore } from "@/store/useCartStore";
-import { useForm } from "react-hook-form";
-import { useProductStore } from "@/store/useProductStore";
-type SearchFormValues = {
-  query: string;
-};
+import SearchInput from "@/components/SearchInput";
+
 
 const Header = () => {
   const recommendTags = [
@@ -43,18 +39,12 @@ const Header = () => {
 
   const { user, handleLogout } = useUserStore();
   const { cart, handleGetCartItems } = useCartStore();
-  const { handleSearchProductByKeyWord } = useProductStore();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [cartQuantity, setCartQuantity] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { register, handleSubmit } = useForm<SearchFormValues>();
-
-  const onSubmit = (data: SearchFormValues) => {
-    if (data.query.trim() === "") return;
-    handleSearchProductByKeyWord(data.query);
-  };
+ 
   const handleOpenModal = () => {
     if (isEmpty(user)) {
       const modal = document.getElementById(
@@ -100,26 +90,7 @@ const Header = () => {
 
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex gap-4 lg:gap-12">
-            <form
-              className="flex flex-1 items-center overflow-hidden rounded-lg border border-[#DDDDE3] ps-4"
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <div className="flex w-full py-2.5">
-                <img src={icon_search} alt="search" className="size-5" />
-                <input
-                  type="text"
-                  className="ms-2 flex-1 border-r-1 border-[#DDDDE3] focus:outline-none"
-                  placeholder="100% hàng thật"
-                  {...register("query")}
-                />
-              </div>
-              <button
-                type="submit"
-                className="h-full cursor-pointer px-4 text-nowrap text-[#0A68FF] hover:bg-[#0A68FF66]"
-              >
-                Tìm kiếm
-              </button>
-            </form>
+          <SearchInput/>
 
             {/* User & Cart  */}
             <div className="flex items-center gap-3">

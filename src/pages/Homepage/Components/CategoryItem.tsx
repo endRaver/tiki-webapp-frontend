@@ -2,13 +2,14 @@ import { useProductStore } from "@/store/useProductStore";
 
 interface CategoryItemProps {
   image: string;
-  nameItem: string;
+  nameItem?: string;
 }
 const CategoryItem = (props: CategoryItemProps) => {
   const { image, nameItem } = props;
   const { handleGetProductByCategory } = useProductStore();
   
   const filterByCategory = () => {
+    if(nameItem)
     handleGetProductByCategory(nameItem);
   };
 
