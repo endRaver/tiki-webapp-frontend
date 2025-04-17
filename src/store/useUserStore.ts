@@ -11,6 +11,7 @@ interface ErrorResponse {
 
 interface UserStore {
   user: User | null;
+  users: User[];
   loading: boolean;
   checkingAuth: boolean;
 
@@ -44,12 +45,16 @@ interface UserStore {
     address: string;
     locationType: string;
   }) => Promise<void>;
+
+  handleGetUsers: () => Promise<void>;
+  handleDeleteUser: (id: string) => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
   loading: false,
   checkingAuth: true,
+  users: [],
 
   handleSignup: async ({
     email,
@@ -230,6 +235,43 @@ export const useUserStore = create<UserStore>((set, get) => ({
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleGetUsers: async () => {
+    set({ loading: true });
+
+    try {
+      const response = await axiosInstance.get("/auth/users");
+
+      set({ users: response.data });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch users",
+      );
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleDeleteUser: async (id: string) => {
+    set({ loading: true });
+    try {
+      await axiosInstance.delete(`/auth/users/${id}`);
+      set((state) => ({
+        users: state.users.filter((user) => user._id !== id),
+      }));
+
+      toast.success("User deleted successfully");
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to delete user",
+      );
+      throw error;
     } finally {
       set({ loading: false });
     }

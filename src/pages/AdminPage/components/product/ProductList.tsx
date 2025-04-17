@@ -5,43 +5,72 @@ import { Product } from "@/types/product";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { Loader2 } from "lucide-react";
+import DeleteProductModal from "./DeleteProductModal";
+import { Filter } from "../../ProductPage";
 
-const ProductList: React.FC = () => {
+const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [sortBy, setSortBy] = useState<"price" | "profit" | "quantitySold">(
+    "price",
+  );
 
   const {
-    filteredProducts,
+    products,
     loading,
-    handleGetAllProductForAdmin,
-    showDeleteModal,
-    deleteProduct,
-    setShowDeleteModal,
-    setDeleteProduct,
-    confirmDeleteProduct,
-    sortProducts,
     totalPages,
     resetProducts,
+    handleFetchAllProduct,
   } = useProductStore();
 
   useEffect(() => {
-    handleGetAllProductForAdmin(currentPage);
-  }, [handleGetAllProductForAdmin, currentPage]);
+    handleFetchAllProduct(currentPage);
+  }, [handleFetchAllProduct, currentPage]);
+
+  // Apply filtering based on all filter criteria
+  useEffect(() => {
+    const filtered = products.filter((product) => {
+      return (
+        product.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+        (filters.category === "" ||
+          product.categories?.name
+            .toLowerCase()
+            .includes(filters.category.toLowerCase())) &&
+        (filters.seller === "" ||
+          product.current_seller?.seller?.name
+            .toLowerCase()
+            .includes(filters.seller.toLowerCase()))
+      );
+    });
+
+    // Apply sorting after filtering
+    const sortedProducts = [...filtered].sort((a, b) => {
+      if (sortBy === "price") {
+        return (b.current_seller?.price || 0) - (a.current_seller?.price || 0);
+      } else if (sortBy === "profit") {
+        const profitA =
+          ((a.current_seller?.price || 0) - (a.original_price || 0)) *
+          (a.quantity_sold?.value ?? 0);
+        const profitB =
+          ((b.current_seller?.price || 0) - (b.original_price || 0)) *
+          (b.quantity_sold?.value ?? 0);
+        return profitB - profitA; // Changed to sort highest profit first
+      } else if (sortBy === "quantitySold") {
+        return (b.quantity_sold?.value ?? 0) - (a.quantity_sold?.value ?? 0);
+      }
+      return 0;
+    });
+
+    setFilteredProducts(sortedProducts);
+  }, [filters, products, sortBy]);
 
   useEffect(() => {
     return () => {
       resetProducts();
     };
   }, [resetProducts]);
-
-  const handleDelete = (product: Product) => {
-    setDeleteProduct(product);
-    setShowDeleteModal(true);
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    setDeleteProduct(null);
-  };
 
   const renderTableBody = () => {
     if (loading) {
@@ -101,7 +130,10 @@ const ProductList: React.FC = () => {
             <FaEdit />
           </Link>
           <button
-            onClick={() => handleDelete(product)}
+            onClick={() => {
+              setDeleteProduct(product);
+              setShowDeleteModal(true);
+            }}
             className="text-red-500 hover:text-red-700"
           >
             <MdDeleteOutline />
@@ -112,89 +144,40 @@ const ProductList: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 p-6">
-      <div className="rounded border border-gray-200 bg-white p-6">
-        {showDeleteModal && deleteProduct && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
-            <div className="w-[400px] rounded-lg bg-white p-6 shadow-lg">
-              <div className="mb-4 flex items-center">
-                <span className="mr-2 text-orange-500">⚠️</span>
-                <h2 className="text-lg font-semibold">Delete Product</h2>
-              </div>
-              <p className="mb-2 text-sm text-gray-600">
-                Are you sure you want to delete this product?
-              </p>
-              <p className="text-sm font-medium text-gray-800">
-                {deleteProduct.name}
-              </p>
-              <p className="mt-2 font-semibold text-red-600">
-                {deleteProduct.current_seller?.price || 0}đ
-              </p>
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  onClick={confirmDeleteProduct}
-                  className="flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <svg
-                        className="mr-2 h-5 w-5 animate-spin text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 Sakura 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Deleting...
-                    </>
-                  ) : (
-                    "Confirm"
-                  )}
-                </button>
-                <button
-                  onClick={cancelDelete}
-                  className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
-                  disabled={loading}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        <div className="mb-4 flex items-center justify-between">
+    <>
+      <div className="flex-1">
+        <div className="mb-4 flex items-center justify-between px-4">
           <h2 className="text-lg font-semibold text-gray-800">
             Products: {filteredProducts.length}
           </h2>
           <div className="flex space-x-2">
             <button
-              onClick={() => sortProducts("price")}
-              className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+              onClick={() => setSortBy("price")}
+              className={`rounded border px-4 py-2 text-gray-700 hover:bg-gray-100 ${
+                sortBy === "price"
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300"
+              }`}
             >
               Sort by price
             </button>
             <button
-              onClick={() => sortProducts("profit")}
-              className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+              onClick={() => setSortBy("profit")}
+              className={`rounded border px-4 py-2 text-gray-700 hover:bg-gray-100 ${
+                sortBy === "profit"
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300"
+              }`}
             >
               Sort by profit
             </button>
             <button
-              onClick={() => sortProducts("quantitySold")}
-              className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+              onClick={() => setSortBy("quantitySold")}
+              className={`rounded border px-4 py-2 text-gray-700 hover:bg-gray-100 ${
+                sortBy === "quantitySold"
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300"
+              }`}
             >
               Sort by quantity sold
             </button>
@@ -232,7 +215,14 @@ const ProductList: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+
+      {showDeleteModal && deleteProduct && (
+        <DeleteProductModal
+          deleteProduct={deleteProduct}
+          onClose={() => setShowDeleteModal(false)}
+        />
+      )}
+    </>
   );
 };
 

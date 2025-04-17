@@ -17,8 +17,8 @@ const ProductEdit: React.FC = () => {
     loading,
     sellers,
     categoryNames,
-    fetchSellers,
-    fetchCategories,
+    handleFetchSellers,
+    handleFetchCategories,
   } = useProductStore();
 
   const [formData, setFormData] = useState<{
@@ -76,9 +76,9 @@ const ProductEdit: React.FC = () => {
     if (id) {
       handleGetProductById(id);
     }
-    fetchCategories();
-    fetchSellers();
-  }, [id, handleGetProductById, fetchCategories, fetchSellers]);
+    handleFetchCategories();
+    handleFetchSellers();
+  }, [id, handleGetProductById, handleFetchCategories, handleFetchSellers]);
 
   useEffect(() => {
     if (currentProduct && sellers.length > 0) {
@@ -103,30 +103,39 @@ const ProductEdit: React.FC = () => {
         seller_price: String(currentProduct.current_seller?.price || 0),
         seller_id: sellerId,
         specifications:
-          currentProduct.specifications && currentProduct.specifications.length > 0
+          currentProduct.specifications &&
+          currentProduct.specifications.length > 0
             ? currentProduct.specifications.map((spec) => ({
-              ...spec,
-              attributes: spec.attributes.map((attr) => ({
-                code: attr.code || "",
-                name: attr.name || "",
-                value: attr.value || "",
-                ...(attr._id && { _id: attr._id }),
-              })),
-            }))
+                ...spec,
+                attributes: spec.attributes.map((attr) => ({
+                  code: attr.code || "",
+                  name: attr.name || "",
+                  value: attr.value || "",
+                  ...(attr._id && { _id: attr._id }),
+                })),
+              }))
             : [
-              {
-                name: "General Information",
-                attributes: [
-                  { code: "publisher_vn", name: "Publisher", value: "" },
-                  { code: "publication_date", name: "Publication Date", value: "" },
-                  { code: "dimensions", name: "Dimensions", value: "" },
-                  { code: "dich_gia", name: "Translator", value: "" },
-                  { code: "", name: "Cover Type", value: "" },
-                  { code: "number_of_page", name: "Number of Pages", value: "" },
-                  { code: "manufacturer", name: "Manufacturer", value: "" },
-                ],
-              },
-            ],
+                {
+                  name: "General Information",
+                  attributes: [
+                    { code: "publisher_vn", name: "Publisher", value: "" },
+                    {
+                      code: "publication_date",
+                      name: "Publication Date",
+                      value: "",
+                    },
+                    { code: "dimensions", name: "Dimensions", value: "" },
+                    { code: "dich_gia", name: "Translator", value: "" },
+                    { code: "", name: "Cover Type", value: "" },
+                    {
+                      code: "number_of_page",
+                      name: "Number of Pages",
+                      value: "",
+                    },
+                    { code: "manufacturer", name: "Manufacturer", value: "" },
+                  ],
+                },
+              ],
       });
       setExistingImages(currentProduct.images || []);
     }
@@ -472,8 +481,11 @@ const ProductEdit: React.FC = () => {
               name="seller_id"
               value={formData.seller_id}
               onChange={handleChange}
-              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.seller_id ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                }`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
+                errors.seller_id
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500"
+              }`}
               disabled={loading}
             >
               <option value="">Select Seller</option>

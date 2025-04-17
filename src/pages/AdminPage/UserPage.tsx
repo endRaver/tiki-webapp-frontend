@@ -1,37 +1,61 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import UserList from "../AdminPage/components/user/UserList";
 import UserFilter from "../AdminPage/components/user/UserFilter";
-import { useUserAdminStore } from "@/store/useUserAdminStore";
 import { Link } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
+import { User } from "@/types/user";
+import { useUserStore } from "@/store/useUserStore";
+
+export type Filters = {
+  name: string;
+  role: string;
+  isVerified: string;
+};
 
 const UserPage: React.FC = () => {
-  const { users, filteredUsers, fetchUsers, filterUsers, loading } = useUserAdminStore();
+  const { loading, users, handleGetUsers } = useUserStore();
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [filters, setFilters] = useState<Filters>({
+    name: "",
+    role: "",
+    isVerified: "",
+  });
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    handleGetUsers();
+  }, [handleGetUsers]);
 
-  const handleUserFilterChange = (filters: { name: string; role: string; isVerified: string }) => {
-    filterUsers(filters);
-  };
+  useEffect(() => {
+    const filtered = users.filter((user) => {
+      return (
+        user.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+        user.role.toLowerCase().includes(filters.role.toLowerCase()) &&
+        user.isVerified.toString().includes(filters.isVerified)
+      );
+    });
+    setFilteredUsers(filtered);
+  }, [users, filters]);
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center mb-4">
-          <Link to="/admin/products" className="text-gray-500 hover:text-gray-700 mr-2">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center">
+          <Link
+            to="/admin/products"
+            className="mr-2 text-gray-500 hover:text-gray-700"
+          >
             <FaChevronLeft />
           </Link>
           <h1 className="text-2xl font-semibold text-gray-800">List User</h1>
         </div>
       </div>
-      {/* Pass both users (full list) and filteredUsers to UserFilter */}
-      <UserFilter users={users} filteredUsers={filteredUsers} onFilterChange={handleUserFilterChange} />
+
+      <UserFilter filters={filters} setFilters={setFilters} />
+
       {loading ? (
-        <div className="text-center py-10">Loading...</div>
+        <div className="py-10 text-center">Loading...</div>
       ) : (
-        <UserList users={filteredUsers} />
+        <UserList users={filteredUsers} setFilterUsers={setFilteredUsers} />
       )}
     </div>
   );

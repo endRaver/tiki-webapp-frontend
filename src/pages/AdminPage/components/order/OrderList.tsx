@@ -1,20 +1,11 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
-interface Order {
-  _id: string;
-  orderNumber: string;
-  status: string;
-  totalAmount: number;
-  createdAt: string;
-}
-interface OrderListProps {
-  orders: Order[];
-}
-const OrderList: React.FC<OrderListProps> = ({ orders }) => {
+import { Order } from "@/types/order";
+
+const OrderList = ({ orders }: { orders: Order[] }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded p-6">
-      <div className="flex justify-between items-center mb-4">
+    <div className="rounded border border-gray-200 bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-800">
           Orders: {orders.length}
         </h2>
@@ -22,7 +13,9 @@ const OrderList: React.FC<OrderListProps> = ({ orders }) => {
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border border-gray-200 p-2 text-left">Order Number</th>
+            <th className="border border-gray-200 p-2 text-left">
+              Order Number
+            </th>
             <th className="border border-gray-200 p-2 text-left">Status</th>
             <th className="border border-gray-200 p-2 text-left">Total</th>
             <th className="border border-gray-200 p-2 text-left">Created At</th>
@@ -32,7 +25,7 @@ const OrderList: React.FC<OrderListProps> = ({ orders }) => {
         <tbody>
           {orders.length === 0 ? (
             <tr>
-              <td colSpan={5} className="text-center py-10">
+              <td colSpan={5} className="py-10 text-center">
                 <div className="text-gray-500">
                   <svg
                     className="mx-auto h-12 w-12 text-gray-400"
@@ -58,8 +51,10 @@ const OrderList: React.FC<OrderListProps> = ({ orders }) => {
                 <td className="p-2">{order.orderNumber}</td>
                 <td className="p-2">{order.status}</td>
                 <td className="p-2">{order.totalAmount} VNĐ</td>
-                <td className="p-2">{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td className="p-2 flex space-x-2">
+                <td className="p-2">
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </td>
+                <td className="flex space-x-2 p-2">
                   <Link
                     to={`/admin/orders/edit/${order._id}`}
                     state={{ order }}
