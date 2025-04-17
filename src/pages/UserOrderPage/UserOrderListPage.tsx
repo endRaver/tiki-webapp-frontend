@@ -10,8 +10,8 @@ import { Link } from "react-router-dom";
 const tabs = [
   { id: "all", name: "Tất cả đơn" },
   { id: "pending", name: "Chờ thanh toán" },
-  { id: "processing", name: "Đang xử lý" },
-  { id: "shipping", name: "Đang vận chuyển" },
+  { id: "confirmed", name: "Đang xử lý" },
+  { id: "shipped", name: "Đang vận chuyển" },
   { id: "delivered", name: "Đã giao" },
   { id: "cancelled", name: "Đã hủy" },
 ];
@@ -21,12 +21,22 @@ const UserOrderListPage = () => {
 
   const { user } = useUserStore();
   const { orders, handleGetOrdersByUserId } = useOrderStore();
+  const [ordersFilter, setOdersFilter] = useState(orders);
 
   useEffect(() => {
     if (user) {
       handleGetOrdersByUserId(user._id);
     }
-  }, [handleGetOrdersByUserId, user]);
+    if (orders) {
+      if (activeTab === "all") {
+        setOdersFilter(orders);
+      }
+      else{
+        const filtered = orders.filter(order => order.status === activeTab);
+        setOdersFilter(filtered);
+      }
+    }
+  }, [handleGetOrdersByUserId, user, orders, activeTab]);
 
   return (
     <div className="mb-4 w-full">
@@ -36,11 +46,10 @@ const UserOrderListPage = () => {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`flex-1 cursor-pointer border-b-2 bg-white py-2.5 text-center text-nowrap ${
-              activeTab === tab.id
+            className={`flex-1 cursor-pointer border-b-2 bg-white py-2.5 text-center text-nowrap ${activeTab === tab.id
                 ? "border-b-primary-500 text-primary-500"
                 : "border-b-transparent text-neutral-500"
-            }`}
+              }`}
             onClick={() => setActiveTab(tab.id)}
           >
             {tab.name}
@@ -57,14 +66,16 @@ const UserOrderListPage = () => {
         />
       </div>
 
-      {isEmpty(orders) ? (
+      {isEmpty(ordersFilter) ? (
         <div className="flex flex-col items-center justify-center bg-white p-[35px]">
           <img src={empty_order} alt="empty_order" className="size-[200px]" />
           <p className="text-center text-neutral-500">Chưa có đơn hàng</p>
         </div>
       ) : (
+
         <div className="flex flex-col gap-3">
-          {orders?.map((order) => (
+
+          {ordersFilter?.map((order) => (
             <Link to={`/profile/orders/${order._id}`} key={order._id}>
               <div className="cursor-pointer bg-white px-6 py-3 duration-300 hover:shadow-md">
                 <div className="border-border-line flex items-center justify-between border-b pb-2 text-sm">
@@ -110,7 +121,7 @@ const UserOrderListPage = () => {
                       <span className="text-neutral-500 line-through">
                         {formatCurrency(
                           order.products[0].product.original_price *
-                            order.products[0].quantity,
+                          order.products[0].quantity,
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>
@@ -118,7 +129,7 @@ const UserOrderListPage = () => {
                       <span className="text-primary-500">
                         {formatCurrency(
                           order.products[0].product.current_seller.price *
-                            order.products[0].quantity,
+                          order.products[0].quantity,
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>

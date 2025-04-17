@@ -92,7 +92,7 @@ const Confirm = () => {
           </p>
 
           {/* TODO: Add order detail page */}
-          <Link to={`/orders/${currentOrder?._id}`}>
+          <Link to={`/profile/orders/${currentOrder?._id}`}>
             <p className="cursor-pointer text-sm font-medium text-[#0B74E5]">
               Xem đơn hàng
             </p>
