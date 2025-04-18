@@ -2,7 +2,7 @@ import { arrow_right, check_product, return_money, return_product } from "@/asse
 
 const PurchaseAssurance = () => {
     return (
-        <div className="p-4 bg-white rounded-lg flex flex-col">
+        <div className="p-4 bg-white sm:rounded-lg flex flex-col">
             {/* Tiêu đề và nút mũi tên */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="font-semibold">An tâm mua sắm</h2>

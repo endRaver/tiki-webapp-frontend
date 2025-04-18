@@ -59,9 +59,9 @@ const Payment = () => {
   };
 
   return (
-    <div className="h-fit w-full flex-1 rounded-lg bg-white p-4 md:max-w-[360px]">
+    <div className=" h-fit w-full flex-1 sm:rounded-lg bg-white p-4 md:max-w-[360px]">
       {/* Tiki Trading Logo */}
-      <div className="flex items-center gap-2 border-b border-[#EBEBF0] pb-4">
+      <div className="hidden sm:flex items-center gap-2 border-b border-[#EBEBF0] pb-4">
         <img src={logo} alt="Tiki Trading" className="h-6" />
         <div>
           <p className="text-sm font-medium">Tiki Trading</p>
@@ -71,7 +71,7 @@ const Payment = () => {
 
       {/* Số lượng */}
       <div>
-        <div className="mt-4">
+        <div className="mt-4 hidden sm:block">
           <span className="text-sm font-semibold text-black">Số Lượng</span>
           <div className="mt-2 flex items-center gap-2">
             <button
@@ -94,7 +94,7 @@ const Payment = () => {
         </div>
 
         {/* Giá tạm tính */}
-        <div className="mt-4">
+        <div className="mt-4 hidden sm:block">
           <span className="text-base font-semibold text-black">Tạm tính</span>
           <div className="mt-2 text-2xl font-semibold text-black">
             {(
@@ -105,7 +105,7 @@ const Payment = () => {
         </div>
 
         {/* Nút hành động */}
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="sm:mt-4 flex flex-col gap-2">
           <button
             className="btn h-10 w-full cursor-pointer rounded-sm bg-[#FF424E] py-2 font-light text-white hover:bg-red-600"
             onClick={onBuyNow}
@@ -116,19 +116,21 @@ const Payment = () => {
               "Mua ngay"
             )}
           </button>
-          <button
-            className="flex min-h-[41px] w-full cursor-pointer items-center justify-center rounded border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
-            onClick={onAddToCart}
-          >
-            {isLoadingAddToCart ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              "Thêm vào giỏ"
-            )}
-          </button>
-          <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
-            Mua trước trả sau
-          </button>
+          <div className="flex sm:flex-col gap-2 flex-row">
+            <button
+              className="flex min-h-[41px] sm:w-full w-1/2 cursor-pointer items-center justify-center rounded border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
+              onClick={onAddToCart}
+            >
+              {isLoadingAddToCart ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                "Thêm vào giỏ"
+              )}
+            </button>
+            <button className="sm:w-full w-1/2 cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
+              Mua trước trả sau
+            </button>
+          </div>
         </div>
       </div>
     </div>
