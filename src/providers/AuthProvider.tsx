@@ -1,12 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { Loader2 } from "lucide-react";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { handleCheckAuth, checkingAuth } = useUserStore();
+  const hasCheckedAuth = useRef(false);
 
   useEffect(() => {
-    handleCheckAuth();
+    if (!hasCheckedAuth.current) {
+      handleCheckAuth();
+
+      hasCheckedAuth.current = true;
+    }
   }, [handleCheckAuth]);
 
   useEffect(() => {
