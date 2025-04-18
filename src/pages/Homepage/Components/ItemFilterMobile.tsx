@@ -1,26 +1,50 @@
 import {
-  change_price,
   filter,
   freeship_extra,
   now,
   top_deal,
 } from "@/assets/icons/home_page_icons";
-
+import { softType } from "./ArrangeFilter";
+import { useState } from "react";
+import { useProductStore } from "@/store/useProductStore";
+const sortOptions: softType[] = [
+  {
+    title: "Phổ biến",
+    keySoft: "",
+  },
+  {
+    title: "Bán chạy",
+    keySoft: "best_seller",
+  },
+  {
+    title: "Hàng mới",
+    keySoft: "date_desc",
+  },
+  {
+    title: "Giá ⇅",
+    keySoft: "price_asc",
+  },
+];
 const ItemFilterMobile = () => {
+  const [active, setActive] = useState("Phổ biến");
+  const { handleFilterProduct } = useProductStore();
+  const handleClick = (option:softType) => {
+    setActive(option.title);
+    handleFilterProduct(option.keySoft);
+  };
   return (
     <div className="bg-white">
-      <div className="container mx-auto flex items-center justify-between px-1 py-3 text-sm text-black">
-        <button className="text-primary-200">Phổ biến</button>
-        <span className="text-gray-400">•</span>
-        <button className="">Bán chạy</button>
-        <span className="text-gray-400">•</span>
-        <button className="">Hàng mới</button>
-        <span className="text-gray-400">•</span>
-        <button className="flex items-center">
-          <span>Giá</span>
-          <img src={change_price} alt="change_price" className="ml-1" />
-        </button>
-      </div>
+      <nav >
+        <ul className="container mx-auto flex items-center justify-between px-1 py-3 text-sm  -black">
+          {sortOptions.map((option,index) => (
+            <li className="flex justify-between items-center" key={option.title}>{index !== 0 && (
+              <span className="text-gray-400 px-5 select-none">•</span>
+            )}<button onClick={() => handleClick(option)} className={`cursor-pointer flex items-center gap-1 ${active === option.title ? "text-blue-600 font-medium" : "text-black"
+              }`}>{option.title}</button>
+            </li>
+          ))}
+        </ul>
+      </nav>
       <div className="border-border-line container mx-auto flex items-center border-t px-1 py-2">
         <button className="flex items-center">
           <img src={filter} alt="filter" className="me-1" />

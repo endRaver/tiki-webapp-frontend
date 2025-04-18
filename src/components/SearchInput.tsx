@@ -2,38 +2,45 @@ import { history_icon, icon_search } from "@/assets/icons/header_icons";
 import useDebounce from "@/hooks/useDebounce";
 import CategoryItem from "@/pages/Homepage/Components/CategoryItem";
 import { useProductStore } from "@/store/useProductStore";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 type SearchFormValues = {
   keyword: string;
 };
 const SearchInput = () => {
   const { register, handleSubmit } = useForm<SearchFormValues>();
-  const { handleSearchProductByKeyWord } = useProductStore();
+  const { handleSearchProductByKeyWord,handleFetchAllProduct } = useProductStore();
   const [isFocused, setIsFocused] = useState(false);
   const [keyword, setKeyword] = useState("");
   const { products } = useProductStore();
   const debouncedSearch = useDebounce(keyword, 2000);
 
-  const listCategotyName = products
-    .filter((product) =>
-      product.name.toLowerCase().includes(keyword.toLowerCase()),
-    )
-    .map((product) => product.name);
-
-  const listCategoryImage = products
-    .filter((product) =>
-      product.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
-    )
-    .map((product) => ({
-      image: product.images[0]?.small_url,
-      category: product.categories.name,
-    }));
+  const listCategoryName = useMemo(() => {
+    return products
+      .filter((product) =>
+        product.name.toLowerCase().includes(keyword.toLowerCase())
+      )
+      .map((product) => product.name);
+  }, [products, keyword]);
+  
+  const listCategoryImage = useMemo(() => {
+    return products
+      .filter((product) =>
+        product.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+      .map((product) => ({
+        image: product.images[0]?.small_url,
+        category: product.categories.name,
+      }));
+  }, [products, debouncedSearch]);
 
   const historySearch = localStorage.getItem("historySearch");
 
   const onSubmit = (word: string) => {
-    if (word === "") return;
+    if (word === ""){
+        handleFetchAllProduct(undefined, true);
+        return;
+    } 
     localStorage.setItem("historySearch", word);
     handleSearchProductByKeyWord(word);
   };
@@ -61,7 +68,7 @@ const SearchInput = () => {
         Tìm kiếm
       </button>
       {isFocused && (
-        <div className="absolute top-12 left-0 z-20 w-full bg-[#ffffff]">
+        <div className="absolute top-12 left-0 z-20 w-full bg-[#ffffff] border border-gray-300 shadow-lg rounded-lg p-4">
           <div className="max-h-50 overflow-hidden">
             {historySearch && (
               <button
@@ -73,7 +80,7 @@ const SearchInput = () => {
               </button>
             )}
             <ul>
-              {listCategotyName.map((name) => (
+              {listCategoryName.map((name) => (
                 <li key={name} className="hover:bg-[#27272a1f]">
                   <button
                     type="button"
@@ -87,7 +94,7 @@ const SearchInput = () => {
               ))}
             </ul>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-1">
             {listCategoryImage.map((item, index) => (
               <CategoryItem
                 key={index}

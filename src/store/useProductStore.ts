@@ -17,7 +17,7 @@ interface ProductStore {
   totalPages: number;
   sellers: Seller[];
 
-  handleFetchAllProduct: (currentPage?: number) => Promise<void>;
+  handleFetchAllProduct: (currentPage?: number,isFetchAll?:boolean) => Promise<void>;
   handleFetchTopDealsProducts: () => Promise<Product[]>;
   handleFetchRelatedProducts: (categoryName: string) => Promise<Product[]>;
   handleGetProductById: (id: string | undefined) => Promise<void>;
@@ -126,7 +126,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  handleFetchAllProduct: async (currentPage?: number) => {
+  handleFetchAllProduct: async (currentPage?: number,isFetchAll? :boolean) => {
     if (currentPage === 1) {
       set({ loading: true });
     }
@@ -134,7 +134,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     const previousProducts = get().products;
 
     try {
-      const response = await axiosInstance.get(`/products?page=${currentPage}`);
+      const response =isFetchAll?
+       await axiosInstance.get(`/products?all=true`):await axiosInstance.get(`/products?page=${currentPage}`);
 
       set({
         products: [...previousProducts, ...response.data.products],

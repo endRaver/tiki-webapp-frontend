@@ -1,7 +1,7 @@
 import { ChevronDown, Check } from "lucide-react";
 import { useProductStore } from "@/store/useProductStore";
 import { useState } from "react";
-interface softType {
+export interface softType {
   title: string;
   keySoft: string;
 }
