@@ -224,8 +224,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
         ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
         : Math.max(...selectedCart.map((item) => item.shippingPrice));
 
-    console.log(groupCart);
-
     let productDiscount = 0;
     let shippingDiscount = 0;
 

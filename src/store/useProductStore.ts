@@ -24,10 +24,8 @@ interface ProductStore {
   categoryCache: CacheManager<string[]>;
   sellerCache: CacheManager<Seller[]>;
 
-  handleFetchAllProduct: (
-    currentPage?: number,
-    isFetchAll?: boolean,
-  ) => Promise<void>;
+  handleGetAllProduct: () => Promise<Product[]>;
+  handleGetAllProductPagination: (currentPage?: number) => Promise<void>;
 
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
@@ -61,27 +59,32 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   categoryCache: new CacheManager<string[]>(),
   sellerCache: new CacheManager<Seller[]>(),
 
-  handleFetchAllProduct: async (
-    currentPage?: number,
-    isFetchAll: boolean = false,
-  ) => {
-    const cacheKey = isFetchAll
-      ? "fetch_all_products"
-      : `fetch_products_page_${currentPage}`;
+  handleGetAllProduct: async () => {
+    const cacheKey = "fetch_all_products";
     const cachedData = get().productsCache.get(cacheKey);
 
     if (cachedData) {
-      if (isFetchAll) {
-        set({
-          products: cachedData,
-          totalPages: 1,
-        });
-      } else {
-        set({
-          products: cachedData,
-          totalPages: cachedData.length / 10,
-        });
-      }
+      return cachedData;
+    }
+
+    try {
+      const response = await axiosInstance.get(`/products?all=true`);
+      return response.data.products;
+    } catch (error) {
+      console.error("Error fetching all products:", error);
+      return [];
+    }
+  },
+
+  handleGetAllProductPagination: async (currentPage?: number) => {
+    const cacheKey = `fetch_products_page_${currentPage}`;
+    const cachedData = get().productsCache.get(cacheKey);
+
+    if (cachedData) {
+      set({
+        products: cachedData,
+        totalPages: cachedData.length / 10,
+      });
       return;
     }
 
@@ -92,18 +95,21 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     const previousProducts = get().products;
 
     try {
-      const response = isFetchAll
-        ? await axiosInstance.get(`/products?all=true`)
-        : await axiosInstance.get(`/products?page=${currentPage}`);
+      const response = await axiosInstance.get(`/products?page=${currentPage}`);
+      if (currentPage === 1) {
+        set({ products: response.data.products });
+        get().productsCache.set(cacheKey, response.data.products);
+      } else {
+        const newProducts = [...previousProducts, ...response.data.products];
 
-      const newProducts = [...previousProducts, ...response.data.products];
+        // Update cache
+        get().productsCache.set(cacheKey, newProducts);
 
-      // Update cache
-      get().productsCache.set(cacheKey, newProducts);
-      set({
-        products: newProducts,
-        totalPages: response.data.pagination.pages,
-      });
+        set({
+          products: newProducts,
+          totalPages: response.data.pagination.pages,
+        });
+      }
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");

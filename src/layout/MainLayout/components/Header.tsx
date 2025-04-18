@@ -22,7 +22,6 @@ import { isEmpty } from "lodash";
 import { useCartStore } from "@/store/useCartStore";
 import SearchInput from "@/components/SearchInput";
 
-
 const Header = () => {
   const recommendTags = [
     "điện gia dụng",
@@ -44,7 +43,6 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
- 
   const handleOpenModal = () => {
     if (isEmpty(user)) {
       const modal = document.getElementById(
@@ -78,19 +76,16 @@ const Header = () => {
       </section>
 
       <main className="container mx-auto flex gap-4 py-2 lg:gap-12">
-        <Link
-          to="/"
-          className="flex cursor-pointer flex-col items-center gap-2"
-        >
+        <a href="/" className="flex cursor-pointer flex-col items-center gap-2">
           <img src={tikiLogo} alt="logo" />
           <span className="text-primary-500 text-sm font-semibold text-nowrap">
             Tốt & Nhanh
           </span>
-        </Link>
+        </a>
 
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex gap-4 lg:gap-12">
-          <SearchInput/>
+            <SearchInput />
 
             {/* User & Cart  */}
             <div className="flex items-center gap-3">

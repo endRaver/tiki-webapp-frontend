@@ -42,17 +42,17 @@ const Homepage = () => {
   const { totalPages } = useProductStore();
   const [moreLoading, setMoreLoading] = useState(false);
 
-  const { handleFetchAllProduct, resetProducts } = useProductStore();
+  const { handleGetAllProductPagination, resetProducts } = useProductStore();
 
   useEffect(() => {
     const fetchMoreProducts = async () => {
       setMoreLoading(true);
-      await handleFetchAllProduct(currentPage);
+      await handleGetAllProductPagination(currentPage);
       setMoreLoading(false);
     };
 
     fetchMoreProducts();
-  }, [handleFetchAllProduct, currentPage]);
+  }, [handleGetAllProductPagination, currentPage]);
 
   useEffect(() => {
     return () => {

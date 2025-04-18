@@ -2,6 +2,7 @@ import { useProductStore } from "@/store/useProductStore";
 import { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import ViewMoreSection from "./ViewMoreSection";
+import { motion } from "framer-motion";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -33,7 +34,12 @@ const BookImage = () => {
   }, [currentProduct]);
 
   return (
-    <div className="h-fit w-full flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0 md:max-w-100">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="h-fit w-full flex-1 gap-y-4 rounded-lg bg-white py-4 pb-0 md:max-w-100"
+    >
       <div className="mb-4 px-4">
         {/* Main Image */}
         <div className="mb-2 flex h-96 w-full justify-center rounded-lg border border-gray-300">
@@ -102,7 +108,7 @@ const BookImage = () => {
       <div className="hidden sm:block">
         <ViewMoreSection />
       </div>
-    </div>
+    </motion.div>
   );
 };
 export default BookImage;

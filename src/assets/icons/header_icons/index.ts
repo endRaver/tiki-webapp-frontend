@@ -11,6 +11,8 @@ import logo_slogan from "./logo_slogan.svg";
 import active_home from "./active_home.png";
 import history_icon from "./history_icon.png";
 import search_icon from "./search_icon.png";
+import search_input from "./search_input.png";
+import remove_history from "./remove_search_input.png";
 
 export {
   header_account,
@@ -26,4 +28,6 @@ export {
   active_home,
   history_icon,
   search_icon,
+  search_input,
+  remove_history,
 };

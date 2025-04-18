@@ -2,6 +2,7 @@ import { useProductStore } from "@/store/useProductStore";
 import Carousel from "./Carousel";
 import { useEffect } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
+import { motion } from "framer-motion";
 
 const RelatedBooks = () => {
   const { products, currentProduct, loading, handleGetProductByCategory } =
@@ -43,7 +44,12 @@ const RelatedBooks = () => {
     );
   }
   return (
-    <div className="flex flex-col gap-y-4 bg-white p-4 sm:rounded-lg">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col gap-y-4 bg-white p-4 sm:rounded-lg"
+    >
       {/* Tiêu đề */}
       <div className="flex items-center justify-between">
         <span className="font-semibold">Sản phẩm tương tự</span>
@@ -62,7 +68,7 @@ const RelatedBooks = () => {
       <div className="hidden min-[390px]:block sm:hidden md:hidden lg:hidden">
         <Carousel products={products} itemsPerPage={4} rows={2} />
       </div>
-    </div>
+    </motion.div>
   );
 };
 

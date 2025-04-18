@@ -22,12 +22,12 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
     loading,
     totalPages,
     resetProducts,
-    handleFetchAllProduct,
+    handleGetAllProductPagination,
   } = useProductStore();
 
   useEffect(() => {
-    handleFetchAllProduct(currentPage);
-  }, [handleFetchAllProduct, currentPage]);
+    handleGetAllProductPagination(currentPage);
+  }, [handleGetAllProductPagination, currentPage]);
 
   // Apply filtering based on all filter criteria
   useEffect(() => {

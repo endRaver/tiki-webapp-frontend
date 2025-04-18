@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
 import { Product } from "@/types/product";
 import { isEmpty } from "lodash";
-
+import { motion } from "framer-motion";
 const TopDeals = () => {
   const { handleFetchTopDealsProducts } = useProductStore();
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,7 +24,7 @@ const TopDeals = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-y-4 sm:rounded-lg bg-white p-4">
+      <div className="flex flex-col gap-y-4 bg-white p-4 sm:rounded-lg">
         {/* Tiêu đề */}
         <div className="flex items-center justify-between">
           <span className="font-semibold">Top Deals</span>
@@ -52,7 +52,12 @@ const TopDeals = () => {
     );
   }
   return (
-    <div className="flex flex-col gap-y-4 sm:rounded-lg bg-white p-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col gap-y-4 bg-white p-4 sm:rounded-lg"
+    >
       {/* Tiêu đề */}
       <div className="flex items-center justify-between">
         <span className="font-semibold">Top Deals</span>
@@ -71,7 +76,7 @@ const TopDeals = () => {
       <div className="hidden min-[390px]:block sm:hidden md:hidden lg:hidden">
         <Carousel products={products} itemsPerPage={2} rows={1} />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
