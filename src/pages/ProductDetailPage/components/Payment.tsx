@@ -117,20 +117,7 @@ const Payment = () => {
               "Mua ngay"
             )}
           </button>
-          <button
-            className="flex min-h-[41px] w-full cursor-pointer items-center justify-center rounded border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
-            disabled={isLoadingAddToCart}
-            onClick={onAddToCart}
-          >
-            {isLoadingAddToCart ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              "Thêm vào giỏ"
-            )}
-          </button>
-          <button className="w-full cursor-pointer rounded-sm border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100">
-            Mua trước trả sau
-          </button>
+
           <div className="flex sm:flex-col gap-2 flex-row">
             <button
               className="flex min-h-[41px] sm:w-full w-1/2 cursor-pointer items-center justify-center rounded border border-[#0A68FF] py-2 text-[#0A68FF] hover:bg-blue-100"
