@@ -32,9 +32,7 @@ const ArrangeFilter = () => {
   const [selected, setSelected] = useState(sortOptions[0].title); // Mặc định "Phổ biến"
   const [isOpen, setIsOpen] = useState(false);
   const { handleFilterProduct } = useProductStore();
-  // useEffect(() => {
-  //   handleFilterProduct("best_seller");
-  // }, [selected]);
+
   return (
     <div className="relative inline-flex gap-[7px] align-middle">
       <span className="px-[8px] py-[5px] text-gray-500">Sắp xếp</span>

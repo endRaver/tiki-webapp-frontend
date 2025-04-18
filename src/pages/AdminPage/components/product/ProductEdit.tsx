@@ -17,8 +17,8 @@ const ProductEdit: React.FC = () => {
     loading,
     sellers,
     categoryNames,
-    fetchSellers,
-    fetchCategories,
+    handleFetchSellers,
+    handleFetchCategories,
   } = useProductStore();
 
   const [formData, setFormData] = useState<{
@@ -76,12 +76,19 @@ const ProductEdit: React.FC = () => {
     if (id) {
       handleGetProductById(id);
     }
-    fetchCategories();
-    fetchSellers();
-  }, [id, handleGetProductById, fetchCategories, fetchSellers]);
+    handleFetchCategories();
+    handleFetchSellers();
+  }, [id, handleGetProductById, handleFetchCategories, handleFetchSellers]);
 
   useEffect(() => {
-    if (currentProduct) {
+    if (currentProduct && sellers.length > 0) {
+      const sellerId =
+        typeof currentProduct.current_seller?.seller === "object"
+          ? currentProduct.current_seller.seller?._id || ""
+          : currentProduct.current_seller?.seller || "";
+
+      console.log("Setting seller_id:", sellerId); // Debug
+
       setFormData({
         name: currentProduct.name || "",
         description: currentProduct.description || "",
@@ -94,10 +101,7 @@ const ProductEdit: React.FC = () => {
             : [{ name: "" }],
         images: [],
         seller_price: String(currentProduct.current_seller?.price || 0),
-        seller_id:
-          (typeof currentProduct.current_seller?.seller === "object" &&
-            currentProduct.current_seller.seller?._id) ||
-          "",
+        seller_id: sellerId,
         specifications:
           currentProduct.specifications &&
           currentProduct.specifications.length > 0
@@ -134,14 +138,8 @@ const ProductEdit: React.FC = () => {
               ],
       });
       setExistingImages(currentProduct.images || []);
-      console.log(
-        "Initialized seller_id:",
-        (typeof currentProduct.current_seller?.seller === "object" &&
-          currentProduct.current_seller.seller?._id) ||
-          "N/A",
-      );
     }
-  }, [currentProduct]);
+  }, [currentProduct, sellers]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -483,11 +481,15 @@ const ProductEdit: React.FC = () => {
               name="seller_id"
               value={formData.seller_id}
               onChange={handleChange}
-              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${errors.seller_id ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"}`}
+              className={`w-full rounded border px-4 py-2 focus:ring-2 focus:outline-none ${
+                errors.seller_id
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500"
+              }`}
               disabled={loading}
             >
               <option value="">Select Seller</option>
-              {Array.isArray(sellers) && sellers.length > 0 ? (
+              {sellers.length > 0 ? (
                 sellers.map((seller) => (
                   <option key={seller._id} value={seller._id}>
                     {seller.name}
@@ -495,7 +497,7 @@ const ProductEdit: React.FC = () => {
                 ))
               ) : (
                 <option value="" disabled>
-                  No sellers available
+                  Loading sellers...
                 </option>
               )}
             </select>

@@ -2,42 +2,28 @@ import React, { useEffect } from "react";
 import { useProductStore } from "@/store/useProductStore";
 import { FaChevronLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { Filter } from "../../ProductPage";
 
-interface ProductFilterProps {
-  onFilterChange?: (filters: {
-    name: string;
-    category: string;
-    seller: string;
-  }) => void;
-}
-
-const ProductFilter: React.FC<ProductFilterProps> = ({ onFilterChange }) => {
-  const {
-    categoryNames,
-    sellers,
-    fetchCategories,
-    fetchSellers,
-    handleAdminFilterProducts,
-  } = useProductStore();
-  const [filters, setFilters] = React.useState({
-    name: "",
-    category: "",
-    seller: "",
-  });
+const ProductFilter = ({
+  filters,
+  setFilters,
+}: {
+  filters: Filter;
+  setFilters: (filters: Filter) => void;
+}) => {
+  const { categoryNames, sellers, handleFetchCategories, handleFetchSellers } =
+    useProductStore();
 
   useEffect(() => {
-    fetchCategories();
-    fetchSellers();
-  }, [fetchCategories, fetchSellers]);
+    handleFetchCategories();
+    handleFetchSellers();
+  }, [handleFetchCategories, handleFetchSellers]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    const newFilters = { ...filters, [name]: value };
-    setFilters(newFilters);
-    handleAdminFilterProducts(newFilters);
-    if (onFilterChange) onFilterChange(newFilters);
+    setFilters({ ...filters, [name]: value });
   };
 
   return (

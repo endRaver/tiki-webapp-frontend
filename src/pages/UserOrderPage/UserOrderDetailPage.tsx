@@ -8,9 +8,6 @@ import { format } from "date-fns";
 const UserOrderPage = () => {
   const { id } = useParams();
   const { handleGetOrderById, currentOrder } = useOrderStore();
-  // const {user} = useUserStore();
-  console.log(currentOrder?.user);
-  
 
   useEffect(() => {
     if (id) {
@@ -30,16 +27,16 @@ const UserOrderPage = () => {
 
   return (
     <div>
-      <p className="text-[19px] font-light">
+      <p className="pt-4 text-[19px] font-light md:pt-0">
         Chi tiết đơn hàng #861977987 -{" "}
-        <span className="font-normal">Đang xử lý</span>
+        <span className="font-normal block sm:inline">Đang xử lý</span>
       </p>
 
       <p className="mt-0.5 mb-3 flex justify-end text-[13px] text-neutral-100">
         Ngày đặt hàng: {formatDate(currentOrder?.createdAt?.toLocaleString())}
       </p>
 
-      <div className="mb-5 flex gap-x-2 text-[13px] text-neutral-500">
+      <div className="mb-5 flex flex-col gap-2 text-[13px] text-neutral-500 sm:flex-row">
         {/* Địa chỉ người nhận */}
         <div className="flex-1">
           <p className="mb-4 uppercase">Địa chỉ người nhận</p>
@@ -89,7 +86,7 @@ const UserOrderPage = () => {
           {"<< Quay lại đơn hàng của tôi"}
         </Link>
         <div>
-          <button className="cursor-pointer rounded bg-[#FDD835] px-[50px] py-2.5 font-bold text-neutral-500">
+          <button className="cursor-pointer rounded bg-[#FDD835] px-4 py-2.5 font-bold text-neutral-500 sm:px-[50px]">
             Theo dõi đơn hàng
           </button>
         </div>

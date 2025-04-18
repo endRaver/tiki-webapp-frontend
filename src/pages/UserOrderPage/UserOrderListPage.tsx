@@ -21,7 +21,7 @@ const UserOrderListPage = () => {
 
   const { user } = useUserStore();
   const { orders, handleGetOrdersByUserId } = useOrderStore();
-  const [ordersFilter, setOdersFilter] = useState(orders);
+  const [ordersFilter, setOrdersFilter] = useState(orders);
 
   useEffect(() => {
     if (user) {
@@ -29,27 +29,29 @@ const UserOrderListPage = () => {
     }
     if (orders) {
       if (activeTab === "all") {
-        setOdersFilter(orders);
-      }
-      else{
-        const filtered = orders.filter(order => order.status === activeTab);
-        setOdersFilter(filtered);
+        setOrdersFilter(orders);
+      } else {
+        const filtered = orders.filter((order) => order.status === activeTab);
+        setOrdersFilter(filtered);
       }
     }
   }, [handleGetOrdersByUserId, user, orders, activeTab]);
 
   return (
     <div className="mb-4 w-full">
-      <h5 className="text-[19px] font-light">Đơn hàng của tôi</h5>
+      <h5 className="hidden text-[19px] font-light md:block">
+        Đơn hàng của tôi
+      </h5>
 
-      <div className="mt-5 flex text-sm">
+      <div className="mt-5 hidden text-sm md:flex">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`flex-1 cursor-pointer border-b-2 bg-white py-2.5 text-center text-nowrap ${activeTab === tab.id
+            className={`flex-1 cursor-pointer border-b-2 bg-white py-2.5 text-center text-nowrap ${
+              activeTab === tab.id
                 ? "border-b-primary-500 text-primary-500"
                 : "border-b-transparent text-neutral-500"
-              }`}
+            }`}
             onClick={() => setActiveTab(tab.id)}
           >
             {tab.name}
@@ -72,9 +74,7 @@ const UserOrderListPage = () => {
           <p className="text-center text-neutral-500">Chưa có đơn hàng</p>
         </div>
       ) : (
-
         <div className="flex flex-col gap-3">
-
           {ordersFilter?.map((order) => (
             <Link to={`/profile/orders/${order._id}`} key={order._id}>
               <div className="cursor-pointer bg-white px-6 py-3 duration-300 hover:shadow-md">
@@ -121,7 +121,7 @@ const UserOrderListPage = () => {
                       <span className="text-neutral-500 line-through">
                         {formatCurrency(
                           order.products[0].product.original_price *
-                          order.products[0].quantity,
+                            order.products[0].quantity,
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>
@@ -129,7 +129,7 @@ const UserOrderListPage = () => {
                       <span className="text-primary-500">
                         {formatCurrency(
                           order.products[0].product.current_seller.price *
-                          order.products[0].quantity,
+                            order.products[0].quantity,
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>

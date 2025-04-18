@@ -4,6 +4,12 @@ import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "react-hot-toast";
 import { create } from "zustand";
 import { useCartStore } from "./useCartStore";
+import { AxiosError } from "axios";
+
+type ErrorResponse = {
+  success: boolean;
+  message: string;
+};
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -18,6 +24,9 @@ interface OrderStore {
   handlePaymentCard: () => Promise<void>;
   handlePaymentCash: () => Promise<void>;
   handleCheckoutSuccess: (sessionId: string) => Promise<void>;
+
+  handleGetAllOrders: () => Promise<void>;
+  handleUpdateOrder: (id: string, updatedOrder: Order) => Promise<void>;
 }
 
 export const useOrderStore = create<OrderStore>((set) => ({
@@ -26,7 +35,44 @@ export const useOrderStore = create<OrderStore>((set) => ({
   isLoading: false,
   useCartStore: useCartStore,
 
-  
+  handleGetAllOrders: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get("/orders");
+
+      set({ orders: response.data });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch orders",
+      );
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  handleUpdateOrder: async (id, updatedOrder) => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.put(`/orders/${id}`, updatedOrder);
+
+      set((state) => ({
+        orders: state.orders?.map((order) =>
+          order._id === id ? response.data : order,
+        ),
+      }));
+      toast.success("Order updated successfully");
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to update order",
+      );
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   handleGetOrdersByUserId: async (userId) => {
     try {
       const response = await axiosInstance.get(`/orders/user/${userId}`);
@@ -39,6 +85,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
   handleGetOrderById: async (orderId) => {
     try {
       const response = await axiosInstance.get(`/orders/${orderId}`);
+
       set({ currentOrder: response.data });
     } catch (error) {
       console.error(error);

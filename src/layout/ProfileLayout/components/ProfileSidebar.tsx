@@ -8,9 +8,9 @@ import { useUserStore } from "@/store/useUserStore";
 import { NavLink } from "react-router-dom";
 
 const UserInfo = () => {
-  const {user} = useUserStore();
+  const { user } = useUserStore();
   return (
-    <div className="w-[250px]">
+    <div className="hidden w-[250px] md:block">
       <div className="flex items-center gap-3 px-2">
         <div className="flex items-center justify-center">
           <img src={ava} alt="avatar" />

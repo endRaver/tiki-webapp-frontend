@@ -26,8 +26,8 @@ const AddProductForm: React.FC = () => {
     loading,
     sellers,
     categoryNames,
-    fetchSellers,
-    fetchCategories,
+    handleFetchSellers,
+    handleFetchCategories,
   } = useProductStore();
 
   const [formData, setFormData] = useState<FormData>({
@@ -69,9 +69,9 @@ const AddProductForm: React.FC = () => {
   });
 
   useEffect(() => {
-    fetchSellers();
-    fetchCategories();
-  }, [fetchSellers, fetchCategories]);
+    handleFetchSellers();
+    handleFetchCategories();
+  }, [handleFetchSellers, handleFetchCategories]);
 
   const handleChange = (
     e: React.ChangeEvent<

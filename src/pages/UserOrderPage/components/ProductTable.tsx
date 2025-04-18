@@ -18,9 +18,15 @@ const ProductTable = () => {
         <thead className="border-b border-[#F4F4F4]">
           <tr className="flex w-full text-[15px] font-normal text-[#787878]">
             <th className="flex-3 px-4 py-5 text-left font-normal">Sản phẩm</th>
-            <th className="flex-1 px-4 py-5 text-left font-normal">Giá</th>
-            <th className="flex-1 px-4 py-5 text-left font-normal">Số lượng</th>
-            <th className="flex-1 px-4 py-5 text-left font-normal">Giảm giá</th>
+            <th className="hidden flex-1 px-4 py-5 text-left font-normal sm:block">
+              Giá
+            </th>
+            <th className="hidden flex-1 px-4 py-5 text-left font-normal sm:block">
+              Số lượng
+            </th>
+            <th className="hidden flex-1 px-4 py-5 text-left font-normal sm:block">
+              Giảm giá
+            </th>
             <th className="flex-2 px-4 py-5 text-right font-normal">
               Tạm tính
             </th>
@@ -33,7 +39,7 @@ const ProductTable = () => {
               className="flex w-full border-b border-[#F4F4F4]"
               key={product.product._id}
             >
-              <td className="flex-3 px-4 py-5">
+              <td className="sm:flex-3 px-4 py-5">
                 <div className="flex gap-4">
                   <div
                     className="aspect-square size-[60px] rounded-sm bg-cover bg-center"
@@ -65,14 +71,14 @@ const ProductTable = () => {
                 </div>
               </td>
 
-              <td className="flex-1 px-4 py-5 text-[13px]">
+              <td className="hidden px-4 py-5 text-[13px] sm:flex-1">
                 {formatCurrency(product.product.original_price)}{" "}
                 <span className="underline underline-offset-1">đ</span>
               </td>
-              <td className="flex-1 px-4 py-5 text-[13px]">
+              <td className="hidden px-4 py-5 text-[13px] sm:flex-1">
                 {product.quantity}
               </td>
-              <td className="flex-1 px-4 py-5 text-[13px]">
+              <td className="hidden px-4 py-5 text-[13px] sm:flex-1">
                 {formatCurrency(
                   product.product.original_price -
                     product.product.current_seller.price,

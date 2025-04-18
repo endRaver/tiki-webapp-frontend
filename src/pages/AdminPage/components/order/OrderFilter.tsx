@@ -1,37 +1,19 @@
-import React, { useState } from "react";
 import SearchBar from "../common/SearchBar";
+import { Filter } from "../../OrderPage";
 
-interface Order {
-  orderNumber: string;
-  status: string;
-  paymentMethod: string;
-}
-
-interface OrderFilterProps {
-  orders: Order[];
-  filteredOrders: Order[];
-  onFilterChange: (filters: { orderNumber: string; status: string; paymentMethod: string }) => void;
-}
-
-const OrderFilter: React.FC<OrderFilterProps> = ({ orders, onFilterChange }) => {
-  const [filters, setFilters] = useState({
-    orderNumber: "",
-    status: "",
-    paymentMethod: "",
-  });
-
+const OrderFilter = ({
+  filters,
+  setFilters,
+}: {
+  filters: Filter;
+  setFilters: (filters: Filter) => void;
+}) => {
   const handleFilterChange = (name: string, value: string) => {
-    const newFilters = { ...filters, [name]: value };
-    setFilters(newFilters);
-    onFilterChange(newFilters);
+    setFilters({ ...filters, [name]: value });
   };
 
-  // Use the full orders list to calculate unique statuses, so all statuses are always shown
-  const uniqueStatuses = Array.from(new Set(orders.map((order) => order.status)));
-  const uniquePaymentMethods = Array.from(new Set(orders.map((order) => order.paymentMethod)));
-
   return (
-    <div className="flex space-x-2 mb-4">
+    <div className="mb-4 flex space-x-2">
       <SearchBar
         placeholder="Search by order number"
         value={filters.orderNumber}
@@ -40,26 +22,23 @@ const OrderFilter: React.FC<OrderFilterProps> = ({ orders, onFilterChange }) => 
       <select
         value={filters.status}
         onChange={(e) => handleFilterChange("status", e.target.value)}
-        className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
         <option value="">All Statuses</option>
-        {uniqueStatuses.map((status) => (
-          <option key={status} value={status}>
-            {status}
-          </option>
-        ))}
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
       </select>
       <select
         value={filters.paymentMethod}
         onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
-        className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
         <option value="">All Payment Methods</option>
-        {uniquePaymentMethods.map((method) => (
-          <option key={method} value={method}>
-            {method}
-          </option>
-        ))}
+        <option value="cash">Cash</option>
+        <option value="card">Card</option>
       </select>
     </div>
   );
