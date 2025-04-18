@@ -1,35 +1,21 @@
 import { useProductStore } from "@/store/useProductStore";
 import Carousel from "./Carousel";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import BookCardSkeleton from "@/components/skeleton/BookCardSkeleton";
-import { Product } from "@/types/product";
-import { isEmpty } from "lodash";
 
 const RelatedBooks = () => {
-  const { currentProduct, handleFetchRelatedProducts } = useProductStore();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { products, currentProduct, loading, handleGetProductByCategory } =
+    useProductStore();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      if (currentProduct?.categories?.name) {
-        setLoading(true);
-        const result = await handleFetchRelatedProducts(
-          currentProduct.categories.name,
-        );
-        if (!isEmpty(result)) {
-          setProducts(result);
-        }
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [handleFetchRelatedProducts, currentProduct]);
+    if (currentProduct?.categories?.name) {
+      handleGetProductByCategory(currentProduct.categories.name);
+    }
+  }, [handleGetProductByCategory, currentProduct]);
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-y-4 sm:rounded-lg bg-white p-4">
+      <div className="flex flex-col gap-y-4 bg-white p-4 sm:rounded-lg">
         {/* Tiêu đề */}
         <div className="flex items-center justify-between">
           <span className="font-semibold">Sản phẩm tương tự</span>
@@ -57,7 +43,7 @@ const RelatedBooks = () => {
     );
   }
   return (
-    <div className="flex flex-col gap-y-4 sm:rounded-lg bg-white p-4">
+    <div className="flex flex-col gap-y-4 bg-white p-4 sm:rounded-lg">
       {/* Tiêu đề */}
       <div className="flex items-center justify-between">
         <span className="font-semibold">Sản phẩm tương tự</span>

@@ -6,7 +6,17 @@ import Selection from "@/components/ui/Selection";
 import { useCartStore } from "@/store/useCartStore";
 
 const DeliveryMethodSelection = () => {
-  const { shippingType, setShippingType } = useCartStore();
+  const { shippingType, setShippingType, groupCart, selectedCart } =
+    useCartStore();
+
+  const fastShippingPrice = groupCart.reduce(
+    (acc, group) => acc + group.totalShippingPrice,
+    0,
+  );
+
+  const savingShippingPrice = Math.max(
+    ...selectedCart.map((item) => item.shippingPrice),
+  );
 
   return (
     <div className="relative max-w-[500px]">
@@ -22,7 +32,7 @@ const DeliveryMethodSelection = () => {
             <img src={delivery_method} alt="delivery" />
             <span className="text-sm">Giao siêu tốc 2h</span>
             <span className="text-success-100 rounded bg-white px-1 py-0.5 text-[13px]">
-              -25k
+              -{fastShippingPrice / 1000}k
             </span>
           </div>
         </Selection>
@@ -37,7 +47,7 @@ const DeliveryMethodSelection = () => {
           <div className="flex items-center gap-1">
             <span className="text-sm">Giao tiết kiệm</span>
             <span className="text-success-100 rounded bg-white px-1 py-0.5 text-[13px]">
-              -16k
+              -{savingShippingPrice / 1000}k
             </span>
           </div>
         </Selection>

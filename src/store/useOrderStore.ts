@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { create } from "zustand";
 import { useCartStore } from "./useCartStore";
 import { AxiosError } from "axios";
+import { CacheManager } from "@/utils/cache";
 
 type ErrorResponse = {
   success: boolean;
@@ -19,6 +20,9 @@ interface OrderStore {
   currentOrder: Order | null;
   useCartStore: typeof useCartStore;
 
+  ordersCache: CacheManager<Order[]>;
+  currentOrderCache: CacheManager<Order>;
+
   handleGetOrdersByUserId: (userId: string) => Promise<void>;
   handleGetOrderById: (orderId: string) => Promise<void>;
   handlePaymentCard: () => Promise<void>;
@@ -27,19 +31,32 @@ interface OrderStore {
 
   handleGetAllOrders: () => Promise<void>;
   handleUpdateOrder: (id: string, updatedOrder: Order) => Promise<void>;
+
+  clearAllCache: () => void;
 }
 
-export const useOrderStore = create<OrderStore>((set) => ({
+export const useOrderStore = create<OrderStore>((set, get) => ({
   orders: null,
   currentOrder: null,
   isLoading: false,
   useCartStore: useCartStore,
 
+  ordersCache: new CacheManager<Order[]>(),
+  currentOrderCache: new CacheManager<Order>(),
+
   handleGetAllOrders: async () => {
+    const cacheKey = "get_all_orders";
+    const cachedOrders = get().ordersCache.get(cacheKey);
+    if (cachedOrders) {
+      set({ orders: cachedOrders });
+      return;
+    }
+
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get("/orders");
 
+      get().ordersCache.set(cacheKey, response.data);
       set({ orders: response.data });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -61,6 +78,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
           order._id === id ? response.data : order,
         ),
       }));
+      get().clearAllCache();
       toast.success("Order updated successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -74,8 +92,16 @@ export const useOrderStore = create<OrderStore>((set) => ({
   },
 
   handleGetOrdersByUserId: async (userId) => {
+    const cacheKey = `get_orders_by_user_id_${userId}`;
+    const cachedOrders = get().ordersCache.get(cacheKey);
+    if (cachedOrders) {
+      set({ orders: cachedOrders });
+      return;
+    }
+
     try {
       const response = await axiosInstance.get(`/orders/user/${userId}`);
+      get().ordersCache.set(cacheKey, response.data);
       set({ orders: response.data });
     } catch (error) {
       console.error(error);
@@ -83,8 +109,16 @@ export const useOrderStore = create<OrderStore>((set) => ({
   },
 
   handleGetOrderById: async (orderId) => {
+    const cacheKey = `get_order_by_id_${orderId}`;
+    const cachedOrder = get().currentOrderCache.get(cacheKey);
+    if (cachedOrder) {
+      set({ currentOrder: cachedOrder });
+      return;
+    }
+
     try {
       const response = await axiosInstance.get(`/orders/${orderId}`);
+      get().currentOrderCache.set(cacheKey, response.data);
 
       set({ currentOrder: response.data });
     } catch (error) {
@@ -181,5 +215,11 @@ export const useOrderStore = create<OrderStore>((set) => ({
     } catch (error) {
       console.log(error);
     }
+  },
+
+  clearAllCache: () => {
+    const { ordersCache, currentOrderCache } = get();
+    ordersCache.clear();
+    currentOrderCache.clear();
   },
 }));

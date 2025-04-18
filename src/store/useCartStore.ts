@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 import { Product } from "@/types/product";
 import { CartItem, Coupon } from "@/types/user";
 import { map, groupBy } from "lodash";
-
+import { CacheManager } from "@/utils/cache";
 interface CartStore {
   isLoading: boolean;
   cart: CartItem[];
@@ -16,8 +16,10 @@ interface CartStore {
     totalShippingPrice: number;
     shippingDate: Date;
   }[];
-
   coupons: Coupon[];
+
+  couponCache: CacheManager<Coupon[]>;
+
   shippingType: "fast" | "saving";
   paymentMethod: "cash" | "card";
 
@@ -58,8 +60,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
   cart: [],
   selectedCart: [],
   groupCart: [],
-
   coupons: [],
+
+  couponCache: new CacheManager<Coupon[]>(),
+
   shippingType: "fast",
   paymentMethod: "cash",
 
@@ -220,6 +224,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
         ? groupCart.reduce((acc, group) => acc + group.totalShippingPrice, 0)
         : Math.max(...selectedCart.map((item) => item.shippingPrice));
 
+    console.log(groupCart);
+
     let productDiscount = 0;
     let shippingDiscount = 0;
 
@@ -259,8 +265,16 @@ export const useCartStore = create<CartStore>((set, get) => ({
   },
 
   handleGetMyCoupons: async () => {
+    const cacheKey = "get_my_coupons";
+    const cachedCoupons = get().couponCache.get(cacheKey);
+    if (cachedCoupons) {
+      set({ coupons: cachedCoupons });
+      return;
+    }
+
     try {
       const response = await axiosInstance.get("/coupons");
+      get().couponCache.set(cacheKey, response.data);
       set({ coupons: response.data });
     } catch (error) {
       console.error(error);
@@ -318,6 +332,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   setSelectedCart: async (cart: CartItem[]) => {
     set({ selectedCart: cart });
+
     get().calculateTotal();
   },
 
@@ -338,5 +353,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     );
 
     set({ groupCart });
+    get().calculateTotal();
   },
 }));

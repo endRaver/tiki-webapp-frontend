@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { AxiosError } from "axios";
 import { User } from "@/types/user";
+import { CacheManager } from "@/utils/cache";
 
 interface ErrorResponse {
   success: boolean;
@@ -14,6 +15,9 @@ interface UserStore {
   users: User[];
   loading: boolean;
   checkingAuth: boolean;
+
+  userCache: CacheManager<User>;
+  usersCache: CacheManager<User[]>;
 
   handleSignup: (data: { email: string; password: string }) => Promise<{
     success: boolean;
@@ -48,13 +52,18 @@ interface UserStore {
 
   handleGetUsers: () => Promise<void>;
   handleDeleteUser: (id: string) => Promise<void>;
+
+  clearAllCache: () => void;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
+  users: [],
   loading: false,
   checkingAuth: true,
-  users: [],
+
+  userCache: new CacheManager<User>(),
+  usersCache: new CacheManager<User[]>(),
 
   handleSignup: async ({
     email,
@@ -106,6 +115,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       await axiosInstance.post("/auth/logout");
       set({ user: null });
+
+      get().clearAllCache();
       toast.success("Đăng xuất thành công");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -116,9 +127,17 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 
   handleCheckAuth: async () => {
+    const cacheKey = "check_auth";
+    const cachedUser = get().userCache.get(cacheKey);
+    if (cachedUser) {
+      set({ user: cachedUser });
+      return;
+    }
+
     set({ checkingAuth: true });
     try {
       const response = await axiosInstance.get("/auth/profile");
+      get().userCache.set(cacheKey, response.data);
       set({ user: response.data });
     } catch (error) {
       set({ checkingAuth: false, user: null });
@@ -147,12 +166,20 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 
   handleGoogleLogin: async (accessToken) => {
+    const cacheKey = "google_login";
+    const cachedUser = get().userCache.get(cacheKey);
+    if (cachedUser) {
+      set({ user: cachedUser });
+      return;
+    }
+
     set({ loading: true });
     try {
       const response = await axiosInstance.post("/auth/google", {
         token: accessToken,
       });
       set({ user: response.data });
+      get().userCache.set(cacheKey, response.data);
       toast.success("Đăng nhập thành công");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -230,6 +257,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
     try {
       const response = await axiosInstance.put(`/auth/users/${data._id}`, data);
+
+      get().clearAllCache();
       set({ user: response.data });
       toast.success("Cập nhật thông tin thành công");
     } catch (error) {
@@ -241,10 +270,18 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 
   handleGetUsers: async () => {
+    const cacheKey = "get_users";
+    const cachedUsers = get().usersCache.get(cacheKey);
+    if (cachedUsers) {
+      set({ users: cachedUsers });
+      return;
+    }
+
     set({ loading: true });
 
     try {
       const response = await axiosInstance.get("/auth/users");
+      get().usersCache.set(cacheKey, response.data);
 
       set({ users: response.data });
     } catch (error) {
@@ -265,6 +302,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
         users: state.users.filter((user) => user._id !== id),
       }));
 
+      get().clearAllCache();
       toast.success("User deleted successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -275,5 +313,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
     } finally {
       set({ loading: false });
     }
+  },
+
+  clearAllCache: () => {
+    const { userCache, usersCache } = get();
+    userCache.clear();
+    usersCache.clear();
   },
 }));

@@ -3,6 +3,7 @@ import { Product, Seller } from "@/types/product";
 import axiosInstance from "@/lib/axios";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { CacheManager } from "@/utils/cache";
 
 interface ErrorResponse {
   success: boolean;
@@ -17,13 +18,22 @@ interface ProductStore {
   totalPages: number;
   sellers: Seller[];
 
-  handleFetchAllProduct: (currentPage?: number,isFetchAll?:boolean) => Promise<void>;
-  handleFetchTopDealsProducts: () => Promise<Product[]>;
-  handleFetchRelatedProducts: (categoryName: string) => Promise<Product[]>;
+  // Cache managers
+  productsCache: CacheManager<Product[]>;
+  currentProductCache: CacheManager<Product>;
+  categoryCache: CacheManager<string[]>;
+  sellerCache: CacheManager<Seller[]>;
+
+  handleFetchAllProduct: (
+    currentPage?: number,
+    isFetchAll?: boolean,
+  ) => Promise<void>;
+
   handleGetProductById: (id: string | undefined) => Promise<void>;
   handleGetProductByCategory: (categoryName: string) => Promise<void>;
   handleSearchProductByKeyWord: (categoryName: string) => Promise<void>;
   handleFilterProduct: (categoryName: string) => Promise<void>;
+  handleFetchTopDealsProducts: () => Promise<Product[]>;
 
   handleCreateProduct: (productData: FormData) => Promise<void>;
   handleUpdateProduct: (id: string, productData: FormData) => Promise<void>;
@@ -34,6 +44,7 @@ interface ProductStore {
 
   resetProducts: () => void;
   resetCurrentProduct: () => void;
+  clearAllCache: () => void;
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
@@ -44,89 +55,36 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   categoryNames: [],
   totalPages: 0,
 
-  handleFetchCategories: async () => {
-    set({ loading: true });
-    try {
-      const response = await axiosInstance.get("/products/categories");
-      const normalizedCategoryNames = (response.data || []).map(
-        (name: string) => name.trim(),
-      );
+  // Initialize cache managers
+  currentProductCache: new CacheManager<Product>(),
+  productsCache: new CacheManager<Product[]>(),
+  categoryCache: new CacheManager<string[]>(),
+  sellerCache: new CacheManager<Seller[]>(),
 
-      set({ categoryNames: normalizedCategoryNames });
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(
-        axiosError.response?.data?.message ?? "Failed to fetch category names",
-      );
-    } finally {
-      set({ loading: false });
+  handleFetchAllProduct: async (
+    currentPage?: number,
+    isFetchAll: boolean = false,
+  ) => {
+    const cacheKey = isFetchAll
+      ? "fetch_all_products"
+      : `fetch_products_page_${currentPage}`;
+    const cachedData = get().productsCache.get(cacheKey);
+
+    if (cachedData) {
+      if (isFetchAll) {
+        set({
+          products: cachedData,
+          totalPages: 1,
+        });
+      } else {
+        set({
+          products: cachedData,
+          totalPages: cachedData.length / 10,
+        });
+      }
+      return;
     }
-  },
 
-  handleFetchSellers: async () => {
-    set({ loading: true });
-    try {
-      const response = await axiosInstance.get("/sellers");
-      const fetchedSellers = Array.isArray(response.data.sellers)
-        ? response.data.sellers.map((seller: Seller) => ({
-            ...seller,
-            id: seller._id,
-          }))
-        : [];
-      set({ sellers: fetchedSellers });
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(
-        axiosError.response?.data?.message ?? "Failed to fetch sellers",
-      );
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  handleDeleteProduct: async (id: string) => {
-    try {
-      await axiosInstance.delete(`/products/${id}`);
-      set((state) => ({
-        products: state.products.filter((p) => p._id !== id),
-      }));
-      toast.success("Product deleted successfully");
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(
-        axiosError.response?.data?.message ?? "Failed to delete product",
-      );
-      throw error;
-    }
-  },
-
-  handleFetchRelatedProducts: async (categoryName: string) => {
-    try {
-      const response = await axiosInstance.get(
-        `/products/category/${categoryName}`,
-      );
-      const related = response.data;
-      return related;
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "An error occurred");
-      return [];
-    }
-  },
-
-  handleFetchTopDealsProducts: async (): Promise<Product[]> => {
-    try {
-      const response = await axiosInstance.get(`/products/recommended`);
-
-      return response.data;
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message ?? "An error occurred");
-      return [];
-    }
-  },
-
-  handleFetchAllProduct: async (currentPage?: number,isFetchAll? :boolean) => {
     if (currentPage === 1) {
       set({ loading: true });
     }
@@ -134,11 +92,16 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     const previousProducts = get().products;
 
     try {
-      const response =isFetchAll?
-       await axiosInstance.get(`/products?all=true`):await axiosInstance.get(`/products?page=${currentPage}`);
+      const response = isFetchAll
+        ? await axiosInstance.get(`/products?all=true`)
+        : await axiosInstance.get(`/products?page=${currentPage}`);
 
+      const newProducts = [...previousProducts, ...response.data.products];
+
+      // Update cache
+      get().productsCache.set(cacheKey, newProducts);
       set({
-        products: [...previousProducts, ...response.data.products],
+        products: newProducts,
         totalPages: response.data.pagination.pages,
       });
     } catch (error) {
@@ -150,10 +113,21 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   handleGetProductById: async (id: string | undefined) => {
+    if (!id) return;
+
+    const cachedProduct = get().currentProductCache.get(id);
+    if (cachedProduct) {
+      set({ currentProduct: cachedProduct });
+      return;
+    }
+
     set({ loading: true });
     try {
       const response = await axiosInstance.get(`/products/${id}`);
       const product: Product = await response.data;
+
+      // Update cache
+      get().currentProductCache.set(id, product);
       set({ currentProduct: product });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -164,15 +138,23 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   handleGetProductByCategory: async (categoryName: string) => {
+    const cacheKey = `category_products_${categoryName}`;
+    const cachedProducts = get().productsCache.get(cacheKey);
+    if (cachedProducts) {
+      set({ products: cachedProducts });
+      return;
+    }
+
     set({ loading: true });
     try {
       const response = await axiosInstance.get(
         `/products/category/${categoryName}`,
       );
 
-      console.log(response.data);
-
       const fetchedProducts = Array.isArray(response.data) ? response.data : [];
+
+      // Update cache
+      get().productsCache.set(cacheKey, fetchedProducts);
       set({ products: fetchedProducts });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -187,9 +169,18 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   handleSearchProductByKeyWord: async (keyWord: string) => {
+    const cacheKey = `search_products_${keyWord}`;
+    const cachedProducts = get().productsCache.get(cacheKey);
+    if (cachedProducts) {
+      set({ products: cachedProducts });
+      return;
+    }
+
     set({ loading: true });
     try {
       const response = await axiosInstance.get(`/products/search/${keyWord}`);
+
+      get().productsCache.set(cacheKey, response.data);
       set({ products: response.data });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -200,16 +191,61 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   handleFilterProduct: async (typeSearch: string) => {
+    const cacheKey = `filter_products_${typeSearch}`;
+    const cachedProducts = get().productsCache.get(cacheKey);
+    if (cachedProducts) {
+      set({ products: cachedProducts });
+      return;
+    }
+
     set({ loading: true });
     try {
       const response = await axiosInstance.get(`/products?sort=${typeSearch}`);
 
+      get().productsCache.set(cacheKey, response.data.products);
       set({ products: response.data.products });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
     } finally {
       set({ loading: false });
+    }
+  },
+
+  handleFetchTopDealsProducts: async (): Promise<Product[]> => {
+    const cacheKey = "fetch_top_deals_products";
+    const cachedProducts = get().productsCache.get(cacheKey);
+    if (cachedProducts) {
+      return cachedProducts;
+    }
+
+    try {
+      const response = await axiosInstance.get(`/products/recommended`);
+
+      get().productsCache.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(axiosError.response?.data?.message ?? "An error occurred");
+      return [];
+    }
+  },
+
+  handleDeleteProduct: async (id: string) => {
+    try {
+      await axiosInstance.delete(`/products/${id}`);
+      set((state) => ({
+        products: state.products.filter((p) => p._id !== id),
+      }));
+
+      get().clearAllCache();
+      toast.success("Product deleted successfully");
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to delete product",
+      );
+      throw error;
     }
   },
 
@@ -225,6 +261,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         products: [...state.products, response.data.product],
       }));
 
+      get().clearAllCache();
       toast.success("Product created successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -253,6 +290,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
             ? response.data
             : state.currentProduct,
       }));
+
+      get().clearAllCache();
       toast.success("Product updated successfully");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -265,9 +304,76 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
+  handleFetchCategories: async () => {
+    const cacheKey = "fetch_categories";
+    const cachedCategories = get().categoryCache.get(cacheKey);
+    if (cachedCategories) {
+      set({ categoryNames: cachedCategories });
+      return;
+    }
+
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get("/products/categories");
+      const normalizedCategoryNames = (response.data || []).map(
+        (name: string) => name.trim(),
+      );
+
+      get().categoryCache.set(cacheKey, normalizedCategoryNames);
+      set({ categoryNames: normalizedCategoryNames });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch category names",
+      );
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  handleFetchSellers: async () => {
+    const cacheKey = "fetch_sellers";
+    const cachedSellers = get().sellerCache.get(cacheKey);
+    if (cachedSellers) {
+      set({ sellers: cachedSellers });
+      return;
+    }
+
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get("/sellers");
+
+      const fetchedSellers = Array.isArray(response.data.sellers)
+        ? response.data.sellers.map((seller: Seller) => ({
+            ...seller,
+            id: seller._id,
+          }))
+        : [];
+
+      get().sellerCache.set(cacheKey, fetchedSellers);
+      set({ sellers: fetchedSellers });
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message ?? "Failed to fetch sellers",
+      );
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   resetProducts: () => {
     set({ products: [], totalPages: 0 });
   },
 
   resetCurrentProduct: () => set({ currentProduct: null }),
+
+  clearAllCache: () => {
+    const { currentProductCache, productsCache, categoryCache, sellerCache } =
+      get();
+    currentProductCache.clear();
+    productsCache.clear();
+    categoryCache.clear();
+    sellerCache.clear();
+  },
 }));
