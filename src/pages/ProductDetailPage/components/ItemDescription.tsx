@@ -6,7 +6,7 @@ const ItemDescription = () => {
   const { currentProduct } = useProductStore();
   
   return (
-    <div className="flex flex-col rounded-lg bg-white p-4">
+    <div className="flex flex-col sm:rounded-lg bg-white p-4">
       <span className="font-semibold">Mô tả sản phẩm</span>
       <div className="relative">
         <div

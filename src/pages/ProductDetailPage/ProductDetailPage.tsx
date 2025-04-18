@@ -6,6 +6,8 @@ import BookImage from "./components/BookImage";
 import Payment from "./components/Payment";
 import ProductInformation from "./components/ProductInformation";
 import { useProductStore } from "@/store/useProductStore";
+import BookImageMobile from "./components/BookImageMobile";
+import ProductInformationMobile from "./components/ProductInfomationMobile";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,10 +42,10 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      <div className="container mx-auto flex flex-col items-center space-y-4 pt-4 pb-10 sm:hidden sm:gap-2 md:hidden lg:hidden lg:gap-4 xl:gap-6">
-        <BookImage />
+      <div className="relative mx-auto flex flex-col items-center space-y-4 sm:hidden sm:gap-2 md:hidden lg:hidden lg:gap-4 xl:gap-6">
+        <BookImageMobile />
         <Payment />
-        <ProductInformation />
+        <ProductInformationMobile />
       </div>
     </div>
   );

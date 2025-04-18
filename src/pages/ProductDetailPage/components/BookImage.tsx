@@ -1,7 +1,7 @@
-import { arrow_right, book_info } from "@/assets/icons/detail_page_icons";
 import { useProductStore } from "@/store/useProductStore";
 import { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import ViewMoreSection from "./ViewMoreSection";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -99,15 +99,8 @@ const BookImage = () => {
       </div>
 
       {/* View More Section */}
-      <div className="flex justify-between border-t border-[#EBEBF0] p-4">
-        <div className="flex items-center gap-x-1">
-          <img src={book_info} alt="book info" />
-          <p className="text-sm">
-            <span className="text-[#808089]">Xem thêm</span> Tóm tắt nội dung
-            sách
-          </p>
-        </div>
-        <img src={arrow_right} alt="arrow right" />
+      <div className="hidden sm:block">
+        <ViewMoreSection />
       </div>
     </div>
   );

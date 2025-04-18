@@ -34,93 +34,187 @@ const Confirm = () => {
     );
 
   return (
-    <div className="bg-background relative mx-auto flex h-[740px] w-full justify-center gap-x-4 p-5">
-      <Confetti
-        width={window.innerWidth}
-        height={window.innerHeight}
-        gravity={0.1}
-        style={{ zIndex: 99 }}
-        numberOfPieces={700}
-        recycle={false}
-      />
-
-      <div className="relative flex h-130 w-[742px] flex-col rounded-lg bg-white">
-        <div className="h-[112px] w-[742px] rounded-t-xl bg-gradient-to-r from-[#0bbee5] to-[#3856f3]"></div>
-        <img className="absolute top-0" src={header_img} alt="header img" />
-        <img
-          className="absolute top-10 left-10"
-          src={confirm_icon}
-          alt="confirm icon"
+    <div>
+      <div className="bg-background hidden sm:flex relative mx-auto h-[740px] w-full justify-center gap-x-4 p-5">
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          gravity={0.1}
+          style={{ zIndex: 99 }}
+          numberOfPieces={700}
+          recycle={false}
         />
-        <div className="absolute top-10 left-[222px] flex flex-col">
-          <p className="text-2xl font-medium text-white">
-            Yay, đặt hàng thành công!
-          </p>
-          <p className="text-lg font-medium text-white">
-            Chuẩn bị tiền mặt {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
-            <span className="underline underline-offset-1">đ</span>
-          </p>
-        </div>
-        <div className="absolute top-[132px] left-[220px] w-120">
-          <div className="border-border-line flex justify-between border-b py-2">
-            <p className="text-sm text-[#808089]">Phương thức thanh toán</p>
-            <p className="text-sm">Thanh toán tiền mặt</p>
-          </div>
-          <div className="flex justify-between py-2">
-            <p className="text-[#808089]">Tổng cộng</p>
-            <div className="flex flex-col items-end">
-              <p className="text-lg font-medium">
-                {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
-                <span className="underline underline-offset-1">đ</span>
-              </p>
-              <span className="text-xs text-[#808089]">
-                (Đã bao gồm VAT nếu có)
-              </span>
-            </div>
-          </div>
-          <Link to="/">
-            <button className="h-11 w-full cursor-pointer rounded-sm border border-[#0b74e5] font-medium text-[#0b74e5]">
-              Quay về trang chủ
-            </button>
-          </Link>
-        </div>
-      </div>
-      <div className="h-fit w-80 rounded-sm bg-white">
-        <div className="border-border-line flex justify-between border-b p-4">
-          <p className="text-sm font-bold">
-            Mã đơn hàng: {currentOrder?.orderNumber}
-          </p>
 
-          {/* TODO: Add order detail page */}
-          <Link to={`/profile/orders/${currentOrder?._id}`}>
-            <p className="cursor-pointer text-sm font-medium text-[#0B74E5]">
-              Xem đơn hàng
+        <div className="relative flex h-130 w-[742px] flex-col rounded-lg bg-white">
+          <div className="h-[112px] w-[742px] rounded-t-xl bg-gradient-to-r from-[#0bbee5] to-[#3856f3]"></div>
+          <img className="absolute top-0" src={header_img} alt="header img" />
+          <img
+            className="absolute top-10 left-10"
+            src={confirm_icon}
+            alt="confirm icon"
+          />
+          <div className="absolute top-10 left-[222px] flex flex-col">
+            <p className="text-2xl font-medium text-white">
+              Yay, đặt hàng thành công!
             </p>
-          </Link>
+            <p className="text-lg font-medium text-white">
+              Chuẩn bị tiền mặt {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
+              <span className="underline underline-offset-1">đ</span>
+            </p>
+          </div>
+          <div className="absolute top-[132px] left-[220px] w-120">
+            <div className="border-border-line flex justify-between border-b py-2">
+              <p className="text-sm text-[#808089]">Phương thức thanh toán</p>
+              <p className="text-sm">Thanh toán tiền mặt</p>
+            </div>
+            <div className="flex justify-between py-2">
+              <p className="text-[#808089]">Tổng cộng</p>
+              <div className="flex flex-col items-end">
+                <p className="text-lg font-medium">
+                  {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
+                  <span className="underline underline-offset-1">đ</span>
+                </p>
+                <span className="text-xs text-[#808089]">
+                  (Đã bao gồm VAT nếu có)
+                </span>
+              </div>
+            </div>
+            <Link to="/">
+              <button className="h-11 w-full cursor-pointer rounded-sm border border-[#0b74e5] font-medium text-[#0b74e5]">
+                Quay về trang chủ
+              </button>
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col p-4">
-          <p className="text-sm text-neutral-400">
-            {currentOrder?.shippingDate
-              ? `Giao thứ 6, trước 13h, ${format(
+        <div className="h-fit w-80 rounded-sm bg-white">
+          <div className="border-border-line flex justify-between border-b p-4">
+            <p className="text-sm font-bold">
+              Mã đơn hàng: {currentOrder?.orderNumber}
+            </p>
+
+            {/* TODO: Add order detail page */}
+            <Link to={`/profile/orders/${currentOrder?._id}`}>
+              <p className="cursor-pointer text-sm font-medium text-[#0B74E5]">
+                Xem đơn hàng
+              </p>
+            </Link>
+          </div>
+          <div className="flex flex-col p-4">
+            <p className="text-sm text-neutral-400">
+              {currentOrder?.shippingDate
+                ? `Giao thứ 6, trước 13h, ${format(
                   new Date(currentOrder?.shippingDate),
                   "dd/MM",
                 )}`
-              : ""}
-          </p>
-          <div className="flex flex-col items-start gap-y-2 px-1 py-2">
-            {map(currentOrder?.products, (product) => (
-              <div key={product.product._id} className="flex items-center gap-2">
-                <div
-                  className="h-12 w-12 flex-1 bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${product.product.images[0].medium_url})`,
-                  }}
-                />
-                <p className="line-clamp-3 text-sm flex-5 text-[#808089]">
-                  {product.product.name}
+                : ""}
+            </p>
+            <div className="flex flex-col items-start gap-y-2 px-1 py-2">
+              {map(currentOrder?.products, (product) => (
+                <div key={product.product._id} className="flex items-center gap-2">
+                  <div
+                    className="h-12 w-12 flex-1 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url(${product.product.images[0].medium_url})`,
+                    }}
+                  />
+                  <p className="line-clamp-3 text-sm flex-5 text-[#808089]">
+                    {product.product.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex sm:hidden flex-col gap-4 bg-background h-[95vh]">
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          gravity={0.1}
+          style={{ zIndex: 99 }}
+          numberOfPieces={700}
+          recycle={false}
+        />
+
+        <div className="relative flex h-100 w-full flex-col bg-white">
+          <div className="h-[112px] w-full bg-gradient-to-r from-[#0bbee5] to-[#3856f3]"></div>
+          <img className="absolute top-0" src={header_img} alt="header img" />
+          <img
+            className="absolute top-15"
+            src={confirm_icon}
+            alt="confirm icon"
+          />
+          <div className="absolute top-10 left-[60px] flex flex-col">
+            <p className="text-2xl font-medium text-white">
+              Yay, đặt hàng thành công!
+            </p>
+            <p className="text-lg font-medium text-white">
+              Chuẩn bị tiền mặt {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
+              <span className="underline underline-offset-1">đ</span>
+            </p>
+          </div>
+          <div className="absolute top-[200px] p-1 w-full">
+            <div className="border-border-line flex justify-between border-b py-2">
+              <p className="text-sm text-[#808089]">Phương thức thanh toán</p>
+              <p className="text-sm">Thanh toán tiền mặt</p>
+            </div>
+            <div className="flex justify-between py-2">
+              <p className="text-[#808089]">Tổng cộng</p>
+              <div className="flex flex-col items-end">
+                <p className="text-lg font-medium">
+                  {formatCurrency(currentOrder?.totalAmount ?? 0)}{" "}
+                  <span className="underline underline-offset-1">đ</span>
                 </p>
+                <span className="text-xs text-[#808089]">
+                  (Đã bao gồm VAT nếu có)
+                </span>
               </div>
-            ))}
+            </div>
+            <Link to="/">
+              <button className="h-11 w-full cursor-pointer rounded-sm border border-[#0b74e5] font-medium text-[#0b74e5]">
+                Quay về trang chủ
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        <div className=" w-full bg-white">
+          <div className="border-border-line flex justify-between border-b p-4">
+            <p className="text-sm font-bold">
+              Mã đơn hàng: {currentOrder?.orderNumber}
+            </p>
+
+            {/* TODO: Add order detail page */}
+            <Link to={`/profile/orders/${currentOrder?._id}`}>
+              <p className="cursor-pointer text-sm font-medium text-[#0B74E5]">
+                Xem đơn hàng
+              </p>
+            </Link>
+          </div>
+          <div className="flex flex-col p-4">
+            <p className="text-sm text-neutral-400">
+              {currentOrder?.shippingDate
+                ? `Giao thứ 6, trước 13h, ${format(
+                  new Date(currentOrder?.shippingDate),
+                  "dd/MM",
+                )}`
+                : ""}
+            </p>
+            <div className="flex flex-col items-start gap-y-2 px-1 py-2">
+              {map(currentOrder?.products, (product) => (
+                <div key={product.product._id} className="flex items-center gap-2">
+                  <div
+                    className="h-12 w-12 flex-1 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url(${product.product.images[0].medium_url})`,
+                    }}
+                  />
+                  <p className="line-clamp-3 text-sm flex-5 text-[#808089]">
+                    {product.product.name}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

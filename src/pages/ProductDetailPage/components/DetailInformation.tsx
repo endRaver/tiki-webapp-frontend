@@ -7,7 +7,7 @@ const DetailInformation = ({
   specifications: Specification;
 }) => {
   return (
-    <div className="space-y-1 rounded-lg bg-white p-4">
+    <div className="space-y-1 sm:rounded-lg bg-white p-4">
       <span className="font-semibold">{specifications.name}</span>
 
       <div className="mt-3 text-sm">

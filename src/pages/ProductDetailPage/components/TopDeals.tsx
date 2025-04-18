@@ -24,7 +24,7 @@ const TopDeals = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">
+      <div className="flex flex-col gap-y-4 sm:rounded-lg bg-white p-4">
         {/* Tiêu đề */}
         <div className="flex items-center justify-between">
           <span className="font-semibold">Top Deals</span>
@@ -52,7 +52,7 @@ const TopDeals = () => {
     );
   }
   return (
-    <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4">
+    <div className="flex flex-col gap-y-4 sm:rounded-lg bg-white p-4">
       {/* Tiêu đề */}
       <div className="flex items-center justify-between">
         <span className="font-semibold">Top Deals</span>
