@@ -19,6 +19,7 @@ interface ProductStore {
   sellers: Seller[];
 
   // Cache managers
+  allProductsCache: CacheManager<Product[]>;
   productsCache: CacheManager<Product[]>;
   currentProductCache: CacheManager<Product>;
   categoryCache: CacheManager<string[]>;
@@ -55,13 +56,14 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   // Initialize cache managers
   currentProductCache: new CacheManager<Product>(),
+  allProductsCache: new CacheManager<Product[]>(),
   productsCache: new CacheManager<Product[]>(),
   categoryCache: new CacheManager<string[]>(),
   sellerCache: new CacheManager<Seller[]>(),
 
   handleGetAllProduct: async () => {
     const cacheKey = "fetch_all_products";
-    const cachedData = get().productsCache.get(cacheKey);
+    const cachedData = get().allProductsCache.get(cacheKey);
 
     if (cachedData) {
       return cachedData;
@@ -69,6 +71,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
     try {
       const response = await axiosInstance.get(`/products?all=true`);
+      get().allProductsCache.set(cacheKey, response.data.products);
       return response.data.products;
     } catch (error) {
       console.error("Error fetching all products:", error);

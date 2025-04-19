@@ -72,14 +72,14 @@ const BookImage = () => {
                 onClick={() => setIsThumbnailImg(img._id)}
                 onMouseOver={() => setIsMainImg(img._id)}
                 onFocus={() => setIsMainImg(img._id)}
-                className="m-0 flex h-auto w-13.5 flex-shrink-0 border-none bg-transparent p-0"
-              >
-                <img
-                  src={img.base_url}
-                  alt="Thumbnail 1"
-                  className={`w-13.5 cursor-pointer rounded-sm ${isThumbnailImg === img._id ? "border-2 border-[#0A68FF]" : "border border-[#EBEBF0]"}`}
-                />
-              </button>
+                className={`m-0 flex size-13.5 flex-shrink-0 cursor-pointer border-2 bg-transparent p-0 ${isThumbnailImg === img._id ? "border-[#0A68FF]" : "border border-[#EBEBF0]"}`}
+                style={{
+                  backgroundImage: `url(${img.thumbnail_url})`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              />
             ))}
           </div>
           {/* Nút điều hướng trái */}

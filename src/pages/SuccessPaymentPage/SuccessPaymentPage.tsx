@@ -35,7 +35,7 @@ const Confirm = () => {
 
   return (
     <div>
-      <div className="bg-background hidden sm:flex relative mx-auto h-[740px] w-full justify-center gap-x-4 p-5">
+      <div className="bg-background relative mx-auto hidden h-[740px] justify-center gap-x-4 p-5 sm:flex">
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
@@ -46,14 +46,14 @@ const Confirm = () => {
         />
 
         <div className="relative flex h-130 w-[742px] flex-col rounded-lg bg-white">
-          <div className="h-[112px] w-[742px] rounded-t-xl bg-gradient-to-r from-[#0bbee5] to-[#3856f3]"></div>
+          <div className="h-[112px] w-full rounded-t-xl bg-gradient-to-r from-[#0bbee5] to-[#3856f3]"></div>
           <img className="absolute top-0" src={header_img} alt="header img" />
           <img
-            className="absolute top-10 left-10"
+            className="absolute top-auto bottom-10 left-10 lg:top-10"
             src={confirm_icon}
             alt="confirm icon"
           />
-          <div className="absolute top-10 left-[222px] flex flex-col">
+          <div className="absolute top-10 right-60 flex flex-col">
             <p className="text-2xl font-medium text-white">
               Yay, đặt hàng thành công!
             </p>
@@ -62,7 +62,7 @@ const Confirm = () => {
               <span className="underline underline-offset-1">đ</span>
             </p>
           </div>
-          <div className="absolute top-[132px] left-[220px] w-120">
+          <div className="absolute top-[132px] right-10 w-full max-w-120">
             <div className="border-border-line flex justify-between border-b py-2">
               <p className="text-sm text-[#808089]">Phương thức thanh toán</p>
               <p className="text-sm">Thanh toán tiền mặt</p>
@@ -103,21 +103,24 @@ const Confirm = () => {
             <p className="text-sm text-neutral-400">
               {currentOrder?.shippingDate
                 ? `Giao thứ 6, trước 13h, ${format(
-                  new Date(currentOrder?.shippingDate),
-                  "dd/MM",
-                )}`
+                    new Date(currentOrder?.shippingDate),
+                    "dd/MM",
+                  )}`
                 : ""}
             </p>
             <div className="flex flex-col items-start gap-y-2 px-1 py-2">
               {map(currentOrder?.products, (product) => (
-                <div key={product.product._id} className="flex items-center gap-2">
+                <div
+                  key={product.product._id}
+                  className="flex items-center gap-2"
+                >
                   <div
                     className="h-12 w-12 flex-1 bg-cover bg-center"
                     style={{
                       backgroundImage: `url(${product.product.images[0].medium_url})`,
                     }}
                   />
-                  <p className="line-clamp-3 text-sm flex-5 text-[#808089]">
+                  <p className="line-clamp-3 flex-5 text-sm text-[#808089]">
                     {product.product.name}
                   </p>
                 </div>
@@ -126,7 +129,7 @@ const Confirm = () => {
           </div>
         </div>
       </div>
-      <div className="flex sm:hidden flex-col gap-4 bg-background h-[95vh]">
+      <div className="bg-background flex h-[95vh] flex-col gap-4 sm:hidden">
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
@@ -153,7 +156,7 @@ const Confirm = () => {
               <span className="underline underline-offset-1">đ</span>
             </p>
           </div>
-          <div className="absolute top-[200px] p-1 w-full">
+          <div className="absolute top-[200px] w-full p-1">
             <div className="border-border-line flex justify-between border-b py-2">
               <p className="text-sm text-[#808089]">Phương thức thanh toán</p>
               <p className="text-sm">Thanh toán tiền mặt</p>
@@ -178,7 +181,7 @@ const Confirm = () => {
           </div>
         </div>
 
-        <div className=" w-full bg-white">
+        <div className="w-full bg-white">
           <div className="border-border-line flex justify-between border-b p-4">
             <p className="text-sm font-bold">
               Mã đơn hàng: {currentOrder?.orderNumber}
@@ -195,21 +198,24 @@ const Confirm = () => {
             <p className="text-sm text-neutral-400">
               {currentOrder?.shippingDate
                 ? `Giao thứ 6, trước 13h, ${format(
-                  new Date(currentOrder?.shippingDate),
-                  "dd/MM",
-                )}`
+                    new Date(currentOrder?.shippingDate),
+                    "dd/MM",
+                  )}`
                 : ""}
             </p>
             <div className="flex flex-col items-start gap-y-2 px-1 py-2">
               {map(currentOrder?.products, (product) => (
-                <div key={product.product._id} className="flex items-center gap-2">
+                <div
+                  key={product.product._id}
+                  className="flex items-center gap-2"
+                >
                   <div
                     className="h-12 w-12 flex-1 bg-cover bg-center"
                     style={{
                       backgroundImage: `url(${product.product.images[0].medium_url})`,
                     }}
                   />
-                  <p className="line-clamp-3 text-sm flex-5 text-[#808089]">
+                  <p className="line-clamp-3 flex-5 text-sm text-[#808089]">
                     {product.product.name}
                   </p>
                 </div>

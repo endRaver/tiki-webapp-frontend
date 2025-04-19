@@ -12,22 +12,30 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<"price" | "profit" | "quantitySold">(
     "price",
   );
 
   const {
-    products,
-    loading,
     totalPages,
     resetProducts,
-    handleGetAllProductPagination,
+    // handleGetAllProductPagination,
+    handleGetAllProduct,
   } = useProductStore();
 
   useEffect(() => {
-    handleGetAllProductPagination(currentPage);
-  }, [handleGetAllProductPagination, currentPage]);
+    const fetchProducts = async () => {
+      setLoading(true);
+      const products = await handleGetAllProduct();
+      setProducts(products);
+      setLoading(false);
+    };
+
+    fetchProducts();
+  }, [handleGetAllProduct]);
 
   // Apply filtering based on all filter criteria
   useEffect(() => {
