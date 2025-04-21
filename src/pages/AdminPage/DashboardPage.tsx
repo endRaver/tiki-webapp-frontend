@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import {
   AreaChart,
   Area,
@@ -13,11 +13,18 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
-import { useProductStore } from '@/store/useProductStore';
-import { useOrderStore } from '@/store/useOrderStore';
-import { toast } from 'react-hot-toast';
-import { format, startOfDay, startOfWeek, addDays, eachWeekOfInterval, subDays } from 'date-fns';
+} from "recharts";
+import { useProductStore } from "@/store/useProductStore";
+import { useOrderStore } from "@/store/useOrderStore";
+import { toast } from "react-hot-toast";
+import {
+  format,
+  startOfDay,
+  startOfWeek,
+  addDays,
+  eachWeekOfInterval,
+  subDays,
+} from "date-fns";
 
 // Define types
 interface RevenueData {
@@ -66,7 +73,7 @@ interface LocalOrder {
   totalAmount: number;
   stripeSessionId: string;
   createdAt: string;
-  updatedAt: string; 
+  updatedAt: string;
   __v: number;
 }
 
@@ -76,17 +83,27 @@ interface CategorySalesData {
 }
 
 const DashboardPage: React.FC = () => {
-  const { products, sellers, handleFetchAllProduct, handleFetchCategories, handleFetchSellers } = useProductStore();
+  const {
+    products,
+    sellers,
+    handleGetAllProduct,
+    handleFetchCategories,
+    handleFetchSellers,
+  } = useProductStore();
   const { orders: rawOrders, handleGetAllOrders } = useOrderStore();
   const orders = rawOrders as unknown as LocalOrder[];
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [sellerData, setSellerData] = useState<SellerData[]>([]);
   const [orderStatusData, setOrderStatusData] = useState<OrderStatusData[]>([]);
-  const [revenueByCategoryData, setRevenueByCategoryData] = useState<RevenueByCategoryData[]>([]);
+  const [revenueByCategoryData, setRevenueByCategoryData] = useState<
+    RevenueByCategoryData[]
+  >([]);
   const [topProductsData, setTopProductsData] = useState<TopProductData[]>([]);
-  const [categorySalesData, setCategorySalesData] = useState<CategorySalesData[]>([]);
+  const [categorySalesData, setCategorySalesData] = useState<
+    CategorySalesData[]
+  >([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
-  const [timeFrame, setTimeFrame] = useState<'day' | 'week'>('day');
+  const [timeFrame, setTimeFrame] = useState<"day" | "week">("day");
   const [isLoading, setIsLoading] = useState(true);
   const [hasFetched, setHasFetched] = useState(false);
 
@@ -98,7 +115,7 @@ const DashboardPage: React.FC = () => {
       const data: RevenueData[] = [];
       for (let d = startDate; d <= endDate; d = addDays(d, 1)) {
         data.push({
-          name: format(d, 'dd/MM'),
+          name: format(d, "dd/MM"),
           revenue: 0,
         });
       }
@@ -108,39 +125,47 @@ const DashboardPage: React.FC = () => {
     const revenueMap: { [key: string]: number } = {};
 
     orders
-      .filter((order) => order.status === 'delivered')
+      .filter((order) => order.status === "delivered")
       .forEach((order) => {
         try {
           const orderDate = startOfDay(new Date(order.createdAt));
-          const dateKey = format(orderDate, 'yyyy-MM-dd');
+          const dateKey = format(orderDate, "yyyy-MM-dd");
           revenueMap[dateKey] = (revenueMap[dateKey] || 0) + order.totalAmount;
         } catch (error) {
-          console.warn('Error calculating revenue for order:', order._id, error);
+          console.warn(
+            "Error calculating revenue for order:",
+            order._id,
+            error,
+          );
         }
       });
 
-    const dates = orders.map((o) => new Date(o.createdAt)).filter((d) => !isNaN(d.getTime()));
+    const dates = orders
+      .map((o) => new Date(o.createdAt))
+      .filter((d) => !isNaN(d.getTime()));
     if (dates.length === 0) {
       const endDate = startOfDay(new Date());
       const startDate = subDays(endDate, 30);
       const data: RevenueData[] = [];
       for (let d = startDate; d <= endDate; d = addDays(d, 1)) {
         data.push({
-          name: format(d, 'dd/MM'),
+          name: format(d, "dd/MM"),
           revenue: 0,
         });
       }
       return data;
     }
 
-    const startDate = startOfDay(new Date(Math.min(...dates.map(d => d.getTime()))));
+    const startDate = startOfDay(
+      new Date(Math.min(...dates.map((d) => d.getTime()))),
+    );
     const endDate = startOfDay(new Date());
     const data: RevenueData[] = [];
 
     for (let d = startDate; d <= endDate; d = addDays(d, 1)) {
-      const dateKey = format(d, 'yyyy-MM-dd');
+      const dateKey = format(d, "yyyy-MM-dd");
       data.push({
-        name: format(d, 'dd/MM'),
+        name: format(d, "dd/MM"),
         revenue: revenueMap[dateKey] || 0,
       });
     }
@@ -153,9 +178,12 @@ const DashboardPage: React.FC = () => {
     if (!orders || orders.length === 0) {
       const endDate = startOfWeek(new Date(), { weekStartsOn: 1 });
       const startDate = subDays(endDate, 12 * 7);
-      const weeks = eachWeekOfInterval({ start: startDate, end: endDate }, { weekStartsOn: 1 });
+      const weeks = eachWeekOfInterval(
+        { start: startDate, end: endDate },
+        { weekStartsOn: 1 },
+      );
       return weeks.map((week) => ({
-        name: `Week ${format(week, 'ww')}`,
+        name: `Week ${format(week, "ww")}`,
         revenue: 0,
       }));
     }
@@ -163,40 +191,54 @@ const DashboardPage: React.FC = () => {
     const revenueMap: { [key: string]: number } = {};
 
     orders
-      .filter((order) => order.status === 'delivered')
+      .filter((order) => order.status === "delivered")
       .forEach((order) => {
         try {
-          const orderWeek = startOfWeek(new Date(order.createdAt), { weekStartsOn: 1 });
-          const weekKey = format(orderWeek, 'yyyy-MM-dd');
+          const orderWeek = startOfWeek(new Date(order.createdAt), {
+            weekStartsOn: 1,
+          });
+          const weekKey = format(orderWeek, "yyyy-MM-dd");
           revenueMap[weekKey] = (revenueMap[weekKey] || 0) + order.totalAmount;
         } catch (error) {
-          console.warn('Error calculating revenue for order:', order._id, error);
+          console.warn(
+            "Error calculating revenue for order:",
+            order._id,
+            error,
+          );
         }
       });
 
-    const dates = orders.map((o) => new Date(o.createdAt)).filter((d) => !isNaN(d.getTime()));
+    const dates = orders
+      .map((o) => new Date(o.createdAt))
+      .filter((d) => !isNaN(d.getTime()));
     if (dates.length === 0) {
       const endDate = startOfWeek(new Date(), { weekStartsOn: 1 });
       const startDate = subDays(endDate, 12 * 7);
-      const weeks = eachWeekOfInterval({ start: startDate, end: endDate }, { weekStartsOn: 1 });
+      const weeks = eachWeekOfInterval(
+        { start: startDate, end: endDate },
+        { weekStartsOn: 1 },
+      );
       return weeks.map((week) => ({
-        name: `Week ${format(week, 'ww')}`,
+        name: `Week ${format(week, "ww")}`,
         revenue: 0,
       }));
     }
 
-    const startDate = startOfWeek(new Date(Math.min(...dates.map(d => d.getTime()))), { weekStartsOn: 1 });
+    const startDate = startOfWeek(
+      new Date(Math.min(...dates.map((d) => d.getTime()))),
+      { weekStartsOn: 1 },
+    );
     const endDate = startOfWeek(new Date(), { weekStartsOn: 1 });
 
     const weeks = eachWeekOfInterval(
       { start: startDate, end: endDate },
-      { weekStartsOn: 1 }
+      { weekStartsOn: 1 },
     );
 
     const data: RevenueData[] = weeks.map((week) => {
-      const weekKey = format(week, 'yyyy-MM-dd');
+      const weekKey = format(week, "yyyy-MM-dd");
       return {
-        name: `Week ${format(week, 'ww')}`,
+        name: `Week ${format(week, "ww")}`,
         revenue: revenueMap[weekKey] || 0,
       };
     });
@@ -206,7 +248,8 @@ const DashboardPage: React.FC = () => {
 
   // Calculate top sellers (filter <1% and calculate %)
   const calculateTopSellers = useCallback(() => {
-    if (!products || !sellers || products.length === 0 || sellers.length === 0) return [];
+    if (!products || !sellers || products.length === 0 || sellers.length === 0)
+      return [];
 
     const sellerSales: { [key: string]: { name: string; sales: number } } = {};
 
@@ -221,11 +264,15 @@ const DashboardPage: React.FC = () => {
       }
     });
 
-    const totalSales = Object.values(sellerSales).reduce((sum, seller) => sum + seller.sales, 0);
+    const totalSales = Object.values(sellerSales).reduce(
+      (sum, seller) => sum + seller.sales,
+      0,
+    );
 
     const filteredSellers = Object.values(sellerSales)
       .map((seller) => {
-        const percentage = totalSales > 0 ? (seller.sales / totalSales) * 100 : 0;
+        const percentage =
+          totalSales > 0 ? (seller.sales / totalSales) * 100 : 0;
         return { ...seller, percentage };
       })
       .filter((seller) => seller.percentage >= 1)
@@ -242,7 +289,7 @@ const DashboardPage: React.FC = () => {
     const statusMap: { [key: string]: number } = {};
 
     orders.forEach((order) => {
-      const status = order.status || 'unknown';
+      const status = order.status || "unknown";
       statusMap[status] = (statusMap[status] || 0) + 1;
     });
 
@@ -254,18 +301,20 @@ const DashboardPage: React.FC = () => {
 
   // Calculate revenue by category (only delivered orders)
   const calculateRevenueByCategory = useCallback(() => {
-    if (!orders || !products || orders.length === 0 || products.length === 0) return [];
+    if (!orders || !products || orders.length === 0 || products.length === 0)
+      return [];
 
     const categoryRevenueMap: { [key: string]: number } = {};
 
     orders
-      .filter((order) => order.status === 'delivered')
+      .filter((order) => order.status === "delivered")
       .forEach((order) => {
         order.products.forEach((item) => {
           const product = products.find((p) => p._id === item.product);
           if (product && product.categories?.name) {
             const category = product.categories.name;
-            categoryRevenueMap[category] = (categoryRevenueMap[category] || 0) + order.totalAmount;
+            categoryRevenueMap[category] =
+              (categoryRevenueMap[category] || 0) + order.totalAmount;
           }
         });
       });
@@ -281,19 +330,25 @@ const DashboardPage: React.FC = () => {
 
   // Calculate top products (only delivered orders)
   const calculateTopProducts = useCallback(() => {
-    if (!orders || !products || orders.length === 0 || products.length === 0) return [];
+    if (!orders || !products || orders.length === 0 || products.length === 0)
+      return [];
 
-    const productQuantityMap: { [key: string]: { name: string; quantity: number } } = {};
+    const productQuantityMap: {
+      [key: string]: { name: string; quantity: number };
+    } = {};
 
     orders
-      .filter((order) => order.status === 'delivered')
+      .filter((order) => order.status === "delivered")
       .forEach((order) => {
         order.products.forEach((item) => {
           const product = products.find((p) => p._id === item.product);
           if (product) {
             const productId = product._id;
             if (!productQuantityMap[productId]) {
-              productQuantityMap[productId] = { name: product.name, quantity: 0 };
+              productQuantityMap[productId] = {
+                name: product.name,
+                quantity: 0,
+              };
             }
             productQuantityMap[productId].quantity += item.quantity;
           }
@@ -309,7 +364,7 @@ const DashboardPage: React.FC = () => {
   const calculateTotalRevenue = useCallback(() => {
     if (!orders || orders.length === 0) return 0;
     return orders
-      .filter((order) => order.status === 'delivered')
+      .filter((order) => order.status === "delivered")
       .reduce((sum, order) => sum + order.totalAmount, 0);
   }, [orders]);
 
@@ -320,7 +375,7 @@ const DashboardPage: React.FC = () => {
     const categorySalesMap: { [key: string]: number } = {};
 
     products.forEach((product) => {
-      const category = product.categories?.name || 'Unknown';
+      const category = product.categories?.name || "Unknown";
       const sold = product.quantity_sold?.value || 0;
       categorySalesMap[category] = (categorySalesMap[category] || 0) + sold;
     });
@@ -339,15 +394,15 @@ const DashboardPage: React.FC = () => {
     setIsLoading(true);
     try {
       await Promise.all([
-        handleFetchAllProduct({ all: true } as any),
+        handleGetAllProduct(),
         handleFetchCategories(),
         handleFetchSellers(),
         handleGetAllOrders(),
       ]);
       setHasFetched(true);
     } catch (error) {
-      toast.error('Failed to load dashboard data');
-      console.error('Error loading dashboard data:', error);
+      toast.error("Failed to load dashboard data");
+      console.error("Error loading dashboard data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -355,7 +410,8 @@ const DashboardPage: React.FC = () => {
 
   // Update data when timeFrame changes or data is fetched
   useEffect(() => {
-    const revenue = timeFrame === 'day' ? calculateRevenueByDay() : calculateRevenueByWeek();
+    const revenue =
+      timeFrame === "day" ? calculateRevenueByDay() : calculateRevenueByWeek();
     setRevenueData(revenue);
     if (hasFetched) {
       setSellerData(calculateTopSellers());
@@ -384,14 +440,21 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   // Debug logs
-  useEffect(() => {
-    console.log('Orders:', orders);
-    console.log('Products:', products);
-    console.log('Sellers:', sellers);
-    console.log('Revenue by Category Data:', revenueByCategoryData);
-    console.log('Top Products Data:', topProductsData);
-    console.log('Category Sales Data:', categorySalesData);
-  }, [orders, products, sellers, revenueByCategoryData, topProductsData, categorySalesData]);
+  // useEffect(() => {
+  //   console.log("Orders:", orders);
+  //   console.log("Products:", products);
+  //   console.log("Sellers:", sellers);
+  //   console.log("Revenue by Category Data:", revenueByCategoryData);
+  //   console.log("Top Products Data:", topProductsData);
+  //   console.log("Category Sales Data:", categorySalesData);
+  // }, [
+  //   orders,
+  //   products,
+  //   sellers,
+  //   revenueByCategoryData,
+  //   topProductsData,
+  //   categorySalesData,
+  // ]);
 
   const totalProducts = products.length;
   const totalOrders = orders?.length || 0;
@@ -401,7 +464,7 @@ const DashboardPage: React.FC = () => {
     if (Math.abs(value) >= 1000000) {
       return `${(value / 1000000).toFixed(1)}M VND`;
     }
-    return `${value.toLocaleString('en-US')} VND`;
+    return `${value.toLocaleString("en-US")} VND`;
   };
 
   // Format X-axis labels
@@ -417,51 +480,65 @@ const DashboardPage: React.FC = () => {
     return `${(percent * 100).toFixed(1)}%`;
   };
 
-  const COLORS = ['#93C5FD', '#68D391', '#FCA5A5', '#FBB6CE', '#A5B4FC'];
+  const COLORS = ["#93C5FD", "#68D391", "#FCA5A5", "#FBB6CE", "#A5B4FC"];
 
   return (
-    <div className="flex-1 p-6 bg-[#D6E4FF] min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-700 mb-6">Admin Dashboard</h1>
+    <div className="min-h-screen flex-1 bg-[#D6E4FF] p-6">
+      <h1 className="mb-6 text-3xl font-bold text-gray-700">Admin Dashboard</h1>
 
       {isLoading && (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#3B82F6]"></div>
+        <div className="flex h-64 items-center justify-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-b-2 border-[#3B82F6]"></div>
         </div>
       )}
 
       {!isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Quick Stats */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700">Total Revenue</h2>
-            <p className="text-3xl font-bold text-[#3B82F6] mt-2">{totalRevenue.toLocaleString('en-US')} VND</p>
-            <p className="text-gray-500 mt-1">All time (Delivered)</p>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700">
+              Total Revenue
+            </h2>
+            <p className="mt-2 text-3xl font-bold text-[#3B82F6]">
+              {totalRevenue.toLocaleString("en-US")} VND
+            </p>
+            <p className="mt-1 text-gray-500">All time (Delivered)</p>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700">Total Orders</h2>
-            <p className="text-3xl font-bold text-[#10B981] mt-2">{totalOrders}</p>
-            <p className="text-gray-500 mt-1">All time</p>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700">
+              Total Orders
+            </h2>
+            <p className="mt-2 text-3xl font-bold text-[#10B981]">
+              {totalOrders}
+            </p>
+            <p className="mt-1 text-gray-500">All time</p>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700">Total Products</h2>
-            <p className="text-3xl font-bold text-[#8B5CF6] mt-2">{totalProducts}</p>
-            <p className="text-gray-500 mt-1">Across all categories</p>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700">
+              Total Products
+            </h2>
+            <p className="mt-2 text-3xl font-bold text-[#8B5CF6]">
+              {totalProducts}
+            </p>
+            <p className="mt-1 text-gray-500">Across all categories</p>
           </div>
 
           {/* Revenue Chart */}
-          <div className="bg-white rounded-lg shadow-md p-6 md:col-span-2">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-700">Revenue by {timeFrame === 'day' ? 'Day' : 'Week'}</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md md:col-span-2">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-700">
+                Revenue by {timeFrame === "day" ? "Day" : "Week"}
+              </h2>
               <div>
                 <button
-                  className={`px-4 py-2 mr-2 rounded ${timeFrame === 'day' ? 'bg-[#3B82F6] text-white' : 'bg-[#CBD5E1]'}`}
-                  onClick={() => setTimeFrame('day')}
+                  className={`mr-2 rounded px-4 py-2 ${timeFrame === "day" ? "bg-[#3B82F6] text-white" : "bg-[#CBD5E1]"}`}
+                  onClick={() => setTimeFrame("day")}
                 >
                   By Day
                 </button>
                 <button
-                  className={`px-4 py-2 rounded ${timeFrame === 'day' ? 'bg-[#CBD5E1]' : 'bg-[#3B82F6] text-white'}`}
-                  onClick={() => setTimeFrame('week')}
+                  className={`rounded px-4 py-2 ${timeFrame === "day" ? "bg-[#CBD5E1]" : "bg-[#3B82F6] text-white"}`}
+                  onClick={() => setTimeFrame("week")}
                 >
                   By Week
                 </button>
@@ -469,7 +546,7 @@ const DashboardPage: React.FC = () => {
             </div>
             <div className="h-64">
               {revenueData.length === 0 ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex h-full items-center justify-center">
                   <p className="text-gray-500">No data to display</p>
                 </div>
               ) : (
@@ -486,21 +563,25 @@ const DashboardPage: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#94A3B8" />
                     <XAxis
                       dataKey="name"
-                      interval={timeFrame === 'day' ? 3 : 1}
+                      interval={timeFrame === "day" ? 3 : 1}
                       angle={-45}
                       textAnchor="end"
                       height={40}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
                     <YAxis
                       tickFormatter={formatYAxis}
-                      domain={['auto', 'auto']}
+                      domain={["auto", "auto"]}
                       tickCount={5}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
-                    <Tooltip formatter={(value: number) => `${value.toLocaleString('en-US')} VND`} />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        `${value.toLocaleString("en-US")} VND`
+                      }
+                    />
                     <Area
                       type="monotone"
                       dataKey="revenue"
@@ -515,11 +596,13 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Order Status Chart */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Order Status Distribution</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="mb-4 text-xl font-semibold text-gray-700">
+              Order Status Distribution
+            </h2>
             <div className="h-64">
               {orderStatusData.length === 0 ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex h-full items-center justify-center">
                   <p className="text-gray-500">No data to display</p>
                 </div>
               ) : (
@@ -536,11 +619,14 @@ const DashboardPage: React.FC = () => {
                       labelLine={true}
                     >
                       {orderStatusData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip formatter={(value: number) => `${value} orders`} />
-                    <Legend wrapperStyle={{ fontSize: 12, color: '#4B5563' }} />
+                    <Legend wrapperStyle={{ fontSize: 12, color: "#4B5563" }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
@@ -548,11 +634,13 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Revenue by Category */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Revenue by Category (Top 5)</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="mb-4 text-xl font-semibold text-gray-700">
+              Revenue by Category (Top 5)
+            </h2>
             <div className="h-64">
               {revenueByCategoryData.length === 0 ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex h-full items-center justify-center">
                   <p className="text-gray-500">No data to display</p>
                 </div>
               ) : (
@@ -573,15 +661,19 @@ const DashboardPage: React.FC = () => {
                       angle={-45}
                       textAnchor="end"
                       height={40}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
                     <YAxis
                       tickFormatter={formatYAxis}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
-                    <Tooltip formatter={(value: number) => `${value.toLocaleString('en-US')} VND`} />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        `${value.toLocaleString("en-US")} VND`
+                      }
+                    />
                     <Bar dataKey="revenue" fill="#68D391" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -590,11 +682,13 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Top Sellers */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Top Sellers (Units Sold)</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="mb-4 text-xl font-semibold text-gray-700">
+              Top Sellers (Units Sold)
+            </h2>
             <div className="h-64">
               {sellerData.length === 0 ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex h-full items-center justify-center">
                   <p className="text-gray-500">No data to display</p>
                 </div>
               ) : (
@@ -611,11 +705,16 @@ const DashboardPage: React.FC = () => {
                       labelLine={true}
                     >
                       {sellerData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(props: any) => `${props.payload.percentage.toFixed(1)}%`} />
-                    <Legend wrapperStyle={{ fontSize: 12, color: '#4B5563' }} />
+                    <Tooltip
+                      formatter={(value: number) => `${value.toFixed(1)}%`}
+                    />
+                    <Legend wrapperStyle={{ fontSize: 12, color: "#4B5563" }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
@@ -623,11 +722,13 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Top Products */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Top Products (Units Sold)</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="mb-4 text-xl font-semibold text-gray-700">
+              Top Products (Units Sold)
+            </h2>
             <div className="h-64">
               {topProductsData.length === 0 ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex h-full items-center justify-center">
                   <p className="text-gray-500">No data to display</p>
                 </div>
               ) : (
@@ -648,12 +749,12 @@ const DashboardPage: React.FC = () => {
                       angle={-45}
                       textAnchor="end"
                       height={60}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
                     <YAxis
-                      tickFormatter={(value) => value.toLocaleString('en-US')}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tickFormatter={(value) => value.toLocaleString("en-US")}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
                     <Tooltip formatter={(value: number) => `${value} units`} />
@@ -665,11 +766,13 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Sales by Category */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales by Category (Units Sold)</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="mb-4 text-xl font-semibold text-gray-700">
+              Sales by Category (Units Sold)
+            </h2>
             <div className="h-64">
               {categorySalesData.length === 0 ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex h-full items-center justify-center">
                   <p className="text-gray-500">No data to display</p>
                 </div>
               ) : (
@@ -690,12 +793,12 @@ const DashboardPage: React.FC = () => {
                       angle={-45}
                       textAnchor="end"
                       height={60}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
                     <YAxis
-                      tickFormatter={(value) => value.toLocaleString('en-US')}
-                      tick={{ fontSize: 12, fill: '#4B5563' }}
+                      tickFormatter={(value) => value.toLocaleString("en-US")}
+                      tick={{ fontSize: 12, fill: "#4B5563" }}
                       stroke="#4B5563"
                     />
                     <Tooltip formatter={(value: number) => `${value} units`} />

@@ -103,33 +103,35 @@ const UserOrderListPage = () => {
                   <div
                     className="border-border-line size-[82px] border bg-cover bg-center"
                     style={{
-                      backgroundImage: `url(${order.products[0].product.images[0].medium_url})`,
+                      backgroundImage: `url(${order.products?.[0]?.product?.images?.[0]?.medium_url || ""})`,
                     }}
                   />
 
                   <div className="flex flex-1 items-center justify-between">
                     <div className="flex flex-col gap-1">
                       <p className="text-sm font-semibold">
-                        {order.products[0].product.name}
+                        {order.products?.[0]?.product?.name ||
+                          "Product name not available"}
                       </p>
                       <p className="text-xs text-neutral-500">
-                        Số lượng: {order.products[0].quantity}
+                        Số lượng: {order.products?.[0]?.quantity || 0}
                       </p>
                     </div>
 
                     <div className="flex gap-2 text-sm">
                       <span className="text-neutral-500 line-through">
                         {formatCurrency(
-                          order.products[0].product.original_price *
-                            order.products[0].quantity,
+                          (order.products?.[0]?.product?.original_price || 0) *
+                            (order.products?.[0]?.quantity || 0),
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>
 
                       <span className="text-primary-500">
                         {formatCurrency(
-                          order.products[0].product.current_seller.price *
-                            order.products[0].quantity,
+                          (order.products?.[0]?.product?.current_seller
+                            ?.price || 0) *
+                            (order.products?.[0]?.quantity || 0),
                         )}
                         <span className="underline underline-offset-1">đ</span>
                       </span>
