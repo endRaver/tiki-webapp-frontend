@@ -54,7 +54,7 @@ const OrderPage: React.FC = () => {
   ).length;
 
   return (
-    <div className="p-6">
+    <div className="h-[calc(100vh-64px)] overflow-auto p-6">
       <div className="mb-4 flex space-x-2">
         <button className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100">
           ALL ({orders?.length})

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronDown, FaHome, FaSignOutAlt } from "react-icons/fa";
-import { useUserStore } from "@/store/useUserStore"; 
+import { useUserStore } from "@/store/useUserStore";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, handleLogout } = useUserStore(); 
+  const { user, handleLogout } = useUserStore();
 
   return (
     <div className="flex h-16 w-full items-center justify-between border border-gray-300 bg-white p-2 shadow-md">
       <div className="flex h-full w-[250px] items-center px-4">
-        <Link to="/" className="flex h-full w-full items-center">
+        <a href="/" className="flex h-full w-full items-center">
           <img
             src="https://salt.tikicdn.com/ts/SellerCenter/a8/77/22/70afa8081f795da2ed1a7efefc3f0579.png"
             alt="Seller Center Logo"
@@ -19,11 +19,14 @@ const Header: React.FC = () => {
           <span className="flex-1 overflow-hidden text-[18.3px] font-bold whitespace-nowrap">
             SELLER CENTER
           </span>
-        </Link>
+        </a>
       </div>
 
       <div className="flex items-center space-x-4">
-        <Link to="/" className="flex items-center text-gray-700 hover:text-blue-500">
+        <Link
+          to="/"
+          className="flex items-center text-gray-700 hover:text-blue-500"
+        >
           <FaHome className="text-xl" />
           <span className="ml-2 hidden md:inline">Home</span>
         </Link>
@@ -85,11 +88,11 @@ const Header: React.FC = () => {
               <button
                 className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200"
                 onClick={async () => {
-                  await handleLogout(); 
+                  await handleLogout();
                   setIsOpen(false);
                 }}
               >
-                <FaSignOutAlt className="inline mr-2" />
+                <FaSignOutAlt className="mr-2 inline" />
                 <span>Đăng xuất</span>
               </button>
             </div>
