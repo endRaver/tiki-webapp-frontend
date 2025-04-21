@@ -13,7 +13,7 @@ const ReturnOrderPage: React.FC = () => {
   ]);
 
   return (
-    <div className="p-6">
+    <div className="h-[calc(100vh-64px)] overflow-auto p-6">
       <ReturnOrders returnOrders={returnOrders} />
     </div>
   );

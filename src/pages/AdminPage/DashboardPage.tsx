@@ -483,12 +483,12 @@ const DashboardPage: React.FC = () => {
   const COLORS = ["#93C5FD", "#68D391", "#FCA5A5", "#FBB6CE", "#A5B4FC"];
 
   return (
-    <div className="min-h-screen flex-1 bg-[#D6E4FF] p-6">
+    <div className="h-[calc(100vh-64px)] flex-1 overflow-auto bg-[#D6E4FF] p-6">
       <h1 className="mb-6 text-3xl font-bold text-gray-700">Admin Dashboard</h1>
 
       {isLoading && (
         <div className="flex h-64 items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-b-2 border-[#3B82F6]"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-b-2 border-[#3B82F6]" />
         </div>
       )}
 
@@ -712,7 +712,9 @@ const DashboardPage: React.FC = () => {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => `${value.toFixed(1)}%`}
+                      formatter={(props: any) =>
+                        `${props.payload.percentage.toFixed(1)}%`
+                      }
                     />
                     <Legend wrapperStyle={{ fontSize: 12, color: "#4B5563" }} />
                   </PieChart>
