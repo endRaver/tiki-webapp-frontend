@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaBox, FaUsers, FaShoppingCart, FaHeadset, FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
+// Không cần giao diện SliderBarProps nữa
 const SliderBar: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false); // Tự quản lý trạng thái
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -21,17 +22,13 @@ const SliderBar: React.FC = () => {
       name: "User",
       icon: FaUsers,
       hasSubmenu: true,
-      subItems: [
-        { name: "List Users", link: "/admin/users" },
-      ],
+      subItems: [{ name: "List Users", link: "/admin/users" }],
     },
     {
       name: "Order",
       icon: FaShoppingCart,
       hasSubmenu: true,
-      subItems: [
-        { name: "List Orders", link: "/admin/orders" },
-      ],
+      subItems: [{ name: "List Orders", link: "/admin/orders" }],
     },
   ];
 
@@ -65,7 +62,7 @@ const SliderBar: React.FC = () => {
     <div
       className={`bg-white border-r border-gray-200 flex font-inter text-sm flex-col transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
-      } fixed left-0 h-[calc(100vh-64px)] top-[64px]`}
+      } h-[calc(100vh-64px)] flex-shrink-0`}
     >
       {!isCollapsed && (
         <div className="px-4 mb-4 mt-4">
@@ -115,11 +112,6 @@ const SliderBar: React.FC = () => {
                         className="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded"
                       >
                         <span className="flex-1">{subItem.name}</span>
-                        {subItem.name === "Return Orders" && (
-                          <span className="bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded">
-                            NEW
-                          </span>
-                        )}
                       </Link>
                     </li>
                   ))}
