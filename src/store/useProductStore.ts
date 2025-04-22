@@ -86,7 +86,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     if (cachedData) {
       set({
         products: cachedData,
-        totalPages: cachedData.length / 10,
+        totalPages: Math.ceil(cachedData.length / 10),
       });
       return;
     }
@@ -104,15 +104,12 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         get().productsCache.set(cacheKey, response.data.products);
       } else {
         const newProducts = [...previousProducts, ...response.data.products];
-
         // Update cache
         get().productsCache.set(cacheKey, newProducts);
-
-        set({
-          products: newProducts,
-          totalPages: response.data.pagination.pages,
-        });
+        set({ products: newProducts });
       }
+
+      set({ totalPages: response.data.pagination.pages });
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       toast.error(axiosError.response?.data?.message ?? "An error occurred");
