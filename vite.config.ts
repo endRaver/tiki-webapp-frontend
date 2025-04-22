@@ -13,4 +13,7 @@ export default defineConfig({
     alias: [{ find: "@", replacement: resolve(__dirname, "src") }],
   },
   plugins: [react(), tailwindcss()],
+  preview: {
+    allowedHosts: ["tiki-webapp-frontend.onrender.com"],
+  },
 });
