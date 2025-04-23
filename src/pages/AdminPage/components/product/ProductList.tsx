@@ -12,30 +12,30 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  // const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<"price" | "quantitySold">("price");
+  const [moreLoading, setMoreLoading] = useState(false);
 
   const {
+    loading,
+    products,
     totalPages,
     resetProducts,
-    // handleGetAllProductPagination,
-    handleGetAllProduct,
+    handleGetAllProductPagination,
+    // handleGetAllProduct,
   } = useProductStore();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const products = await handleGetAllProduct();
-      setProducts(products);
-      setLoading(false);
+    const fetchMoreProducts = async () => {
+      setMoreLoading(true);
+      await handleGetAllProductPagination(currentPage);
+      setMoreLoading(false);
     };
 
-    fetchProducts();
-  }, [handleGetAllProduct]);
-
-  console.log(filters);
+    fetchMoreProducts();
+  }, [handleGetAllProductPagination, currentPage]);
 
   // Apply filtering based on all filter criteria
   useEffect(() => {
@@ -189,13 +189,19 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
           <tbody>{renderTableBody()}</tbody>
         </table>
 
-        {currentPage < totalPages && (
-          <div className="mt-4 flex justify-center">
+        {currentPage <= totalPages && (
+          <div className="flex justify-center">
             <button
-              className="btn mb-2 cursor-pointer rounded-md border border-blue-400 px-24 py-[8px] text-blue-500 hover:bg-[#0060ff1f]"
-              onClick={() => setCurrentPage(currentPage + 1)}
+              className="btn mb-2 w-[265px] cursor-pointer rounded-md border border-blue-400 py-2 text-blue-500 hover:bg-[#0060ff1f]"
+              onClick={() => {
+                setCurrentPage(currentPage + 1);
+              }}
             >
-              Xem Thêm
+              {moreLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Xem Thêm"
+              )}
             </button>
           </div>
         )}
