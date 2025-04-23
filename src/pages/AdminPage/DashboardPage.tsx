@@ -25,7 +25,8 @@ import {
   eachWeekOfInterval,
   subDays,
 } from "date-fns";
-import { Product } from "@/types/product"; 
+import { Product } from "@/types/product";
+import { Loader2 } from "lucide-react";
 
 interface RevenueData {
   name: string;
@@ -77,10 +78,7 @@ interface CategorySalesData {
 }
 
 const DashboardPage: React.FC = () => {
-  const {
-    products,
-    handleGetProductByCategory,
-  } = useProductStore();
+  const { products, handleGetProductByCategory } = useProductStore();
   const { orders: rawOrders, handleGetAllOrders } = useOrderStore();
   const orders = rawOrders as unknown as LocalOrder[];
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
@@ -260,7 +258,13 @@ const DashboardPage: React.FC = () => {
 
   // Calculate revenue by category (only delivered orders)
   const calculateRevenueByCategory = useCallback(() => {
-    if (!orders || !Array.isArray(orders) || orders.length === 0 || !products || products.length === 0) {
+    if (
+      !orders ||
+      !Array.isArray(orders) ||
+      orders.length === 0 ||
+      !products ||
+      products.length === 0
+    ) {
       return [];
     }
 
@@ -274,9 +278,11 @@ const DashboardPage: React.FC = () => {
           if (product && product.categories?.name) {
             const category = product.categories.name;
             categoryRevenueMap[category] =
-              (categoryRevenueMap[category] || 0) + (item.quantity * item.price);
+              (categoryRevenueMap[category] || 0) + item.quantity * item.price;
           } else {
-            console.warn(`Product ${item.product} not found or no category for order ${order._id}`);
+            console.warn(
+              `Product ${item.product} not found or no category for order ${order._id}`,
+            );
           }
         });
       });
@@ -293,7 +299,13 @@ const DashboardPage: React.FC = () => {
 
   // Calculate top products (only delivered orders)
   const calculateTopProducts = useCallback(() => {
-    if (!orders || !Array.isArray(orders) || orders.length === 0 || !products || products.length === 0) {
+    if (
+      !orders ||
+      !Array.isArray(orders) ||
+      orders.length === 0 ||
+      !products ||
+      products.length === 0
+    ) {
       return [];
     }
 
@@ -316,7 +328,9 @@ const DashboardPage: React.FC = () => {
             }
             productQuantityMap[productId].quantity += item.quantity;
           } else {
-            console.warn(`Product ${item.product} not found for order ${order._id}`);
+            console.warn(
+              `Product ${item.product} not found for order ${order._id}`,
+            );
           }
         });
       });
@@ -378,7 +392,7 @@ const DashboardPage: React.FC = () => {
         "Sách tiếng Việt",
         "Sách tư duy - Kỹ năng sống",
         "Truyện ngắn - Tản văn - Tạp Văn",
-        "Tác phẩm kinh điển"
+        "Tác phẩm kinh điển",
       ];
 
       const allProducts: Product[] = [];
@@ -463,7 +477,7 @@ const DashboardPage: React.FC = () => {
 
       {isLoading && (
         <div className="flex h-64 items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-b-2 border-[#3B82F6]" />
+          <Loader2 className="h-12 w-12 animate-spin" color="#3B82F6" />
         </div>
       )}
 

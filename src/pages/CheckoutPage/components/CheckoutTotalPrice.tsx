@@ -5,10 +5,12 @@ import { formatCurrency } from "@/utils/utils";
 import { useCartStore } from "@/store/useCartStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const CheckoutTotalPrice = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
+    isLoading,
     selectedCart,
     subtotal,
     shippingCoupon,
@@ -161,7 +163,7 @@ const CheckoutTotalPrice = () => {
         </div>
 
         <button
-          className="bg-danger-100 hover:bg-danger-100/80 w-full cursor-pointer rounded py-2.5 text-sm font-medium text-white duration-300"
+          className="bg-danger-100 hover:bg-danger-100/80 flex h-10 w-full cursor-pointer items-center justify-center rounded text-sm font-medium text-white duration-300"
           onClick={() => {
             if (paymentMethod === "card") {
               handlePaymentCard();
@@ -170,8 +172,13 @@ const CheckoutTotalPrice = () => {
               navigate("/purchase-success");
             }
           }}
+          disabled={isLoading}
         >
-          Đặt hàng
+          {isLoading ? (
+            <Loader2 className="animate-spin" color="#fff" />
+          ) : (
+            "Đặt hàng"
+          )}
         </button>
       </div>
     </div>

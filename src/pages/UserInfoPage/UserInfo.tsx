@@ -1,10 +1,10 @@
 import { useUserStore } from "@/store/useUserStore";
-import { User, Bell, Shield, Link2, ChevronRight } from "lucide-react";
+import { User, Bell, Shield, Link2, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 const UserInfo = () => {
-  const { user, handleUpdateUserInfo } = useUserStore();
+  const { user, handleUpdateUserInfo, loading } = useUserStore();
   const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [address, setAddress] = useState(user?.address || "");
   const [name, setName] = useState(user?.name || "");
@@ -131,10 +131,17 @@ const UserInfo = () => {
             </div>
             <div className="pt-4">
               <button
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 font-medium text-white transition-colors duration-200 hover:bg-blue-700 md:w-auto"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
                 onClick={updateUserInfo}
+                disabled={loading}
               >
-                <span>Lưu thay đổi</span>
+                <span>
+                  {loading ? (
+                    <Loader2 className="animate-spin" color="#fff" />
+                  ) : (
+                    "Lưu thay đổi"
+                  )}
+                </span>
               </button>
             </div>
           </div>

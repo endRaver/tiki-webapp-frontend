@@ -4,10 +4,12 @@ import { toast } from "react-hot-toast";
 
 import { useCartStore } from "@/store/useCartStore";
 import { formatCurrency } from "@/utils/utils";
+import { useUserStore } from "@/store/useUserStore";
 
 const CartTotalPrice = () => {
   const { selectedCart, subtotal, discountCoupon, productDiscount, cartTotal } =
     useCartStore();
+  const { user } = useUserStore();
 
   const discountPrice = useMemo(() => {
     return selectedCart.reduce((acc, item) => {
@@ -24,6 +26,13 @@ const CartTotalPrice = () => {
   const handleCheckout = () => {
     if (isEmpty(selectedCart)) {
       toast.error("Vui lòng chọn sản phẩm");
+      return;
+    }
+    if (isEmpty(user?.address) || isEmpty(user?.phoneNumber)) {
+      toast.error("Vui lòng cập nhật thông tin người nhận");
+      setTimeout(() => {
+        window.location.href = "/profile/user-info";
+      }, 1000);
       return;
     }
 

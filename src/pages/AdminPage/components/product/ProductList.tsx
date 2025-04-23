@@ -15,9 +15,7 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const [sortBy, setSortBy] = useState<"price" | "profit" | "quantitySold">(
-    "price",
-  );
+  const [sortBy, setSortBy] = useState<"price" | "quantitySold">("price");
 
   const {
     totalPages,
@@ -36,6 +34,8 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
 
     fetchProducts();
   }, [handleGetAllProduct]);
+
+  console.log(filters);
 
   // Apply filtering based on all filter criteria
   useEffect(() => {
@@ -57,14 +57,6 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
     const sortedProducts = [...filtered].sort((a, b) => {
       if (sortBy === "price") {
         return (b.current_seller?.price || 0) - (a.current_seller?.price || 0);
-      } else if (sortBy === "profit") {
-        const profitA =
-          ((a.current_seller?.price || 0) - (a.original_price || 0)) *
-          (a.quantity_sold?.value ?? 0);
-        const profitB =
-          ((b.current_seller?.price || 0) - (b.original_price || 0)) *
-          (b.quantity_sold?.value ?? 0);
-        return profitB - profitA; // Changed to sort highest profit first
       } else if (sortBy === "quantitySold") {
         return (b.quantity_sold?.value ?? 0) - (a.quantity_sold?.value ?? 0);
       }
@@ -124,12 +116,7 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
         </td>
         <td className="p-2">{product.quantity_sold?.value || 0}</td>
         <td className="p-2">{product.current_seller?.price || 0} VNĐ</td>
-        <td className="p-2">
-          {((product.original_price || 0) -
-            (product.current_seller?.price || 0)) *
-            (product.quantity_sold?.value || 0)}{" "}
-          VNĐ
-        </td>
+
         <td className="flex space-x-2 p-2">
           <Link
             to={`/admin/products/edit/${product._id}`}
@@ -169,16 +156,7 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
             >
               Sort by price
             </button>
-            <button
-              onClick={() => setSortBy("profit")}
-              className={`rounded border px-4 py-2 text-gray-700 hover:bg-gray-100 ${
-                sortBy === "profit"
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-300"
-              }`}
-            >
-              Sort by profit
-            </button>
+
             <button
               onClick={() => setSortBy("quantitySold")}
               className={`rounded border px-4 py-2 text-gray-700 hover:bg-gray-100 ${
@@ -205,7 +183,6 @@ const ProductList: React.FC<{ filters: Filter }> = ({ filters }) => {
                 Quantity Sold
               </th>
               <th className="border border-gray-200 p-2 text-left">Price</th>
-              <th className="border border-gray-200 p-2 text-left">Profit</th>
               <th className="border border-gray-200 p-2 text-left">Actions</th>
             </tr>
           </thead>

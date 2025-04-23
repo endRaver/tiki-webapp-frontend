@@ -126,12 +126,16 @@ const CouponList = ({
               className="text-primary-300 mb-2 flex w-full cursor-pointer items-center justify-center gap-2 px-4 py-1 text-sm font-medium"
               onClick={() => setIsShippingExtended(!isShippingExtended)}
             >
-              <span>Xem thêm ({sortedShippingCoupons.length - 2})</span>
+              <span>
+                {isShippingExtended ? "Thu gọn" : "Xem thêm"}
+                {!isShippingExtended &&
+                  ` (${sortedShippingCoupons.length - 2})`}
+              </span>
               <img
                 src={more_arrow}
                 alt="more"
                 className={`duration-300 ease-in-out ${
-                  !isShippingExtended ? "rotate-270" : "rotate-90"
+                  isShippingExtended ? "rotate-270" : "rotate-90"
                 }`}
               />
             </button>

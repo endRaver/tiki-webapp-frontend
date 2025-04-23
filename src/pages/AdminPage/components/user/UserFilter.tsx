@@ -26,7 +26,7 @@ const UserFilter = ({
       >
         <option value="">All Roles</option>
         <option value="admin">Admin</option>
-        <option value="user">User</option>
+        <option value="customer">Customer</option>
       </select>
       <select
         value={filters.isVerified}

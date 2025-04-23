@@ -17,7 +17,6 @@ const formatDate = (date: string) => {
 };
 
 const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
-
   const {
     discountType,
     discount,
@@ -27,8 +26,8 @@ const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
     expirationDate,
   } = coupon;
 
-  const { total } = useCartStore();
   const {
+    selectedCart,
     discountCoupon,
     shippingCoupon,
     handleApplyCoupon,
@@ -53,6 +52,13 @@ const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
     onDisplayCoupon(coupon);
   };
 
+  const totalSelectedCart = selectedCart.reduce(
+    (acc, item) => acc + item.current_seller.price * item.quantity,
+    0,
+  );
+
+  const isDisabled = totalSelectedCart < minOrderAmount;
+
   const isCouponApplied =
     (discountCoupon && discountCoupon.code === coupon.code) ||
     (shippingCoupon && shippingCoupon.code === coupon.code);
@@ -66,21 +72,21 @@ const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
           src={discountFor === "product" ? coupon_img : free_ship}
           alt="coupon"
           className={`size-[116px] rounded-lg ${
-            total < minOrderAmount ? "opacity-50 grayscale-100" : ""
+            isDisabled ? "opacity-50 grayscale-100" : ""
           }`}
         />
       </div>
 
       <div
         className={`relative flex flex-1 flex-col justify-between p-3 ${
-          total < minOrderAmount ? "opacity-50" : ""
+          isDisabled ? "opacity-50" : ""
         }`}
       >
         <button className="absolute top-3 right-3 cursor-pointer">
           <img
             src={info_blue}
             alt="info"
-            className={`${total < minOrderAmount ? "grayscale-100" : ""}`}
+            className={`${isDisabled ? "grayscale-100" : ""}`}
           />
         </button>
         <div>
@@ -102,13 +108,11 @@ const CouponCard = ({ coupon, onDisplayCoupon }: CouponCardProps) => {
           <button
             onClick={onApplyCoupon}
             className={`rounded bg-[#017fff] px-3 py-0.5 text-sm text-white ${
-              total < minOrderAmount
-                ? "opacity-50 grayscale-100"
-                : "cursor-pointer"
+              isDisabled ? "opacity-50 grayscale-100" : "cursor-pointer"
             }`}
-            disabled={total < minOrderAmount}
+            disabled={isDisabled}
           >
-            {total < minOrderAmount
+            {isDisabled
               ? "Chưa thỏa mãn"
               : isCouponApplied
                 ? "Bỏ Chọn"

@@ -119,6 +119,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
         quantity,
       });
 
+      set((prevState) => {
+        const newCart = [...prevState.cart, response.data];
+        return { cart: newCart };
+      });
+
       await get().handleGetCartItems();
       toast.success("Product added to cart");
       return response.data;

@@ -127,6 +127,8 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   },
 
   handlePaymentCard: async () => {
+    set({ isLoading: true });
+
     const {
       paymentMethod,
       selectedCart,
@@ -167,12 +169,15 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
     } catch (error) {
       console.error("Error creating checkout session:", error);
       toast.error("Payment failed");
+    } finally {
+      set({ isLoading: false });
     }
   },
 
   handlePaymentCash: async () => {
     const { selectedCart, shippingCoupon, totalShippingPrice, total } =
       useCartStore.getState();
+    set({ isLoading: true });
 
     try {
       const res = await axiosInstance.post("/payments/create-cash-order", {
@@ -192,6 +197,8 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
     } catch (error) {
       console.error("Error creating checkout session:", error);
       toast.error("Payment failed");
+    } finally {
+      set({ isLoading: false });
     }
   },
 
